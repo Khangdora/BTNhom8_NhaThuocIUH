@@ -146,6 +146,7 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		box2.add(lblDangxuat = new JLabel("Đăng xuất"));
 		lblDangxuat.setForeground(Color.WHITE);
 		lblDangxuat.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		lblDangxuat.setName("dangxuat");
 		
 		infoPanel.add(box2);
 		
@@ -160,6 +161,7 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		
 		timer.start();
 		lblName.addMouseListener(this);
+		lblDangxuat.addMouseListener(this);
 		
 	}
 	
@@ -175,6 +177,9 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		panelThongKe = child_tab.panelThongKe();
 		panelTrangChu = child_tab.panelTrangChu();
 		
+		btnTab1 = new JButton("Hóa đơn");
+		
+		
 		tabbedPane.addTab("Trang chủ", panelTrangChu);
 		tabbedPane.addTab("Hóa đơn", panelHoaDon);
 		tabbedPane.addTab("Khách hàng", panelKhachHang);
@@ -182,6 +187,10 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		tabbedPane.addTab("Lịch sử", panelLichSu);
 		tabbedPane.addTab("Nhân viên", panelNhanVien);
 		tabbedPane.addTab("Thống kê", panelThongKe);
+		
+		tabbedPane.removeTabAt(0);
+		tabbedPane.setTabComponentAt(0, btnTab1);
+		
 		
 		//removeTab
 //		tabbedPane.removeTabAt(0);
@@ -278,19 +287,26 @@ public class main extends JFrame implements ActionListener, MouseListener {
 
 	}
 	
-//	public static void main(String[] args) {
-//		NhanVien nv = new NhanVien("NV100");
-//		nv.setMatKhau("#Dx123#Dx123");
-//		new main(nv).setVisible(true);
-//	}
+	public static void main(String[] args) {
+		NhanVien nv = new NhanVien("NV100");
+		nv.setMatKhau("#Dx123#Dx123");
+		new main(nv).setVisible(true);
+	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 		String name = e.getComponent().getName();
+		
 		if(name.trim().equals("infoUser")) {
 			new infouser(nvlogin).setVisible(true);
 		}
+		
+		if(name.trim().equals("dangxuat")) {
+			new login().setVisible(true);
+			dispose();
+		}
+		
 	}
 
 	@Override
