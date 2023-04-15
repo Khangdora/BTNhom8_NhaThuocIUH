@@ -5,7 +5,9 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,7 +16,9 @@ import java.awt.event.MouseListener;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -30,6 +34,7 @@ import javax.swing.Timer;
 import DAO.NhanVien_DAO;
 import connectDB.ConnectDB;
 import entity.NhanVien;
+import others.BottomBorder;
 
 public class main extends JFrame implements ActionListener, MouseListener {
 
@@ -39,11 +44,14 @@ public class main extends JFrame implements ActionListener, MouseListener {
 	private static final long serialVersionUID = 1L;
 	
 	private NhanVien nvlogin;
-	JPanel panelTrangChu, panelHoaDon, panelKhoThuoc, panelKhachHang, panelLichSu, panelNhanVien, panelThongKe;
-	JPanel panelNorth, createCenter, panelCenter;
-	JLabel timeNow, timeLeft, lblName, lblDangxuat;
-	JTabbedPane tabbedPane;
-	JButton btnTab1, btnTab2, btnTab3, btnTab4, btnTab5, btnTab6;
+	private JPanel panelTrangChu, panelHoaDon, panelKhoThuoc, panelKhachHang, panelLichSu, panelNhanVien, panelThongKe;
+	private JPanel panelNorth, panelCenter, panelWest;
+	private JLabel timeNow, timeLeft, lblName, lblDangxuat, lblLogo;
+	private JTabbedPane tabbedPane;
+	private JButton btnTab1, btnTab2, btnTab3, btnTab4, btnTab5, btnTab6;
+	
+	private ArrayList<JPanel> panels;
+	private ArrayList<JButton> buttons;
 	
 	ChildTab child_tab = new ChildTab();
 	
@@ -76,8 +84,11 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		createNorth();
 		add(panelNorth, BorderLayout.NORTH);
 		
+		createWest();
+		add(panelWest, BorderLayout.WEST);
+		
 		createCenter();
-		add(createCenter, BorderLayout.CENTER);
+		add(panelCenter, BorderLayout.CENTER);
 		
 	
 	}
@@ -104,10 +115,11 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		brandPanel.setLayout(null);
 		brandPanel.setOpaque(false);
 		
-		JLabel lblLogo = new JLabel(new ImageIcon(getClass().getResource("/img/logoiuh_mini.png")));
+		lblLogo = new JLabel(new ImageIcon(getClass().getResource("/img/logoiuh_mini.png")));
 		lblLogo.setBorder(null);
 		lblLogo.setBounds(0,0,150,40);
 		lblLogo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		lblLogo.setName("home");
 		
 		brandPanel.add(lblLogo);
 		panelNorth.add(brandPanel, BorderLayout.WEST);
@@ -162,12 +174,68 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		timer.start();
 		lblName.addMouseListener(this);
 		lblDangxuat.addMouseListener(this);
+		lblLogo.addMouseListener(this);
+		
+	}
+
+	
+	private void createWest() {
+		
+		panelWest = new JPanel();
+		panelWest.setLayout(new GridLayout(8, 1));
+		panelWest.setPreferredSize(new Dimension(170, 500));
+		panelWest.setBackground(Color.decode("#EEEEEE"));
+		
+		buttons = new ArrayList<JButton>();
+		
+		btnTab1 = new JButton("Hóa đơn");
+		setBtn(btnTab1);
+		buttons.add(btnTab1);
+		
+		btnTab2 = new JButton("Khách hàng");
+		setBtn(btnTab2);
+		buttons.add(btnTab2);
+		
+		btnTab3 = new JButton("Kho thuốc");
+		setBtn(btnTab3);
+		buttons.add(btnTab3);
+		
+		btnTab4 = new JButton("Lịch sử");
+		setBtn(btnTab4);
+		buttons.add(btnTab4);
+		
+		btnTab5 = new JButton("Nhân viên");
+		setBtn(btnTab5);
+		buttons.add(btnTab5);
+		
+		btnTab6 = new JButton("Thống kê");
+		setBtn(btnTab6);
+		buttons.add(btnTab6);
+		
+		panelWest.add(btnTab1);
+		panelWest.add(btnTab2);
+		panelWest.add(btnTab3);
+		panelWest.add(btnTab4);
+		panelWest.add(btnTab5);
+		panelWest.add(btnTab6);
+		panelWest.add(new JLabel());
+		
+		JLabel copyright;
+		panelWest.add(copyright = new JLabel("Group 8 IUH"));
+		copyright.setHorizontalAlignment(SwingConstants.CENTER);
+		copyright.setFont(new Font("Serif", Font.PLAIN, 13));
+		
+		btnTab1.addActionListener(this);
+		btnTab2.addActionListener(this);
+		btnTab3.addActionListener(this);
+		btnTab4.addActionListener(this);
+		btnTab5.addActionListener(this);
+		btnTab6.addActionListener(this);
 		
 	}
 	
 	private void createCenter() {
-		createCenter = new JPanel();
-		tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
+		panelCenter = new JPanel();
 		
 		panelHoaDon = child_tab.panelHoaDon();
 		panelKhachHang = child_tab.panelKhachHang();
@@ -177,51 +245,50 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		panelThongKe = child_tab.panelThongKe();
 		panelTrangChu = child_tab.panelTrangChu();
 		
-		btnTab1 = new JButton("Hóa đơn");
+		panelCenter.add(panelTrangChu);
+		panelCenter.add(panelHoaDon);
+		panelCenter.add(panelKhachHang);
+		panelCenter.add(panelKhoThuoc);
+		panelCenter.add(panelLichSu);
+		panelCenter.add(panelNhanVien);
+		panelCenter.add(panelThongKe);
+		onlyHome();
 		
+		panels = new ArrayList<JPanel>();
+		panels.add(panelTrangChu);
+		panels.add(panelHoaDon);
+		panels.add(panelKhachHang);
+		panels.add(panelKhoThuoc);
+		panels.add(panelLichSu);
+		panels.add(panelNhanVien);
+		panels.add(panelThongKe);
 		
-		tabbedPane.addTab("Trang chủ", panelTrangChu);
-		tabbedPane.addTab("Hóa đơn", panelHoaDon);
-		tabbedPane.addTab("Khách hàng", panelKhachHang);
-		tabbedPane.addTab("Kho thuốc", panelKhoThuoc);
-		tabbedPane.addTab("Lịch sử", panelLichSu);
-		tabbedPane.addTab("Nhân viên", panelNhanVien);
-		tabbedPane.addTab("Thống kê", panelThongKe);
-		
-		tabbedPane.removeTabAt(0);
-		tabbedPane.setTabComponentAt(0, btnTab1);
-		
-		
-		//removeTab
-//		tabbedPane.removeTabAt(0);
-		
-		
-//		tabbedPane.removeTabAt(1);
-//		btnTab1 = new JButton("Hóa đơn");
-//		btnTab1.setOpaque(false);
-//		
-//		tabbedPane.set
-		
-//		Tab1
-//		btnTab1 = new JButton("Trang chủ");
-//		btnTab1.setOpaque(false);
-//		tabbedPane.removeTabAt(0);
-//		tabbedPane.insertTab("", null, new JPanel(), null, 0);
-//		tabbedPane.setTabComponentAt(0, btnTab1);
-		
-////		//Tab2
-//		btnTab2 = new JButton("Khách hàng");
-//		btnTab2.setOpaque(false);
-//		tabbedPane.removeTabAt(1);
-//		tabbedPane.insertTab("", null, new JPanel(), null, 1);
-//		tabbedPane.setTabComponentAt(1, btnTab2);
-		
-		tabbedPane.setBorder(null);
-		
-		createCenter.add(tabbedPane);
+	}
+	
+	private void onlyHome() {
+		panelHoaDon.setVisible(true);
+		panelHoaDon.setVisible(false);
+		panelKhachHang.setVisible(false);
+		panelKhoThuoc.setVisible(false);
+		panelLichSu.setVisible(false);
+		panelNhanVien.setVisible(false);
+		panelThongKe.setVisible(false);
+	}
+	
+	private void setBtn(JButton jbtn) {
+		jbtn.setBorder(null);
+		jbtn.setBackground(Color.decode("#003399"));
+		jbtn.setFont(new Font("Arial", Font.BOLD, 14));
+		jbtn.setForeground(Color.WHITE);
+		jbtn.setFocusable(false);
+		jbtn.setText(jbtn.getText().toUpperCase());
+		jbtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		jbtn.setBorder(BorderFactory.createCompoundBorder(jbtn.getBorder(), new BottomBorder()));
 	}
 	
 	private void updateTime() {
+		
+		//========================================= LÀM LẠI
 		
 		//Cài đặt thời gian hiện tại
 		LocalDateTime now = LocalDateTime.now();
@@ -284,6 +351,80 @@ public class main extends JFrame implements ActionListener, MouseListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
+		
+		Object o = e.getSource();
+		if(o.equals(btnTab1)) {			
+            for (JPanel panel : panels) {
+                if (panel == panelHoaDon) {
+                    panel.setVisible(true);
+                    btnTab1.setBackground(Color.decode("#003366"));
+                } else {
+                    panel.setVisible(false);
+                    btnTab1.setBackground(Color.decode("#003399"));
+                }
+             }
+		}
+		
+		if(o.equals(btnTab2)) {			
+            for (JPanel panel : panels) {
+                if (panel == panelKhachHang) {
+                    panel.setVisible(true);
+                    btnTab1.setBackground(Color.decode("#003366"));
+                } else {
+                   panel.setVisible(false);
+                   btnTab1.setBackground(Color.decode("#003399"));
+                }
+             }
+		}
+		
+		if(o.equals(btnTab3)) {			
+            for (JPanel panel : panels) {
+                if (panel == panelKhoThuoc) {
+                    panel.setVisible(true);
+                    btnTab1.setBackground(Color.decode("#003366"));
+                } else {
+                   panel.setVisible(false);
+                   btnTab1.setBackground(Color.decode("#003399"));
+                }
+             }
+		}
+		
+		if(o.equals(btnTab4)) {			
+            for (JPanel panel : panels) {
+                if (panel == panelLichSu) {
+                    panel.setVisible(true);
+                    btnTab1.setBackground(Color.decode("#003366"));
+                } else {
+                   panel.setVisible(false);
+                   btnTab1.setBackground(Color.decode("#003399"));
+                }
+             }
+		}
+		
+		if(o.equals(btnTab5)) {			
+            for (JPanel panel : panels) {
+                if (panel == panelNhanVien) {
+                    panel.setVisible(true);
+                    btnTab1.setBackground(Color.decode("#003366"));
+                } else {
+                   panel.setVisible(false);
+                   btnTab1.setBackground(Color.decode("#003399"));
+                }
+             }
+		}
+		
+		if(o.equals(btnTab6)) {			
+            for (JPanel panel : panels) {
+                if (panel == panelThongKe) {
+                    panel.setVisible(true);
+                    btnTab1.setBackground(Color.decode("#003366"));
+                } else {
+                   panel.setVisible(false);
+                   btnTab1.setBackground(Color.decode("#003399"));
+                }
+             }
+		}
+		
 
 	}
 	
@@ -297,6 +438,18 @@ public class main extends JFrame implements ActionListener, MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 		String name = e.getComponent().getName();
+		
+		if(name.trim().equals("home")) {
+            for (JPanel panel : panels) {
+                if (panel == panelTrangChu) {
+                   panel.setVisible(true);
+                   btnTab1.setBackground(Color.decode("#003366"));
+                } else {
+                   panel.setVisible(false);
+                   btnTab1.setBackground(Color.decode("#003399"));
+                }
+             }
+		}
 		
 		if(name.trim().equals("infoUser")) {
 			new infouser(nvlogin).setVisible(true);
