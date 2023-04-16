@@ -184,7 +184,7 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		panelWest = new JPanel();
 		panelWest.setLayout(new GridLayout(8, 1));
 		panelWest.setPreferredSize(new Dimension(170, 500));
-		panelWest.setBackground(Color.decode("#EEEEEE"));
+		panelWest.setBackground(Color.decode("#AAAAAA"));
 		
 		buttons = new ArrayList<JButton>();
 		
@@ -231,11 +231,18 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		btnTab4.addActionListener(this);
 		btnTab5.addActionListener(this);
 		btnTab6.addActionListener(this);
+		btnTab1.addMouseListener(this);
+		btnTab2.addMouseListener(this);
+		btnTab3.addMouseListener(this);
+		btnTab4.addMouseListener(this);
+		btnTab5.addMouseListener(this);
+		btnTab6.addMouseListener(this);
 		
 	}
 	
 	private void createCenter() {
 		panelCenter = new JPanel();
+		panelCenter.setBorder(null);
 		
 		panelHoaDon = child_tab.panelHoaDon();
 		panelKhachHang = child_tab.panelKhachHang();
@@ -284,6 +291,33 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		jbtn.setText(jbtn.getText().toUpperCase());
 		jbtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		jbtn.setBorder(BorderFactory.createCompoundBorder(jbtn.getBorder(), new BottomBorder()));
+	}
+	
+	private void entBtn(JButton jbtn) {
+		jbtn.setBackground(Color.decode("#3366CC"));
+	}
+	
+	private void outBtn(JButton jbtn) {
+		jbtn.setBackground(Color.decode("#003399"));
+	}
+	
+	private void setBgBtn() {
+		for (JButton btn : buttons) {
+			btn.setBackground(Color.decode("#003399"));
+			btn.setForeground(Color.white);
+		}
+	}
+	
+	private void setBgBtn(JButton x) {
+		for (JButton btn : buttons) {
+			if(btn == x) {
+				btn.setBackground(Color.decode("#EEEEEE"));
+				btn.setForeground(Color.black);
+			} else {
+				btn.setBackground(Color.decode("#003399"));
+				btn.setForeground(Color.white);
+			}
+		}
 	}
 	
 	private void updateTime() {
@@ -355,74 +389,66 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		Object o = e.getSource();
 		if(o.equals(btnTab1)) {			
             for (JPanel panel : panels) {
-                if (panel == panelHoaDon) {
+                if (panel == panelHoaDon) 
                     panel.setVisible(true);
-                    btnTab1.setBackground(Color.decode("#003366"));
-                } else {
+                 else 
                     panel.setVisible(false);
-                    btnTab1.setBackground(Color.decode("#003399"));
-                }
              }
+            setBgBtn(btnTab1);
 		}
 		
 		if(o.equals(btnTab2)) {			
             for (JPanel panel : panels) {
-                if (panel == panelKhachHang) {
+                if (panel == panelKhachHang) 
                     panel.setVisible(true);
-                    btnTab1.setBackground(Color.decode("#003366"));
-                } else {
+                else 
                    panel.setVisible(false);
-                   btnTab1.setBackground(Color.decode("#003399"));
-                }
              }
+             setBgBtn(btnTab2);
 		}
 		
 		if(o.equals(btnTab3)) {			
             for (JPanel panel : panels) {
                 if (panel == panelKhoThuoc) {
                     panel.setVisible(true);
-                    btnTab1.setBackground(Color.decode("#003366"));
                 } else {
                    panel.setVisible(false);
-                   btnTab1.setBackground(Color.decode("#003399"));
                 }
              }
+            setBgBtn(btnTab3);
 		}
 		
 		if(o.equals(btnTab4)) {			
             for (JPanel panel : panels) {
                 if (panel == panelLichSu) {
                     panel.setVisible(true);
-                    btnTab1.setBackground(Color.decode("#003366"));
                 } else {
                    panel.setVisible(false);
-                   btnTab1.setBackground(Color.decode("#003399"));
                 }
              }
+            setBgBtn(btnTab4);
 		}
 		
 		if(o.equals(btnTab5)) {			
             for (JPanel panel : panels) {
                 if (panel == panelNhanVien) {
                     panel.setVisible(true);
-                    btnTab1.setBackground(Color.decode("#003366"));
                 } else {
                    panel.setVisible(false);
-                   btnTab1.setBackground(Color.decode("#003399"));
                 }
              }
+            setBgBtn(btnTab5);
 		}
 		
 		if(o.equals(btnTab6)) {			
             for (JPanel panel : panels) {
                 if (panel == panelThongKe) {
                     panel.setVisible(true);
-                    btnTab1.setBackground(Color.decode("#003366"));
                 } else {
                    panel.setVisible(false);
-                   btnTab1.setBackground(Color.decode("#003399"));
                 }
              }
+            setBgBtn(btnTab6);
 		}
 		
 
@@ -440,15 +466,13 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		String name = e.getComponent().getName();
 		
 		if(name.trim().equals("home")) {
-            for (JPanel panel : panels) {
-                if (panel == panelTrangChu) {
+           for (JPanel panel : panels) {
+                if (panel == panelTrangChu)
                    panel.setVisible(true);
-                   btnTab1.setBackground(Color.decode("#003366"));
-                } else {
+                else 
                    panel.setVisible(false);
-                   btnTab1.setBackground(Color.decode("#003399"));
-                }
-             }
+            }
+           setBgBtn();
 		}
 		
 		if(name.trim().equals("infoUser")) {
@@ -477,13 +501,37 @@ public class main extends JFrame implements ActionListener, MouseListener {
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+//		Object o = e.getSource();
+//		if(o.equals(btnTab1)) 
+//			entBtn(btnTab1);
+//		if(o.equals(btnTab2)) 
+//			entBtn(btnTab2);
+//		if(o.equals(btnTab3)) 
+//			entBtn(btnTab3);
+//		if(o.equals(btnTab4)) 
+//			entBtn(btnTab4);
+//		if(o.equals(btnTab5)) 
+//			entBtn(btnTab5);
+//		if(o.equals(btnTab6)) 
+//			entBtn(btnTab6);
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+//		Object o = e.getSource();
+//		if(o.equals(btnTab1)) 
+//			outBtn(btnTab1);
+//		if(o.equals(btnTab2)) 
+//			outBtn(btnTab2);
+//		if(o.equals(btnTab3)) 
+//			outBtn(btnTab3);
+//		if(o.equals(btnTab4)) 
+//			outBtn(btnTab4);
+//		if(o.equals(btnTab5)) 
+//			outBtn(btnTab5);
+//		if(o.equals(btnTab6)) 
+//			outBtn(btnTab6);
 	}
 	
 	
