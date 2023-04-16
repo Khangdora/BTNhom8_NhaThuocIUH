@@ -92,10 +92,10 @@ public class Thuoc_DAO {
 		
 		try {
 			
-			String sql = "SELECT * FROM Thuoc LIMIT ? OFFSET ?";
+			String sql = "SELECT * FROM Thuoc ORDER BY maThuoc OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 			stmt = con.prepareStatement(sql);
-			stmt.setInt(1, limit);
-			stmt.setInt(2, start);
+			stmt.setInt(1, start);
+			stmt.setInt(2, limit);
 			ResultSet rs = stmt.executeQuery();
 			
 			while (rs.next()) {
@@ -151,7 +151,7 @@ public class Thuoc_DAO {
 				String xuatXu = rs.getString(1);
 				int soLuong = rs.getInt(2);
 				
-				String str = xuatXu + "(" + soLuong + ")";
+				String str = xuatXu + " (" + soLuong + ")";
 				dsthuoc.add(str);
 				
 			}

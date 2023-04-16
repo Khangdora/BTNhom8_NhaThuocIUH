@@ -35,8 +35,6 @@ import javax.swing.Timer;
 
 import DAO.NhanVien_DAO;
 import connectDB.ConnectDB;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import entity.NhanVien;
 import others.BottomBorder;
 
@@ -93,6 +91,9 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		createCenter();
 		add(panelCenter, BorderLayout.CENTER);
 		
+		panelNorth.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		panelWest.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		panelCenter.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 	
 	}
 	
@@ -224,7 +225,7 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		panelWest.add(new JLabel());
 		
 		JLabel copyright;
-		panelWest.add(copyright = new JLabel("Group 8 IUH"));
+		panelWest.add(copyright = new JLabel("© Group 8 IUH"));
 		copyright.setHorizontalAlignment(SwingConstants.CENTER);
 		copyright.setFont(new Font("Serif", Font.PLAIN, 13));
 		
@@ -465,11 +466,11 @@ public class main extends JFrame implements ActionListener, MouseListener {
 
 	}
 	
-//	public static void main(String[] args) {
-//		NhanVien nv = new NhanVien("NV100");
-//		nv.setMatKhau("#Dx123#Dx123");
-//		new main(nv).setVisible(true);
-//	}
+	public static void main(String[] args) {
+		NhanVien nv = new NhanVien("NV100");
+		nv.setMatKhau("#Dx123#Dx123");
+		new main(nv).setVisible(true);
+	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
