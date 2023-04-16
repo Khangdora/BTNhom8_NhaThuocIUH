@@ -1,6 +1,6 @@
 package entity;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.Objects;
 
 public class Thuoc {
@@ -16,6 +16,7 @@ public class Thuoc {
 	private String dangBaoChe;
 	private Date ngayNhapThuoc;
 	private Date hanSuDung;
+	private String thumbnail;
 	
 	public String getMaThuoc() {
 		return maThuoc;
@@ -105,6 +106,13 @@ public class Thuoc {
 		this.hanSuDung = hanSuDung;
 	}
 	
+	public void setThumbnail(String url) {
+		this.thumbnail = url;
+	}
+	
+	public String getThumbnail() {
+		return thumbnail;
+	}
 
 	@Override
 	public int hashCode() {
@@ -121,6 +129,23 @@ public class Thuoc {
 			return false;
 		Thuoc other = (Thuoc) obj;
 		return Objects.equals(maThuoc, other.maThuoc);
+	}
+
+	public Thuoc(String maThuoc, String tenThuoc, String donViBan, int soLuong, double donGia, String thanhPhan,
+			String xuatXu, String congDung, String dangBaoChe, Date ngayNhapThuoc, Date hanSuDung, String thumbnail) {
+		super();
+		this.maThuoc = maThuoc;
+		this.tenThuoc = tenThuoc;
+		this.donViBan = donViBan;
+		this.soLuong = soLuong;
+		this.donGia = donGia;
+		this.thanhPhan = thanhPhan;
+		this.xuatXu = xuatXu;
+		this.congDung = congDung;
+		this.dangBaoChe = dangBaoChe;
+		this.ngayNhapThuoc = ngayNhapThuoc;
+		this.hanSuDung = hanSuDung;
+		this.thumbnail = thumbnail;
 	}
 
 	public Thuoc(String maThuoc, String tenThuoc, String donViBan, int soLuong, double donGia, String thanhPhan,

@@ -6,6 +6,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -33,6 +35,8 @@ import javax.swing.Timer;
 
 import DAO.NhanVien_DAO;
 import connectDB.ConnectDB;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import entity.NhanVien;
 import others.BottomBorder;
 
@@ -47,7 +51,6 @@ public class main extends JFrame implements ActionListener, MouseListener {
 	private JPanel panelTrangChu, panelHoaDon, panelKhoThuoc, panelKhachHang, panelLichSu, panelNhanVien, panelThongKe;
 	private JPanel panelNorth, panelCenter, panelWest;
 	private JLabel timeNow, timeLeft, lblName, lblDangxuat, lblLogo;
-	private JTabbedPane tabbedPane;
 	private JButton btnTab1, btnTab2, btnTab3, btnTab4, btnTab5, btnTab6;
 	
 	private ArrayList<JPanel> panels;
@@ -73,7 +76,7 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		// ========================
 		
 		setTitle("Hệ thống Nhà thuốc IUH");
-		setSize(1000,700);
+		setSize(1100,700);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setResizable(false);
@@ -102,16 +105,16 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		        super.paintComponent(g);
 		        ImageIcon imageIcon = new ImageIcon(getClass().getResource("/img/header.jpg"));
 		        Image image = imageIcon.getImage();
-		        g.drawImage(image, 0, 0, 1000, 60, this);
+		        g.drawImage(image, 0, 0, 1100, 60, this);
 		    }
 		    
 		};
-		panelNorth.setPreferredSize(new Dimension(1000, 60));
+		panelNorth.setPreferredSize(new Dimension(1100, 60));
 		panelNorth.setBorder(null);
 		
 		// === Panel Brand 
 		JPanel brandPanel = new JPanel();
-		brandPanel.setPreferredSize(new Dimension(200, 50));
+		brandPanel.setPreferredSize(new Dimension(300, 50));
 		brandPanel.setLayout(null);
 		brandPanel.setOpaque(false);
 		
@@ -231,12 +234,12 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		btnTab4.addActionListener(this);
 		btnTab5.addActionListener(this);
 		btnTab6.addActionListener(this);
-		btnTab1.addMouseListener(this);
-		btnTab2.addMouseListener(this);
-		btnTab3.addMouseListener(this);
-		btnTab4.addMouseListener(this);
-		btnTab5.addMouseListener(this);
-		btnTab6.addMouseListener(this);
+//		btnTab1.addMouseListener(this);
+//		btnTab2.addMouseListener(this);
+//		btnTab3.addMouseListener(this);
+//		btnTab4.addMouseListener(this);
+//		btnTab5.addMouseListener(this);
+//		btnTab6.addMouseListener(this);
 		
 	}
 	
@@ -283,8 +286,16 @@ public class main extends JFrame implements ActionListener, MouseListener {
 	}
 	
 	private void setBtn(JButton jbtn) {
+		
+//		GradientPaint gradient = new GradientPaint(0, 0, Color.RED, 0, jbtn.getHeight(), Color.BLUE);
+		
+//		Color midColor = new Color((Color.RED.getRed() + Color.BLUE.getRed()) / 2,
+//                (Color.RED.getGreen() + Color.BLUE.getGreen()) / 2,
+//                (Color.RED.getBlue() + Color.BLUE.getBlue()) / 2);
+			
 		jbtn.setBorder(null);
-		jbtn.setBackground(Color.decode("#003399"));
+		jbtn.setBackground(Color.decode("#003366"));
+//		jbtn.setBackground(midColor);
 		jbtn.setFont(new Font("Arial", Font.BOLD, 14));
 		jbtn.setForeground(Color.WHITE);
 		jbtn.setFocusable(false);
@@ -303,7 +314,7 @@ public class main extends JFrame implements ActionListener, MouseListener {
 	
 	private void setBgBtn() {
 		for (JButton btn : buttons) {
-			btn.setBackground(Color.decode("#003399"));
+			btn.setBackground(Color.decode("#003366"));
 			btn.setForeground(Color.white);
 		}
 	}
@@ -314,7 +325,7 @@ public class main extends JFrame implements ActionListener, MouseListener {
 				btn.setBackground(Color.decode("#EEEEEE"));
 				btn.setForeground(Color.black);
 			} else {
-				btn.setBackground(Color.decode("#003399"));
+				btn.setBackground(Color.decode("#003366"));
 				btn.setForeground(Color.white);
 			}
 		}
@@ -454,18 +465,18 @@ public class main extends JFrame implements ActionListener, MouseListener {
 
 	}
 	
-//	public static void main(String[] args) {
-//		NhanVien nv = new NhanVien("NV100");
-//		nv.setMatKhau("#Dx123#Dx123");
-//		new main(nv).setVisible(true);
-//	}
+	public static void main(String[] args) {
+		NhanVien nv = new NhanVien("NV100");
+		nv.setMatKhau("#Dx123#Dx123");
+		new main(nv).setVisible(true);
+	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		String name = e.getComponent().getName();
-		
-		if(name.trim().equals("home")) {
+		String name = e.getComponent().getName().trim();
+					
+		if(name.equals("home")) {
            for (JPanel panel : panels) {
                 if (panel == panelTrangChu)
                    panel.setVisible(true);
@@ -474,16 +485,16 @@ public class main extends JFrame implements ActionListener, MouseListener {
             }
            setBgBtn();
 		}
-		
-		if(name.trim().equals("infoUser")) {
+			
+		if(name.equals("infoUser")) {
 			new infouser(nvlogin).setVisible(true);
 		}
-		
-		if(name.trim().equals("dangxuat")) {
+			
+		if(name.equals("dangxuat")) {
 			new login().setVisible(true);
 			dispose();
 		}
-		
+
 	}
 
 	@Override
