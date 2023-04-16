@@ -71,6 +71,8 @@ VALUES
 ('SP1004',N'Siro ho Prospan Forte Engelhard',N'Chai',100,85000,N'',N'Việt Nam',N'Cao khô lá thường xuyên, ethanol 30%',N'Dung dịch',CONVERT(date,'2023-02-11', 23),CONVERT(date,'2025-04-16', 23),'/img/thumbnail/sp1004.jpg'),
 ('SP1005',N'Bột Dr.G Bifidus Bifido',N'Hộp',13,613000,N'Bifidobacterium bifidum, bifidobacterium longum, Lactobacillus acidophilus, kẽm oxide',N'Hàn Quốc',N'Cải thiện hệ tiêu hóa, ức chế hại khuẩn và tăng cường lợi khuẩn đường ruột',N'Bột',CONVERT(date,'2023-04-16', 23),CONVERT(date,'2026-04-16', 23),'/img/thumbnail/sp1005.jpg');
 
+SELECT * FROM NhanVien
+
 /*Select * from NhanVien where maNhanVien = 'NV100' and matkhau = '#Dx123#Dx123'
 
 DROP TABLE NhanVien;

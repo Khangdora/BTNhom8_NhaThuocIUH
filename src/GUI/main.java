@@ -465,11 +465,11 @@ public class main extends JFrame implements ActionListener, MouseListener {
 
 	}
 	
-	public static void main(String[] args) {
-		NhanVien nv = new NhanVien("NV100");
-		nv.setMatKhau("#Dx123#Dx123");
-		new main(nv).setVisible(true);
-	}
+//	public static void main(String[] args) {
+//		NhanVien nv = new NhanVien("NV100");
+//		nv.setMatKhau("#Dx123#Dx123");
+//		new main(nv).setVisible(true);
+//	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
