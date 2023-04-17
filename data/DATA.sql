@@ -112,15 +112,15 @@ GO
 INSERT INTO HoaDon VALUES
 ('HD1001','KH1001','NV100',1,0,CONVERT(date,'2023-04-17', 23))
 
-SELECT * FROM Thuoc OFFSET 1 ROWS FETCH NEXT 25 ROWS ONLY
+/*SELECT * FROM Thuoc OFFSET 1 ROWS FETCH NEXT 25 ROWS ONLY
 
 SELECT TOP 1 maHoaDon FROM HoaDon ORDER BY maHoaDon DESC
 
 SELECT TOP 1 * FROM KhachHang WHERE sodienthoai = '0974867266'
 
-SELECT * FROM CT_HoaDon
+SELECT * FROM Thuoc WHERE maThuoc = 'SP1001'
 
-/*Select * from NhanVien where maNhanVien = 'NV100' and matkhau = '#Dx123#Dx123'
+Select * from NhanVien where maNhanVien = 'NV100' and matkhau = '#Dx123#Dx123'
 
 DROP TABLE NhanVien;
 DROP TABLE CaTruc;
