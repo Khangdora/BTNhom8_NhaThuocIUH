@@ -30,17 +30,12 @@ public class Thuoc_DAO {
 				totalRows = rs.getInt("total");
 			}
 			
-			rs.close();
-			stmt.close();
-			con.close();
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
 		return totalRows;
 	}
-	
 	
 	public ArrayList<Thuoc> getallThuoc() {
 		
@@ -80,6 +75,51 @@ public class Thuoc_DAO {
 		return dsthuoc;
 	}
 	
+	public Thuoc getThuocTheoMaThuoc(String maThuoc) {
+		Thuoc thuoc = null;
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			
+			String sql = "SELECT * FROM Thuoc WHERE maThuoc = ?";
+			statement = con.prepareStatement(sql);
+			statement.setString(1, maThuoc);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				
+				String maThuocStr = rs.getString(1);
+				String tenThuoc = rs.getString(2);
+				String donViBan = rs.getString(3);
+				int soLuong = rs.getInt(4);
+				double donGia = rs.getDouble(5);
+				String thanhPhan = rs.getString(6);
+				String xuatXu = rs.getString(7);
+				String congDung = rs.getString(8);
+				String dangBaoChe = rs.getString(9);
+				Date ngayNhapThuoc = rs.getDate(10);
+				Date hanSuDung = rs.getDate(11);
+				String thumbnail = rs.getString(12);
+				
+				thuoc = new Thuoc(maThuocStr, tenThuoc, donViBan, soLuong, donGia, thanhPhan, xuatXu, congDung, dangBaoChe, ngayNhapThuoc, hanSuDung, thumbnail);
+				
+			}
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		finally {
+			try {
+				statement.close();
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+		return thuoc;
+	}
 	
 	public ArrayList<Thuoc> getPagesThuoc(int pages) {
 		
@@ -164,5 +204,30 @@ public class Thuoc_DAO {
 		
 	}
 	
+	public String maThuocAuto() {
+		String maMoi = null;
+		String maHienTai = null;
+		
+		try {
+			
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();	
+			String sql = "SELECT TOP 1 maThuoc FROM Thuoc ORDER BY maThuoc DESC";
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				maHienTai = rs.getString(1);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		String kyTuCuoi = maHienTai.replaceAll("[^0-9]+", "");
+		String kyTuMoi = Integer.toString(Integer.parseInt(kyTuCuoi) + 1);
+		
+		maMoi = "SP" + kyTuMoi;
+		return maMoi;
+	}
 
 }
