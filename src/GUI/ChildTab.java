@@ -148,7 +148,7 @@ public class ChildTab implements ActionListener, MouseListener {
 		comboBoxDBC.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		box.add(Box.createHorizontalStrut(5));
 		
-		String[] sapXepStr = {"A-Z", "Z-A", "Mới-Cũ", "Cũ-Mới"};
+		String[] sapXepStr = {"Mới-Cũ", "Cũ-Mới"};
 		JComboBox<String> comboBoxSX = new JComboBox<String>(sapXepStr);
 		box.add(comboBoxSX);
 		comboBoxSX.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -182,19 +182,15 @@ public class ChildTab implements ActionListener, MouseListener {
 		JScrollPane sp = new JScrollPane(tableHoaDon, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		
-		DefaultTableCellRenderer right = new DefaultTableCellRenderer();
-		right.setHorizontalAlignment(JLabel.RIGHT);
-		tableHoaDon.getColumnModel().getColumn(6).setCellRenderer(right);
-		
 		DefaultTableCellRenderer center = new DefaultTableCellRenderer();
 		center.setHorizontalAlignment(JLabel.CENTER);
 		tableHoaDon.getColumnModel().getColumn(0).setCellRenderer(center);
+		tableHoaDon.getColumnModel().getColumn(1).setPreferredWidth(200);
 		tableHoaDon.getColumnModel().getColumn(2).setCellRenderer(center);
 		tableHoaDon.getColumnModel().getColumn(3).setCellRenderer(center);
 		tableHoaDon.getColumnModel().getColumn(4).setCellRenderer(center);
 		tableHoaDon.getColumnModel().getColumn(5).setCellRenderer(center);
-		
-		tableHoaDon.getColumnModel().getColumn(1).setPreferredWidth(200);
+		tableHoaDon.getColumnModel().getColumn(6).setCellRenderer(render);
 		
 		tableHoaDon.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
@@ -380,5 +376,22 @@ public class ChildTab implements ActionListener, MouseListener {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	DefaultTableCellRenderer render = new DefaultTableCellRenderer() {
+		
+		private static final long serialVersionUID = 1L;
+		@Override
+	    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+	        // Lấy đối tượng JLabel của TableCellRenderer
+	        JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	        // Nếu là cột đầu tiên, thiết lập font in đậm
+	        if (column == 6) {
+	            Font boldFont = new Font(label.getFont().getName(), Font.BOLD, label.getFont().getSize());
+	            label.setFont(boldFont);
+	            label.setHorizontalAlignment(JLabel.RIGHT);
+	        }
+	        return label;
+	    }
+	};
 
 }
