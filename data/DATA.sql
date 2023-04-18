@@ -53,6 +53,7 @@ CREATE TABLE HoaDon (
 	dangHoaDon bit,
 	thanhToan bit,
 	ngayMua DATE,
+	tienKhach FLOAT
 
 	CONSTRAINT F_HD_KH FOREIGN KEY (maKhachHang) REFERENCES KhachHang(maKH),
 	CONSTRAINT F_HD_NV FOREIGN KEY (maNhanVien) REFERENCES NhanVien(maNhanVien)
@@ -96,7 +97,7 @@ INSERT INTO [dbo].[NhanVien]
            ('NV104',N'Trần',N'Thị Ánh Thi',N'',N'',N'CA01',0,N'Quản trị viên',943000,N'123')
 GO
 INSERT INTO Thuoc(maThuoc, tenThuoc, donViBan, soLuong, donGia, thanhPhan, xuatXu, congDung, dangBaoChe, ngayNhap, hanSuDung, thumbnail)
-VALUES ('SP1000',N'Dầu mù u Thái Dương Đất Việt',N'Chai',100,46000,N'A. Palmitic, A. Stearic, A. Oleic, A. Lindeic',N'Việt Nam',N'Hỗ trợ trị bỏng, tái tạo da, làm lành vết thương',N'Dung dịch',CONVERT(date,'2023-04-16', 23),CONVERT(date,'2024-04-16', 23),'/img/thumbnail/sp1000.jpg');
+VALUES ('SP1006',N'Dầu mù u Thái Dương Đất Việt',N'Chai',100,46000,N'A. Palmitic, A. Stearic, A. Oleic, A. Lindeic',N'Việt Nam',N'Hỗ trợ trị bỏng, tái tạo da, làm lành vết thương',N'Dung dịch',CONVERT(date,'2023-04-16', 23),CONVERT(date,'2024-04-16', 23),'/img/thumbnail/sp1000.jpg');
 INSERT INTO Thuoc(maThuoc, tenThuoc, donViBan, soLuong, donGia, thanhPhan, xuatXu, congDung, dangBaoChe, ngayNhap, hanSuDung, thumbnail)
 VALUES 
 ('SP1001',N'Viên uống ArmoLipid Plus Rottapharm',N'Hộp',281,235000,N'Coenzyme Q10, Vi tảo lục, Cao khô Berberis aristata, Men gạo đỏ, Policosanol GDL-5, Acid folic',N'Ý',N'Hỗ trợ làm giảm cholesterol, triglycerid trong máu',N'Viên nhộng',CONVERT(date,'2023-04-16', 23),CONVERT(date,'2025-04-17', 23),'/img/thumbnail/sp1001.jpg'),
@@ -111,6 +112,12 @@ INSERT INTO KhachHang VALUES
 GO
 INSERT INTO HoaDon VALUES
 ('HD1001','KH1001','NV100',1,0,CONVERT(date,'2023-04-17', 23))
+
+SELECT * FROM KhachHang
+
+SELECT * FROM Thuoc WHERE donViBan = N'Hộp' ORDER BY maThuoc ASC;
+
+Select * from HoaDon
 
 /*SELECT * FROM Thuoc OFFSET 1 ROWS FETCH NEXT 25 ROWS ONLY
 

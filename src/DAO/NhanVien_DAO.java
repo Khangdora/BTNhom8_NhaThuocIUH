@@ -62,6 +62,7 @@ public class NhanVien_DAO {
 			ResultSet rs = statement.executeQuery();
 			while(rs.next()) {
 				
+				nv.setMaNhanVien(rs.getString(1));
 				nv.setHoNhanVien(rs.getString(2));
 				nv.setTenNhanVien(rs.getString(3));
 				nv.setSoDienThoai(rs.getString(4));
@@ -128,6 +129,31 @@ public class NhanVien_DAO {
 		return count>0; 
 		
 	}
+	
+	public ArrayList<String> getChucVu() {
+		
+		ArrayList<String> dsChucVu = new ArrayList<String>();
+		
+		try {
+			
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
+			String sql = "SELECT chucVu FROM NhanVien GROUP BY chucVu";
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				String ChucVu = rs.getString(1);
+				dsChucVu.add(ChucVu);
+			}
+			
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return dsChucVu;
+		
+	}
+	
 	
 
 }

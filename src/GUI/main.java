@@ -28,6 +28,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
@@ -54,7 +55,7 @@ public class main extends JFrame implements ActionListener, MouseListener {
 	private ArrayList<JPanel> panels;
 	private ArrayList<JButton> buttons;
 	
-	ChildTab child_tab = new ChildTab();
+	ChildTab child_tab;
 	
 	private NhanVien_DAO nhanvien_dao;
 	
@@ -70,6 +71,7 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		
 		nhanvien_dao = new NhanVien_DAO();
 		nvlogin = nhanvien_dao.getNhanVienTheoMaNV(nv.getMaNhanVien());
+		child_tab = new ChildTab(new NhanVien(nv.getMaNhanVien()));
 		
 		// ========================
 		
@@ -488,7 +490,7 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		}
 			
 		if(name.equals("infoUser")) {
-			new infouser(nvlogin).setVisible(true);
+			new InfoUser(nvlogin, nvlogin).setVisible(true);
 		}
 			
 		if(name.equals("dangxuat")) {

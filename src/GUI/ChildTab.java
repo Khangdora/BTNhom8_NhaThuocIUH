@@ -15,10 +15,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.Console;
 import java.nio.file.attribute.AclEntry;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.lang.Math;
 
@@ -54,27 +54,35 @@ import connectDB.ConnectDB;
 import entity.CT_HoaDon;
 import entity.HoaDon;
 import entity.KhachHang;
+import entity.NhanVien;
 import entity.Thuoc;
 import others.BottomBorder;
 import others.RoundedBorder;
 
 public class ChildTab implements ActionListener, MouseListener, KeyListener, DocumentListener, TableModelListener {
 	
+	//Gán DAO
 	private Thuoc_DAO thuoc_dao;
 	private NhanVien_DAO nhanvien_dao;
 	private HoaDon_DAO hoadon_dao;
 	private KhachHang_DAO khachhang_dao;
+	private NhanVien nvlogin;
 	
+	//Gán phần tử
 	private JPanel listPanelHoaDon, addPanelHoaDon;
 	
-	private JTextField txtHoaDon, txtSDT_HD, txtmaKH_HD, txthotenKH_HD;
+	private JTextField txtHoaDon, txtSDT_HD, txtmaKH_HD, txthotenKH_HD, txtmaHoaDon;
 	
 	private JLabel lblTBHD, lblTongTienHD;
 	
-	private JButton btnLocHoaDon, btnNextHoaDon, btnPrevHoaDon, btnLuuHoaDon, btnThanhToan;
+	private JButton btnTaiLaiHoaDon, btnNextHoaDon, btnPrevHoaDon, 
+		btnLuuHoaDon, btnThanhToan, btnTayTrongHoaDon;
 	
 	private DefaultTableModel modelHoaDon, modelChiTietHoaDon;
 	private JTable tableHoaDon, tableChiTietHoaDon;
+	
+	private JComboBox<String> comboBoxPages, comboBoxDangHD, 
+		comboBoxDVB, comboBoxXX, comboBoxDBC, comboBoxSX;
 	
 	private int limit = 25;
 	
@@ -82,7 +90,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 	
 	private Component main;
 	
-	public ChildTab() {
+	public ChildTab(NhanVien nv) {
 		// ====================
 		
 		try {
@@ -95,6 +103,8 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		thuoc_dao = new Thuoc_DAO();
 		hoadon_dao = new HoaDon_DAO();
 		khachhang_dao = new KhachHang_DAO();
+		
+		nvlogin = nv;
 		
 		// ====================
 	}
@@ -149,17 +159,17 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		Box box = Box.createHorizontalBox();
 		box.add(txtHoaDon = new JTextField(10));
 		box.add(Box.createHorizontalStrut(5));
-		txtHoaDon.setText(thuoc_dao.maThuocAuto());
+		txtHoaDon.setName("timkiem_hoadon");
 		
 		String[] donViBanStr = {"Tất cả", "Hộp", "Chai", "Vỉ", "Tuýp"};
-		JComboBox<String> comboBoxDVB = new JComboBox<String>(donViBanStr);
+		comboBoxDVB = new JComboBox<String>(donViBanStr);
 		comboBoxDVB.setPreferredSize(new Dimension(65, 25));
 		box.add(comboBoxDVB);
 		comboBoxDVB.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		box.add(Box.createHorizontalStrut(5));
 		
 		ArrayList<String> xuatXuStr = thuoc_dao.getXuatXu();
-		JComboBox<String> comboBoxXX = new JComboBox<String>();
+		comboBoxXX = new JComboBox<String>();
 		comboBoxXX.addItem("Tất cả");
 		for(String s : xuatXuStr)
 			comboBoxXX.addItem(s);
@@ -168,22 +178,22 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		box.add(Box.createHorizontalStrut(5));
 		
 		String[] dangBaoCheStr = {"Tất cả", "Dung dịch", "Viên sủi", "Bột", "Viên nén", "Viên nhộng", "Khác"};
-		JComboBox<String> comboBoxDBC = new JComboBox<String>(dangBaoCheStr);
+		comboBoxDBC = new JComboBox<String>(dangBaoCheStr);
 		box.add(comboBoxDBC);
 		comboBoxDBC.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		box.add(Box.createHorizontalStrut(5));
 		
 		String[] sapXepStr = {"Mới-Cũ", "Cũ-Mới"};
-		JComboBox<String> comboBoxSX = new JComboBox<String>(sapXepStr);
+		comboBoxSX = new JComboBox<String>(sapXepStr);
 		box.add(comboBoxSX);
 		comboBoxSX.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		box.add(Box.createHorizontalStrut(5));
 		
-		btnLocHoaDon = new JButton("Lọc");
-		box.add(btnLocHoaDon);
-		btnLocHoaDon.setBorder(BorderFactory.createCompoundBorder(btnLocHoaDon.getBorder(), new BottomBorder()));
-		btnLocHoaDon.setFocusable(false);
-		btnLocHoaDon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnTaiLaiHoaDon = new JButton("Tải lại");
+		box.add(btnTaiLaiHoaDon);
+		btnTaiLaiHoaDon.setBorder(BorderFactory.createCompoundBorder(btnTaiLaiHoaDon.getBorder(), new BottomBorder()));
+		btnTaiLaiHoaDon.setFocusable(false);
+		btnTaiLaiHoaDon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		
 		locPanel.add(box);
 		listPanelHoaDon.add(locPanel, BorderLayout.NORTH);
@@ -233,7 +243,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		btnNextHoaDon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		
 		int total = (int) Math.ceil(thuoc_dao.totalThuoc()*1.0/25);
-		JComboBox<String> comboBoxPages = new JComboBox<String>();
+		comboBoxPages = new JComboBox<String>();
 		for (int i=1; i <= total; i++) {
 			comboBoxPages.addItem(i+"");
 		}
@@ -260,7 +270,6 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		Box b = Box.createVerticalBox();
 		
 		Box b1, b2, b3, b4, b5;
-		JTextField txtmaHoaDon;
 		
 		b.add(b1 = Box.createHorizontalBox());
 		b1.add(new JLabel("Thêm hóa đơn".toUpperCase()));
@@ -294,9 +303,9 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		
 		b.add(b4 = Box.createHorizontalBox());
 		b4.add(Box.createHorizontalStrut(5));	
-		JComboBox<String> comboBoxDBC_HD = new JComboBox<String>(new String[] {"Kê đơn", "Không kê đơn"});
-		b4.add(comboBoxDBC_HD);
-		comboBoxDBC_HD.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));	
+		comboBoxDangHD = new JComboBox<String>(new String[] {"Kê đơn", "Không kê đơn"});
+		b4.add(comboBoxDangHD);
+		comboBoxDangHD.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));	
 		b4.add(Box.createHorizontalStrut(5));
 		
 		b.add(b5 = Box.createHorizontalBox());
@@ -355,9 +364,11 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		bSouth.add(Box.createVerticalStrut(20));
 		
 		bSouth.add(b2South);
-		b2South.add(btnLocHoaDon = new JButton("Lưu"));
+		b2South.add(btnLuuHoaDon = new JButton("Lưu"));
 		b2South.add(Box.createHorizontalStrut(10));
 		b2South.add(btnThanhToan = new JButton("Thanh toán"));
+		b2South.add(Box.createHorizontalStrut(10));
+		b2South.add(btnTayTrongHoaDon = new JButton("Tẩy trống"));
 		
 		addPanelHoaDonSouth.add(bSouth);
 		
@@ -368,10 +379,25 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		addPanelHoaDon.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		
 		tableHoaDon.addMouseListener(this);
-		txtSDT_HD.addKeyListener(this);
+		tableChiTietHoaDon.addMouseListener(this);
+		
 		txtSDT_HD.getDocument().putProperty("owner", txtSDT_HD);
 		txtSDT_HD.getDocument().addDocumentListener(this);
+		
+		txtHoaDon.getDocument().putProperty("owner", txtHoaDon);
+		txtHoaDon.getDocument().addDocumentListener(this);
+		
 		modelChiTietHoaDon.addTableModelListener(this);
+		
+		btnTaiLaiHoaDon.addActionListener(this);
+		comboBoxDVB.addActionListener(this); //Đơn vị bán
+		comboBoxDBC.addActionListener(this); //Dạng bào chế
+		comboBoxXX.addActionListener(this); //Xuất xứ
+		comboBoxSX.addActionListener(this); //Sắp xếp
+		
+		btnLuuHoaDon.addActionListener(this); //Lưu hóa đơn
+		btnThanhToan.addActionListener(this); //Thanh toán hóa đơn
+		btnTayTrongHoaDon.addActionListener(this); //Tẩy trống hóa đơn
 		
 		return myPanel;
 	}
@@ -435,6 +461,9 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 	
 	public void setDuLieuHoaDon(int pages) {
 		
+		DefaultTableModel temp = (DefaultTableModel) tableHoaDon.getModel();
+		temp.getDataVector().removeAllElements();
+		
 		List<Thuoc> list = thuoc_dao.getPagesThuoc(pages);
 		for(Thuoc thuoc : list) {
 			
@@ -446,10 +475,24 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		}
 	}
 	
+	public void TayTrongHoaDon() {
+		txtmaHoaDon.setText(hoadon_dao.maHoaDonAuto());
+		txtSDT_HD.setText("");
+		txthotenKH_HD.setText("");
+		txtmaKH_HD.setText("");
+		listCTHoaDon.clear();
+		DefaultTableModel temp = (DefaultTableModel) tableChiTietHoaDon.getModel();
+		temp.setRowCount(0);
+		temp.getDataVector().removeAllElements();
+	}
+	
 	public void setDuLieuChiTietHoaDon() {
 		
 		DefaultTableModel temp = (DefaultTableModel) tableChiTietHoaDon.getModel();
 		temp.getDataVector().removeAllElements();
+		
+		if(listCTHoaDon.isEmpty())
+			return;
 		
 		int i = 1;
 		
@@ -486,7 +529,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		if(x==0)
 			lbl.setForeground(Color.red);
 		else if(x==1)
-			lbl.setForeground(Color.green);
+			lbl.setForeground(Color.decode("#008000"));
 	}
 	
 	public String tongTienCTHD() {
@@ -496,7 +539,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		for(CT_HoaDon ct : listCTHoaDon) {
 			tongTien += ct.getTongtien()*ct.getSoLuong();
 		}
-		return "<html>Tổng tiền: <b><font color='red'>"+formatter.format(tongTien)+"0</font></b>₫</html>";
+		return "<html>Tổng tiền: <b><font color='red'>"+formatter.format(tongTien)+"</font></b>₫</html>";
 		
 	}
 
@@ -578,8 +621,34 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 				txtmaKH_HD.setText("");
 				txthotenKH_HD.setText("");
 			}
-            
         }
+		
+		if(textField.getName().equals("timkiem_hoadon")) {
+			String regex = textField.getText().trim();
+			
+			if(regex.equals("")) 
+				setDuLieuHoaDon(1);
+			else {
+				
+				DefaultTableModel temp = (DefaultTableModel) tableHoaDon.getModel();
+				temp.getDataVector().removeAllElements();
+				
+				List<Thuoc> list = thuoc_dao.filterThuoc(regex);
+				for(Thuoc thuoc : list) {
+					
+					DecimalFormat formatter = new DecimalFormat("#,###");
+					
+					modelHoaDon.addRow(new Object[] {thuoc.getMaThuoc(),thuoc.getTenThuoc(),thuoc.getDonViBan(),
+							thuoc.getSoLuong(),thuoc.getXuatXu(),thuoc.getDangBaoChe(),formatter.format(thuoc.getDonGia())});
+				}
+				
+				btnNextHoaDon.setEnabled(false);
+				btnPrevHoaDon.setEnabled(false);
+				comboBoxPages.setVisible(false);		
+				
+			}
+		}
+		
 	}
 
 	@Override
@@ -598,6 +667,97 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
+		
+		Object o = e.getSource();
+		
+		if(o.equals(btnTaiLaiHoaDon)) {
+			setDuLieuHoaDon(1);
+			
+			btnNextHoaDon.setEnabled(true);
+			btnPrevHoaDon.setEnabled(true);
+			comboBoxPages.setVisible(true);
+			
+			comboBoxDBC.setSelectedIndex(0);
+			comboBoxDVB.setSelectedIndex(0);
+			comboBoxXX.setSelectedIndex(0);
+			comboBoxSX.setSelectedIndex(0);
+			
+		}
+		
+		if(o.equals(comboBoxDBC)||o.equals(comboBoxDVB)
+				||o.equals(comboBoxXX)||o.equals(comboBoxSX)) {
+			
+			String dangBaoChe = (String) comboBoxDBC.getSelectedItem();
+			String donViBan = (String) comboBoxDVB.getSelectedItem();
+			String xuatXu = (String) comboBoxXX.getSelectedItem();
+			String sapXep = (String) comboBoxSX.getSelectedItem();
+			
+			ArrayList<Thuoc> dslist = thuoc_dao.filterNangCao(donViBan, xuatXu, dangBaoChe, sapXep);
+			
+			if(dslist.size()==0)
+				JOptionPane.showMessageDialog(main, "Không có dữ liệu.");
+			
+			DefaultTableModel temp = (DefaultTableModel) tableHoaDon.getModel();
+			temp.getDataVector().removeAllElements();
+			
+			for(Thuoc thuoc : dslist) {
+				
+				DecimalFormat formatter = new DecimalFormat("#,###");
+				
+				modelHoaDon.addRow(new Object[] {thuoc.getMaThuoc(),thuoc.getTenThuoc(),thuoc.getDonViBan(),
+						thuoc.getSoLuong(),thuoc.getXuatXu(),thuoc.getDangBaoChe(),formatter.format(thuoc.getDonGia())});
+			}
+			
+		}
+		
+		if(o.equals(btnLuuHoaDon)) {
+			
+			String maKhachHang = txtmaKH_HD.getText().trim();
+			
+			if(maKhachHang.isBlank()) {
+				lblThongBao(lblTBHD, 0, "Số điện thoại đang rỗng hoặc chưa đúng.");
+			}else {
+				
+				String mahoadon = hoadon_dao.maHoaDonAuto();
+				Date now = new Date();
+				String dangHoaDonStr = (String) comboBoxDangHD.getSelectedItem();
+				boolean dangHoaDon = dangHoaDonStr.trim().equals("Kê đơn") ? true : false;				
+				
+				if(listCTHoaDon.size()==0)
+					lblThongBao(lblTBHD, 0, "Chưa có sản phẩm trong hóa đơn");
+				else {
+					HoaDon hd = new HoaDon(mahoadon, now, new KhachHang(maKhachHang), nvlogin, dangHoaDon, false, 0.0);
+					if(hoadon_dao.create(hd, listCTHoaDon)) {
+						lblThongBao(lblTBHD, 1, "Lưu hóa đơn thành công!");
+					} else
+						lblThongBao(lblTBHD, 0, "Lưu hóa đơn không thành công!");
+				}
+				
+			}
+			
+		}
+		
+		if(o.equals(btnTayTrongHoaDon)) 
+			TayTrongHoaDon();
+		
+		if(o.equals(btnThanhToan)) {
+			
+			String maKhachHang = txtmaKH_HD.getText().trim();
+			if(maKhachHang.isBlank()) { 
+				lblThongBao(lblTBHD, 0, "Số điện thoại đang rỗng hoặc chưa đúng.");
+			}else {
+			
+				String mahoadon = hoadon_dao.maHoaDonAuto();
+				Date now = new Date();
+				String dangHoaDonStr = (String) comboBoxDangHD.getSelectedItem();
+				boolean dangHoaDon = dangHoaDonStr.trim().equals("Kê đơn") ? true : false;
+				
+				HoaDon hd = new HoaDon(mahoadon, now, new KhachHang(maKhachHang), nvlogin, dangHoaDon, false, 0.0);
+				
+				new xuatHoaDon(nvlogin, hd, listCTHoaDon).setVisible(true);
+			
+			}
+		}
 		
 	}
 
@@ -626,6 +786,28 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
             setDuLieuChiTietHoaDon();
             lblTongTienHD.setText(tongTienCTHD());
         }
+        
+        if(e.getClickCount() == 2 && o.equals(tableChiTietHoaDon)) {
+        	
+        	int row = tableChiTietHoaDon.getSelectedRow();
+        	int column = tableChiTietHoaDon.getSelectedColumn();
+        	
+        	tableChiTietHoaDon.clearSelection();
+        	
+        	if(column == 3)
+        		return;
+
+    		if(listCTHoaDon.size()==1)
+    			listCTHoaDon.clear();
+    		else
+    			listCTHoaDon.remove(row);
+    		
+        	setDuLieuChiTietHoaDon();
+        	lblTongTienHD.setText(tongTienCTHD());
+
+        	
+        }
+        
 	}
 
 	@Override

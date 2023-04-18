@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import connectDB.ConnectDB;
 import entity.Thuoc;
@@ -119,6 +121,136 @@ public class Thuoc_DAO {
 		}
 		
 		return thuoc;
+	}
+	
+	
+	public ArrayList<Thuoc> filterNangCao(String donViBan, String xuatXu, String dangBaoChe, String sort) {
+		
+		ArrayList<Thuoc> dsThuoc = new ArrayList<Thuoc>();
+		
+		try {
+			
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
+			String sql = "SELECT * FROM Thuoc ";
+			
+			donViBan = donViBan.replace("Tất cả", "");
+			xuatXu = xuatXu.replace("Tất cả", "");
+			Pattern pattern = Pattern.compile("^[\\p{L}\\s]+");
+			Matcher matcher = pattern.matcher(xuatXu);
+			if(matcher.find())
+				xuatXu = matcher.group(0).trim();
+			
+			dangBaoChe = dangBaoChe.replace("Tất cả", "");
+			
+			if (!donViBan.isBlank()) {
+			    sql += " WHERE donViBan = N'" + donViBan.trim() + "'";
+			    if (!xuatXu.isBlank()) {
+			        sql += " AND xuatXu = N'" + xuatXu.trim() + "'";
+			        if (!dangBaoChe.isBlank()) 
+			            sql += " AND dangBaoChe = N'" + dangBaoChe.trim() + "'";
+			    } else if (!dangBaoChe.isBlank()) {
+			        sql += " AND dangBaoChe = N'" + dangBaoChe.trim() + "'";
+			    } else {
+			        sql += " AND 1=1";
+			    }
+			} else if (!xuatXu.isBlank()) {
+			    sql += " WHERE xuatXu = N'" + xuatXu.trim() + "'";
+			    if (!dangBaoChe.isBlank()) {
+			        sql += " AND dangBaoChe = N'" + dangBaoChe.trim() + "'";
+			    } else {
+			        sql += " AND 1=1";
+			    }
+			} else if (!dangBaoChe.isBlank()) {
+			    sql += " WHERE dangBaoChe = N'" + dangBaoChe.trim() + "'";
+			} else {
+			    sql += " WHERE 1=1";
+			}
+
+			if (!sort.isBlank()) {
+			    sql += sort.trim().equals("Mới-Cũ") ? " ORDER BY maThuoc DESC" : " ORDER BY maThuoc ASC";
+			}
+			
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			while (rs.next()) {
+				
+				String maThuoc = rs.getString(1);
+				String tenThuoc = rs.getString(2);
+				String donViBanStr = rs.getString(3);
+				int soLuong = rs.getInt(4);
+				double donGia = rs.getDouble(5);
+				String thanhPhan = rs.getString(6);
+				String xuatXuStr = rs.getString(7);
+				String congDung = rs.getString(8);
+				String dangBaoCheStr = rs.getString(9);
+				Date ngayNhapThuoc = rs.getDate(10);
+				Date hanSuDung = rs.getDate(11);
+				String thumbnail = rs.getString(12);
+				
+				Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, donViBanStr, soLuong, donGia, thanhPhan, xuatXuStr, congDung, dangBaoCheStr, ngayNhapThuoc, hanSuDung, thumbnail);
+				dsThuoc.add(thuoc);
+				
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return dsThuoc;
+		
+	}
+	
+	public ArrayList<Thuoc> filterThuoc(String regex) {
+		
+		ArrayList<Thuoc> dsThuoc = new ArrayList<Thuoc>();
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement stmt = null;
+		
+		try {
+			
+			String sql = "SELECT TOP 50 * FROM Thuoc WHERE tenThuoc LIKE ? OR maThuoc LIKE ?";
+			stmt = con.prepareStatement(sql);
+			stmt.setString(1, "%"+regex+"%");
+			stmt.setString(2, "%"+regex+"%");
+			ResultSet rs = stmt.executeQuery();
+			
+			while (rs.next()) {
+				
+				String maThuoc = rs.getString(1);
+				String tenThuoc = rs.getString(2);
+				String donViBan = rs.getString(3);
+				int soLuong = rs.getInt(4);
+				double donGia = rs.getDouble(5);
+				String thanhPhan = rs.getString(6);
+				String xuatXu = rs.getString(7);
+				String congDung = rs.getString(8);
+				String dangBaoChe = rs.getString(9);
+				Date ngayNhapThuoc = rs.getDate(10);
+				Date hanSuDung = rs.getDate(11);
+				String thumbnail = rs.getString(12);
+				
+				Thuoc thuoc = new Thuoc(maThuoc, tenThuoc, donViBan, soLuong, donGia, thanhPhan, xuatXu, congDung, dangBaoChe, ngayNhapThuoc, hanSuDung, thumbnail);
+				dsThuoc.add(thuoc);
+				
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		finally {
+			try {
+				stmt.close();
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+		return dsThuoc;
+		
 	}
 	
 	public ArrayList<Thuoc> getPagesThuoc(int pages) {

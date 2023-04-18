@@ -9,7 +9,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import connectDB.ConnectDB;
+import entity.CT_HoaDon;
 import entity.HoaDon;
+import entity.KhachHang;
+import entity.NhanVien;
 
 public class HoaDon_DAO {
 	
@@ -60,8 +63,9 @@ public class HoaDon_DAO {
 				boolean dangHoaDon = rs.getBoolean(4);
 				boolean thanhToan = rs.getBoolean(5);
 				Date ngayMua = rs.getDate(6);
+				double tienKhach = rs.getDouble(7);
 				
-				HoaDon hd = new HoaDon(maHoaDon, ngayMua, maKhachHang, maNhanVien, dangHoaDon, thanhToan);
+				HoaDon hd = new HoaDon(maHoaDon, ngayMua, new KhachHang(maKhachHang), new NhanVien(maNhanVien), dangHoaDon, thanhToan, tienKhach);
 				dshoadon.add(hd);
 				
 			}
@@ -77,24 +81,28 @@ public class HoaDon_DAO {
 		return dshoadon;
 	}
 	
-	public boolean create(HoaDon hd) {
+	public boolean kiemTraTonTai(String maHoaDon) {
 		
 		ConnectDB.getInstance();
 		Connection con = ConnectDB.getConnection();
-		PreparedStatement stmt = null;
-		int n = 0;
-		
+		PreparedStatement statement = null;
+		int count = 0;
 		try {
 			
-			stmt = con.prepareStatement("INSERT INTO" +
-		" HoaDon VALUES(?, ?, ?, ?, ?, ?)");
-			stmt.setString(1, hd.getMaHoaDon());
-			stmt.setString(2, hd.getMaKhachHang());
-			stmt.setString(3, hd.getMaNhanVien());
-			stmt.setBoolean(4, hd.isDangHoaDon());
-			stmt.setBoolean(5, hd.getThanhToan());
-			stmt.setDate(6, hd.getNgayMua());
-			n = stmt.executeUpdate();
+			String sql = "SELECT * FROM HoaDon WHERE maHoaDon = ?";
+			statement = con.prepareStatement(sql);
+			statement.setString(1, maHoaDon);
+			
+			boolean result = statement.execute();
+			
+			if(result) {
+				
+				ResultSet rs = statement.getResultSet();
+				while (rs.next()) {
+					count++;
+				}				
+				
+			}
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -102,14 +110,99 @@ public class HoaDon_DAO {
 		
 		finally {
 			try {
-				stmt.close();
-				con.close();
+				statement.close();
 			} catch (SQLException e2) {
 				e2.printStackTrace();
 			}
 		}
 		
-		return n>0;
+		return count>0;		
+	}
+	
+	
+	public boolean updateThanhToan(HoaDon hd) {
+		
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement stmt = null;
+		int count = 0;
+		try {
+			
+			String sql = "UPDATE HoaDon SET thanhToan = ?, tienKhach = ? WHERE maHoaDon = ?";
+			stmt = con.prepareStatement(sql);
+			stmt.setBoolean(1, hd.getThanhToan());
+			stmt.setDouble(2, hd.getTienKhach());
+			stmt.setString(3, hd.getMaHoaDon());
+			
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				count++;
+			}
+			
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		finally {
+			try {
+				stmt.close();
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+		return count>0;
+		
+	}
+	
+	public boolean create(HoaDon hd, ArrayList<CT_HoaDon> cthd) {
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement stmt1 = null, stmt2 = null;
+		int n1 = 0, n2 = 0;
+		try {
+			
+			stmt1 = con.prepareStatement("INSERT INTO HoaDon VALUES"
+					+ "(?, ?, ?, ?, ?, ?, ?)");
+			stmt1.setString(1, hd.getMaHoaDon());
+			stmt1.setString(2, hd.getKhachHang().getMaKhachHang());
+			stmt1.setString(3, hd.getNhanVien().getMaNhanVien());
+			stmt1.setBoolean(4, hd.isDangHoaDon());
+			stmt1.setBoolean(5, hd.getThanhToan());
+			java.util.Date date = hd.getNgayMua();
+			java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+			stmt1.setDate(6, sqlDate);
+			stmt1.setDouble(7, hd.getTienKhach());
+			n1 = stmt1.executeUpdate();
+			
+			for(CT_HoaDon ct : cthd) {
+				
+				stmt2 = con.prepareStatement("INSERT INTO CT_HoaDon VALUES"
+						+"(?, ?, ?)");
+				stmt2.setString(1, ct.getHoaDon().getMaHoaDon());
+				stmt2.setString(2, ct.getThuocCT().getMaThuoc());
+				stmt2.setInt(3, ct.getSoLuong());
+				n2 += stmt2.executeUpdate();
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		finally {
+			try {
+		        if (stmt1 != null) {
+		            stmt1.close();
+		        }
+		        if (stmt2 != null) {
+		            stmt2.close();
+		        }
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+		return (n1>0 && n2>0);
 		
 	}
 

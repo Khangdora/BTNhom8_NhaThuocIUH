@@ -1,16 +1,24 @@
 package entity;
 
-import java.sql.Date;
-import java.util.ArrayList;
+import java.util.Date;
 
 public class HoaDon {
 	
 	private String maHoaDon;
 	private Date ngayMua;
-	private String maKhachHang;
-	private String maNhanVien;
+	private KhachHang khachHang;
+	private NhanVien nhanVien;
 	private boolean dangHoaDon;
 	private boolean thanhToan;
+	private double tienKhach;
+	
+	public double getTienKhach() {
+		return tienKhach;
+	}
+	
+	public void setTienKhach(double tienKhach) {
+		this.tienKhach = tienKhach;
+	}
 	
 	public String getMaHoaDon() {
 		return maHoaDon;
@@ -24,17 +32,17 @@ public class HoaDon {
 	public void setNgayMua(Date ngayMua) {
 		this.ngayMua = ngayMua;
 	}
-	public String getMaKhachHang() {
-		return maKhachHang;
+	public KhachHang getKhachHang() {
+		return khachHang;
 	}
-	public void setMaKhachHang(String maKhachHang) {
-		this.maKhachHang = maKhachHang;
+	public void setKhachHang(KhachHang khachHang) {
+		this.khachHang = khachHang;
 	}
-	public String getMaNhanVien() {
-		return maNhanVien;
+	public NhanVien getNhanVien() {
+		return nhanVien;
 	}
-	public void setMaNhanVien(String maNhanVien) {
-		this.maNhanVien = maNhanVien;
+	public void setNhanVien(NhanVien nhanVien) {
+		this.nhanVien = nhanVien;
 	}
 	public boolean isDangHoaDon() {
 		return dangHoaDon;
@@ -48,18 +56,19 @@ public class HoaDon {
 	public void setThanhToan(boolean thanhToan) {
 		this.thanhToan = thanhToan;
 	}
-	
-	public HoaDon(String maHoaDon, Date ngayMua, String maKhachHang, String maNhanVien, boolean dangHoaDon,
-			boolean thanhToan) {
+
+	public HoaDon(String maHoaDon, Date ngayMua, KhachHang khachHang, NhanVien nhanVien, boolean dangHoaDon,
+			boolean thanhToan, double tienKhach) {
 		super();
 		this.maHoaDon = maHoaDon;
 		this.ngayMua = ngayMua;
-		this.maKhachHang = maKhachHang;
-		this.maNhanVien = maNhanVien;
+		this.khachHang = khachHang;
+		this.nhanVien = nhanVien;
 		this.dangHoaDon = dangHoaDon;
 		this.thanhToan = thanhToan;
+		this.tienKhach = tienKhach;
 	}
-	
+
 	public HoaDon(String maHoaDon) {
 		super();
 		this.maHoaDon = maHoaDon;
