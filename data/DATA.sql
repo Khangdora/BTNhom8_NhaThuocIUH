@@ -117,7 +117,7 @@ SELECT * FROM KhachHang
 
 SELECT * FROM Thuoc WHERE donViBan = N'Hộp' ORDER BY maThuoc ASC;
 
-Select * from HoaDon
+SELECT chucVu FROM NhanVien GROUP BY chucVu;
 
 /*SELECT * FROM Thuoc OFFSET 1 ROWS FETCH NEXT 25 ROWS ONLY
 

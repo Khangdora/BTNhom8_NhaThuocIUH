@@ -754,7 +754,10 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 				
 				HoaDon hd = new HoaDon(mahoadon, now, new KhachHang(maKhachHang), nvlogin, dangHoaDon, false, 0.0);
 				
-				new xuatHoaDon(nvlogin, hd, listCTHoaDon).setVisible(true);
+				if(listCTHoaDon.size()==0)
+					lblThongBao(lblTBHD, 0, "Danh sách thuốc đang rỗng");
+				else
+					new xuatHoaDon(nvlogin, hd, listCTHoaDon).setVisible(true);
 			
 			}
 		}
