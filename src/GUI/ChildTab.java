@@ -214,8 +214,8 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		tableHoaDon = new JTable(modelHoaDon);
 		tableHoaDon.setRowHeight(20);
 		
-		JScrollPane sp = new JScrollPane(tableHoaDon, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		JScrollPane sp = new JScrollPane(tableHoaDon, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
 		DefaultTableCellRenderer center = new DefaultTableCellRenderer();
 		center.setHorizontalAlignment(JLabel.CENTER);
@@ -339,8 +339,8 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		tableChiTietHoaDon.getColumnModel().getColumn(3).setCellRenderer(center);
 		tableChiTietHoaDon.getColumnModel().getColumn(4).setCellRenderer(render);
 		
-		JScrollPane spCTHD = new JScrollPane(tableChiTietHoaDon, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		JScrollPane spCTHD = new JScrollPane(tableChiTietHoaDon, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		spCTHD.setPreferredSize(new Dimension(320, 350));
 		
 		addPanelHoaDonCenter.add(spCTHD, BorderLayout.CENTER);
