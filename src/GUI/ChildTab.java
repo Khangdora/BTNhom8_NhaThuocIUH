@@ -25,6 +25,7 @@ import java.lang.Math;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -32,11 +33,14 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -46,12 +50,14 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import DAO.CaTruc_DAO;
 import DAO.HoaDon_DAO;
 import DAO.KhachHang_DAO;
 import DAO.NhanVien_DAO;
 import DAO.Thuoc_DAO;
 import connectDB.ConnectDB;
 import entity.CT_HoaDon;
+import entity.CaTruc;
 import entity.HoaDon;
 import entity.KhachHang;
 import entity.NhanVien;
@@ -87,6 +93,17 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 	private int limit = 25;
 	
 	private ArrayList<CT_HoaDon> listCTHoaDon;
+	
+	//Khach Hang
+	private JPanel listPanelNhanVien, addPanelKhachHang;
+	private JTextField txtMaNV_NV, txtHo_NV, txtTen_NV, txtSDT_NV, txtEmail_NV, txtGioiTinh_NV, txtCaTruc_NV, txtChucVu_NV, txtTimMa_NV, txtTienLuong_NV;
+	private JLabel lblTimMa_NV, lblLocCaTruc_NV, lblLocGioiTinh_NV, lblLocChucVu_NV, lblMa_NV, lblHo_NV, lblSDT_NV, lblEmail_NV;
+	private JButton btnLoc_NV, btnNext_NV, btnPrev_NV, btnThem_NV, btnXoa_NV, btnSua_NV;
+	private DefaultTableModel modelNV, modelNV_temp;
+	private JTable tableNV, tableNV_temp;
+	private JComboBox<String> comboBoxGioiTinh_NV, comboBoxChucVu_NV, comboBoxCaTruc_NV;
+	private JRadioButton radNam, radNu;
+	private ArrayList<NhanVien> listNV;
 	
 	private Component main;
 	
@@ -437,13 +454,228 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 	
 	public JPanel panelNhanVien() {
 		JPanel myPanel = new JPanel();
-		myPanel.setPreferredSize(new Dimension(817, 600));
+		myPanel.setPreferredSize(new Dimension(900, 600));
 		myPanel.setBackground(Color.decode("#EEEEEE"));
-		myPanel.setBorder(null);
+		lblEmail_NV = new JLabel("Email:");
 		
-		myPanel.add(new JLabel("NhanVien"));
+		NhanVien nvlogin, nv;
+		
+		NhanVien_DAO nhanvien_dao;
+		CaTruc_DAO catruc_dao;
+		
+		//panel nhap thong tin nhan vien
+		JPanel pnlNhapThongTin = new JPanel(); 
+		pnlNhapThongTin.add(Box.createVerticalStrut(25));
+		myPanel.add(pnlNhapThongTin);
+		pnlNhapThongTin.setPreferredSize(new Dimension(590,240));
+		pnlNhapThongTin.setBorder(BorderFactory.createTitledBorder("Nhập và thay đổi thông tin"));
+		pnlNhapThongTin.setLayout(new BoxLayout(pnlNhapThongTin, BoxLayout.Y_AXIS));
+		
+		// box nhap thong tin nhap vien
+		Box bRight1, bRight2, bRight3, bRight4, bRight5;
+		
+		bRight1 = Box.createHorizontalBox();
+		lblMa_NV = new JLabel("Mã:");
+		lblMa_NV.setPreferredSize(lblEmail_NV.getPreferredSize());
+		bRight1.add(lblMa_NV);
+		txtMaNV_NV = new JTextField();
+		bRight1.add(txtMaNV_NV);
+		pnlNhapThongTin.add(bRight1);
+		pnlNhapThongTin.add(Box.createVerticalStrut(15));
+		
+		
+		bRight2 = Box.createHorizontalBox();
+		lblHo_NV = new JLabel("Họ:");
+		lblHo_NV.setPreferredSize(lblEmail_NV.getPreferredSize());
+		bRight2.add(lblHo_NV);
+		txtHo_NV = new JTextField();
+		bRight2.add(txtHo_NV);
+		bRight2.add(Box.createHorizontalStrut(10));
+		bRight2.add(new JLabel("Tên:"));
+		txtTen_NV = new JTextField();
+		bRight2.add(txtTen_NV);
+		bRight2.add(Box.createHorizontalStrut(10));
+		bRight2.add(new JLabel("Giới tính:"));
+		radNam = new JRadioButton("Nam",true);
+		radNam.setEnabled(true);
+		radNu = new JRadioButton("Nữ");
+		ButtonGroup group = new ButtonGroup();
+		group.add(radNam);
+		group.add(radNu);
+		bRight2.add(radNam);
+		bRight2.add(radNu);
+		pnlNhapThongTin.add(bRight2);
+		pnlNhapThongTin.add(Box.createVerticalStrut(15));
+		
+		
+		bRight3 = Box.createHorizontalBox();
+		lblSDT_NV = new JLabel("SĐT:");
+		lblSDT_NV.setPreferredSize(lblEmail_NV.getPreferredSize());
+		bRight3.add(lblSDT_NV);
+		txtSDT_NV = new JTextField();
+		bRight3.add(txtSDT_NV);
+		bRight3.add(Box.createHorizontalStrut(10));
+		bRight3.add(new JLabel("Ca trực: "));
+		comboBoxCaTruc_NV = new JComboBox<String>(new String[] {"Sáng(6h-14h)", "Chiều(14h-22h)"});
+		bRight3.add(comboBoxCaTruc_NV);
+		comboBoxCaTruc_NV.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		bRight3.add(Box.createHorizontalStrut(10));
+		bRight3.add(new JLabel("Chức vụ: "));
+		comboBoxChucVu_NV = new JComboBox<String>(new String[] {"Nhân viên","Quản trị viên"});
+		bRight3.add(comboBoxChucVu_NV);
+		comboBoxChucVu_NV.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		pnlNhapThongTin.add(bRight3);
+		pnlNhapThongTin.add(Box.createVerticalStrut(15));
+	
+		
+		bRight4 = Box.createHorizontalBox();
+		bRight4.add(lblEmail_NV);
+		txtEmail_NV = new JTextField();
+		bRight4.add(txtEmail_NV);
+		bRight4.add(Box.createHorizontalStrut(10));
+		bRight4.add(new JLabel("Tiền lương"));
+		txtTienLuong_NV = new JTextField();
+		bRight4.add(txtTienLuong_NV);
+		pnlNhapThongTin.add(bRight4);
+		pnlNhapThongTin.add(Box.createVerticalStrut(15));
+		
+		bRight5 = Box.createHorizontalBox();
+		bRight5.add(Box.createHorizontalStrut(50));
+		btnThem_NV = new JButton("Thêm nhân viên");
+		bRight5.add(btnThem_NV);
+		bRight5.add(Box.createHorizontalStrut(10));
+		btnThem_NV = new JButton("Xóa rỗng");
+		bRight5.add(btnThem_NV);
+		pnlNhapThongTin.add(bRight5);
+		pnlNhapThongTin.add(Box.createVerticalStrut(5));
+		
+		
+		//panel thong tin nhan vien
+		try {
+			ConnectDB.getInstance().connect();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		nhanvien_dao = new NhanVien_DAO();
+		catruc_dao = new CaTruc_DAO();
+		
+		JLabel lblHo, lblTen, lblSoDienThoai, lblEmail, lblCaTruc, lblGioiTinh, lblChucVu, lblTienLuong;
+		JTextField txtMa,txtHo, txtTen, txtSoDienThoai, txtEmail, txtCaTruc, txtGioiTinh, txtChucVu, txtTienLuong;
+		JComboBox<String> cbCaTruc, cbGioiTinh, cbChucVu;
+		
+		JPanel pnlThongTin = new JPanel();
+		JLabel avatar;
+		myPanel.add(pnlThongTin);
+		pnlThongTin.setPreferredSize(new Dimension(300, 240));
+		pnlThongTin.setBorder(BorderFactory.createTitledBorder("Thông tin nhân viên"));
+		
+		// box thông tin nhân viên
+		Box bLeft1, bLeft2, bLeft3, bLeft4;
+		pnlThongTin.setLayout(new BoxLayout(pnlThongTin, BoxLayout.Y_AXIS));
+	
+		bLeft1 = Box.createHorizontalBox();
+		bLeft1.add(Box.createHorizontalStrut(105));
+		bLeft1.add(avatar = new JLabel(new ImageIcon(getClass().getResource("/img/avatar.png"))));
+		bLeft1.add(Box.createVerticalStrut(15));
+		pnlThongTin.add(bLeft1);
+		
+		bLeft2 = Box.createHorizontalBox();
+		bLeft2.add(new JLabel("Mã nhân viên:"));
+		txtMa = new JTextField();
+		bLeft2.add(txtMa);
+		
+		
+		
+		// panel loc
+		JPanel pnlLoc = new JPanel();
+		pnlLoc.setPreferredSize(new Dimension(900, 35));
+		myPanel.add(pnlLoc);
+		Box boxLocNV = Box.createHorizontalBox();
+		boxLocNV.add(lblTimMa_NV = new JLabel("Nhập mã nhân viên:"));
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		boxLocNV.add(txtTimMa_NV = new JTextField(7));
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		
+		boxLocNV.add(Box.createHorizontalStrut(7));
+		boxLocNV.add(lblLocGioiTinh_NV = new JLabel("Giới tính"));
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		String[] gioiTinh_NV = {"Tất cả","Nam", "Nữ"};
+		comboBoxGioiTinh_NV = new JComboBox<String>(gioiTinh_NV);
+		boxLocNV.add(comboBoxGioiTinh_NV);
+		comboBoxGioiTinh_NV.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		
+		boxLocNV.add(Box.createHorizontalStrut(7));
+		boxLocNV.add(lblLocCaTruc_NV = new JLabel("Ca trực"));
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		String[] caTruc_NV = {"Tất cả","Sáng(6h-14h)","Chiều(14h-22h)"};
+		comboBoxCaTruc_NV = new JComboBox<String>(caTruc_NV);
+		boxLocNV.add(comboBoxCaTruc_NV);
+		
+		boxLocNV.add(Box.createHorizontalStrut(7));
+		boxLocNV.add(lblLocCaTruc_NV = new JLabel("Chức vụ"));
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		String[] chucVu_NV = {"Tất cả","Nhân viên","Quản trị viên"};
+		comboBoxChucVu_NV = new JComboBox<String>(chucVu_NV);
+		boxLocNV.add(comboBoxChucVu_NV);
+		
+		boxLocNV.add(Box.createHorizontalStrut(10));
+		btnLoc_NV = new JButton("Lọc");
+		boxLocNV.add(btnLoc_NV);
+		boxLocNV.add(Box.createHorizontalStrut(7));
+		btnSua_NV = new JButton("Sửa");
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		boxLocNV.add(btnSua_NV);
+		boxLocNV.add(Box.createHorizontalStrut(7));
+		btnXoa_NV = new JButton("Xóa");
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		boxLocNV.add(btnXoa_NV);
+		
+		pnlLoc.add(boxLocNV);
+		Border cnBorder = BorderFactory.createLoweredBevelBorder();
+		pnlLoc.setBorder(cnBorder);
+		
+		// panel Table danh sach nhan vien
+		JPanel panelTable = new JPanel();
+		panelTable.setLayout(new BorderLayout());
+		panelTable.setBorder(BorderFactory.createTitledBorder("Danh sách nhân viên"));
+		String[] colHeader = {"Mã","Họ","Tên","Số điện thoại","Email","Giới tính","Ca trực","Chức vụ","Tiền lương"};
+		
+		modelNV = new DefaultTableModel(colHeader, 0) {
+			private static final long serialVersionUID = 1L;
+			public boolean isCellEditable(int row, int column) {
+		        return false;
+		    }
+		};
+		
+		tableNV = new JTable(modelNV);
+		tableNV.setRowHeight(20);
+		
+		JScrollPane sp = new JScrollPane(tableNV, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		sp.setPreferredSize(new Dimension(890,290));
+		DefaultTableCellRenderer center = new DefaultTableCellRenderer();
+		center.setHorizontalAlignment(JLabel.CENTER);
+		DefaultTableCellRenderer right = new DefaultTableCellRenderer();
+		right.setHorizontalAlignment(JLabel.RIGHT);
+		tableNV.getColumnModel().getColumn(0).setCellRenderer(center);
+		tableNV.getColumnModel().getColumn(3).setCellRenderer(center);
+		tableNV.getColumnModel().getColumn(4).setCellRenderer(center);
+		tableNV.getColumnModel().getColumn(5).setCellRenderer(center);
+		tableNV.getColumnModel().getColumn(8).setCellRenderer(right);
+		
+		tableNV.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+		panelTable.add(sp, BorderLayout.CENTER);
+		setDuLieuNhanVien();
+		myPanel.add(panelTable);
 		
 		return myPanel;
+		
+
+		//panel table
+		
 	}
 	
 	public JPanel panelThongKe() {
@@ -543,6 +775,27 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		
 	}
 
+	// Xu ly Nhan Vien
+	public void setDuLieuNhanVien() {
+		DecimalFormat formatter = new DecimalFormat("#,###");
+		List<NhanVien> dsNV = nhanvien_dao.getallNhanVien();
+		String gioitinh = "";
+		String caTruc ="";
+		for(NhanVien nv : dsNV) {
+			if(nv.isGioiTinh()) 
+				gioitinh = "Nam";
+				else
+					gioitinh = "Nữ";
+			if (nv.getCaTruc().getMaCaTruc().equals("CA01")) 
+				caTruc = "Sáng (6h-14h)";
+				else
+					caTruc = "Chiều (14h-22h)";
+			modelNV.addRow(new Object[] {nv.getMaNhanVien(),nv.getHoNhanVien(),nv.getTenNhanVien(),
+					nv.getSoDienThoai(),nv.getEmailNhanVien(), gioitinh, caTruc,
+					nv.getChucVu(), formatter.format(nv.getTienLuong())});
+		}
+	}
+	
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
