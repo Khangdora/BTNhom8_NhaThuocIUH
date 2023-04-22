@@ -86,7 +86,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 	private JPanel listPanelKhachHang, addPanelKhachHang;
 	private JTextField txtmaKH_KH, txtho_KH, txtTen_KH, txtSDT_KH, txtEmail_KH, txtgioiTinh_KH, txtLocTuKhoa_KH;
 	private JLabel lblTBKH, lblLocTuKhoa_KH, lblLocTen_KH;
-	private JButton btnLocKH, btnNextKH, btnPrevKH, btnLuuKH, btnThemKH, btnXoaKH, btnSuaKH, btnRefresh;
+	private JButton btnLocKH, btnNextKH, btnPrevKH, btnLuuKH, btnThemKH, btnXoaKH, btnSuaKH, btnRefresh, btnXoaKH_csdl, btnSuaKH_csdl, btnXoaTrangKH;
 	private DefaultTableModel modelKH, modelKH_temp;
 	private JTable tableKH, tableKH_temp;
 	private JComboBox<String> comboBox_SortHoTen, comboBox_SortGioiTinh, comboBoxGioiTinh;
@@ -407,9 +407,10 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		
 		Box box = Box.createHorizontalBox();
 		
-		box.add(lblLocTuKhoa_KH = new JLabel("Từ khóa: "));
-		box.add(txtLocTuKhoa_KH = new JTextField(15));
+		box.add(lblLocTuKhoa_KH = new JLabel("Mã KH, SĐT, Họ tên đệm: "));
+		box.add(txtLocTuKhoa_KH = new JTextField(8));
 		box.add(Box.createHorizontalStrut(5));
+		txtLocTuKhoa_KH.setName("timkiem_khachhang");
 		
 		box.add(lblLocTen_KH = new JLabel("Tên: "));
 		String[] sortTen = {"Tăng", "Giảm"};
@@ -477,6 +478,10 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		
 		btnRefresh = new JButton("Refresh");
 		btnRefresh.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnXoaKH_csdl = new JButton("Xóa");
+		btnXoaKH_csdl.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnSuaKH_csdl = new JButton("Sửa");
+		btnSuaKH_csdl.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 //		btnNextKH = new JButton("❮");
 //		btnNextKH.setFocusable(false);
 //		btnNextKH.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -492,6 +497,8 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 //		btnPrevKH.setFocusable(false);
 //		btnPrevKH.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		
+		panelPages.add(btnXoaKH_csdl);
+		panelPages.add(btnSuaKH_csdl);
 		panelPages.add(btnRefresh);
 //		panelPages.add(btnNextKH);
 //		panelPages.add(comboBoxPages);
@@ -499,7 +506,6 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		
 		listPanelKhachHang.add(panelPages, BorderLayout.SOUTH);
 		
-		// ThemPanel HoaDon
 		addPanelKhachHang = new JPanel();
 		myPanel.add(addPanelKhachHang, BorderLayout.EAST);
 		addPanelKhachHang.setPreferredSize(new Dimension(390, 570));//340
@@ -520,6 +526,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		b2.add(new JLabel("Mã khách hàng:"));
 		b2.add(Box.createHorizontalStrut(5));
 		b2.add(txtmaKH_KH = new JTextField(6));
+		txtmaKH_KH.setEditable(false);
 
 		b2.add(Box.createHorizontalStrut(10));
 		b2.add(new JLabel("Số điện thoại:"));
@@ -602,6 +609,8 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		b1South.add(Box.createHorizontalStrut(5));
 		b1South.add(btnXoaKH = new JButton("Xóa"));
 		b1South.add(Box.createHorizontalStrut(5));
+		b1South.add(btnXoaTrangKH = new JButton("Xóa rỗng"));
+		b1South.add(Box.createHorizontalStrut(5));
 		b1South.add(btnLuuKH = new JButton("Lưu"));
 		
 		addPanelKhachHangSouth.add(bSouth);
@@ -617,7 +626,57 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		btnSuaKH.addActionListener(this);
 		btnLuuKH.addActionListener(this);
 		btnLocKH.addActionListener(this);
+		btnXoaTrangKH.addActionListener(this);
 		btnRefresh.addActionListener(this);
+		btnXoaKH_csdl.addActionListener(this);
+		btnSuaKH_csdl.addActionListener(this);
+		txtLocTuKhoa_KH.getDocument().putProperty("owner", txtLocTuKhoa_KH);
+		txtLocTuKhoa_KH.getDocument().addDocumentListener(this);
+		
+		tableKH.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int r = tableKH.getSelectedRow();
+				txtmaKH_KH.setText(modelKH.getValueAt(r, 0).toString());
+				txtho_KH.setText(modelKH.getValueAt(r, 1).toString());
+				txtTen_KH.setText(modelKH.getValueAt(r, 2).toString());
+				txtSDT_KH.setText(modelKH.getValueAt(r, 3).toString());
+				txtEmail_KH.setText(modelKH.getValueAt(r, 4).toString());
+				
+				if(modelKH.getValueAt(r, 5).toString().equalsIgnoreCase("Nam")) {
+					comboBoxGioiTinh.setSelectedItem("Nam");
+				}
+				else {
+					comboBoxGioiTinh.setSelectedItem("Nữ");
+				}
+			}
+		});
+		
 		return myPanel;
 	}
 	
@@ -813,6 +872,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		
 	}
 
+	
 	@Override
 	public void insertUpdate(DocumentEvent e) {
 		
@@ -840,7 +900,9 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 			}
             
         }
+	
 	}
+	
 
 	@Override
 	public void removeUpdate(DocumentEvent e) {
@@ -854,27 +916,114 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		
 	}
 	
-
+	//Khach_Hàng
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		//Khách hàng
 		Object o = e.getSource();
 		if(o.equals(btnLocKH)) {
 			String selectTen = (String)comboBox_SortHoTen.getSelectedItem();
-//			if(!(txtLocSDT_KH.getText().trim().equals(""))) {
-//				KhachHang kh = khachhang_dao.getKhachHangTheoSDT(txtLocSDT_KH.getText().trim());
-//				
-//				String gioitinh = "";
-//				if(kh.isGioiTinh()) {
-//					gioitinh = "Nam";
-//				}else{
-//					gioitinh = "Nữ";
-//				}
-//				modelKH.getDataVector().removeAllElements();
-//				modelKH.addRow(new Object[] {kh.getMaKhachHang(),kh.getHoKhachHang(),kh.getTenKhachHang(),
-//							kh.getSoDienThoai(),kh.getEmailKhachHang(), gioitinh});
-//			}
-			if(selectTen.equals("Tăng") && radSortNam.isSelected()){
+			if(txtLocTuKhoa_KH.getName().equals("timkiem_khachhang") && selectTen.equals("Tăng") && radSortNam.isSelected()) {
+				String regex = txtLocTuKhoa_KH.getText().trim();
+				
+				if(regex.equals("")) 
+					setDuLieuKhachHang();
+				else {
+					
+					DefaultTableModel temp = (DefaultTableModel) tableKH.getModel();
+					temp.getDataVector().removeAllElements();
+					
+					List<KhachHang> list = khachhang_dao.filterTuKhoaKH_Tang_Nam(regex);
+					for(KhachHang kh : list) {
+						String gioitinh ="";	
+						if(kh.isGioiTinh()) {
+							gioitinh = "Nam";
+						}else{
+							gioitinh = "Nữ";
+						}
+						modelKH.addRow(new Object[] {kh.getMaKhachHang(),kh.getHoKhachHang(),kh.getTenKhachHang(),
+								kh.getSoDienThoai(),kh.getEmailKhachHang(), gioitinh});
+					}	
+					
+				}
+			}
+			
+			if(txtLocTuKhoa_KH.getName().equals("timkiem_khachhang") && selectTen.equals("Giảm") && radSortNam.isSelected()) {
+				String regex = txtLocTuKhoa_KH.getText().trim();
+				
+				if(regex.equals("")) 
+					setDuLieuKhachHang();
+				else {
+					
+					DefaultTableModel temp = (DefaultTableModel) tableKH.getModel();
+					temp.getDataVector().removeAllElements();
+					
+					List<KhachHang> list = khachhang_dao.filterTuKhoaKH_Giam_Nam(regex);
+					for(KhachHang kh : list) {
+						String gioitinh ="";	
+						if(kh.isGioiTinh()) {
+							gioitinh = "Nam";
+						}else{
+							gioitinh = "Nữ";
+						}
+						modelKH.addRow(new Object[] {kh.getMaKhachHang(),kh.getHoKhachHang(),kh.getTenKhachHang(),
+								kh.getSoDienThoai(),kh.getEmailKhachHang(), gioitinh});
+					}	
+					
+				}
+			}
+			
+			if(txtLocTuKhoa_KH.getName().equals("timkiem_khachhang") && selectTen.equals("Tăng") && radSortNu.isSelected()) {
+				String regex = txtLocTuKhoa_KH.getText().trim();
+				
+				if(regex.equals("")) 
+					setDuLieuKhachHang();
+				else {
+					
+					DefaultTableModel temp = (DefaultTableModel) tableKH.getModel();
+					temp.getDataVector().removeAllElements();
+					
+					List<KhachHang> list = khachhang_dao.filterTuKhoaKH_Tang_Nu(regex);
+					for(KhachHang kh : list) {
+						String gioitinh ="";	
+						if(kh.isGioiTinh()) {
+							gioitinh = "Nam";
+						}else{
+							gioitinh = "Nữ";
+						}
+						modelKH.addRow(new Object[] {kh.getMaKhachHang(),kh.getHoKhachHang(),kh.getTenKhachHang(),
+								kh.getSoDienThoai(),kh.getEmailKhachHang(), gioitinh});
+					}	
+					
+				}
+			}
+			
+			if(txtLocTuKhoa_KH.getName().equals("timkiem_khachhang") && selectTen.equals("Giảm") && radSortNu.isSelected()) {
+				String regex = txtLocTuKhoa_KH.getText().trim();
+				
+				if(regex.equals("")) 
+					setDuLieuKhachHang();
+				else {
+					
+					DefaultTableModel temp = (DefaultTableModel) tableKH.getModel();
+					temp.getDataVector().removeAllElements();
+					
+					List<KhachHang> list = khachhang_dao.filterTuKhoaKH_Giam_Nu(regex);
+					for(KhachHang kh : list) {
+						String gioitinh ="";	
+						if(kh.isGioiTinh()) {
+							gioitinh = "Nam";
+						}else{
+							gioitinh = "Nữ";
+						}
+						modelKH.addRow(new Object[] {kh.getMaKhachHang(),kh.getHoKhachHang(),kh.getTenKhachHang(),
+								kh.getSoDienThoai(),kh.getEmailKhachHang(), gioitinh});
+					}	
+					
+				}
+			}
+			
+			if(selectTen.equals("Tăng") && radSortNam.isSelected() && txtLocTuKhoa_KH.getText().trim().equals("")){
 				modelKH.getDataVector().removeAllElements();
 				List<KhachHang> dsKH = khachhang_dao.sortTang_Nam();
 				for(KhachHang kh : dsKH) {
@@ -888,7 +1037,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 							kh.getSoDienThoai(),kh.getEmailKhachHang(), gioitinh});	
 				}
 			}
-			if(selectTen.equals("Giảm") && radSortNam.isSelected()){
+			if(selectTen.equals("Giảm") && radSortNam.isSelected() && txtLocTuKhoa_KH.getText().trim().equals("")){
 				modelKH.getDataVector().removeAllElements();
 				List<KhachHang> dsKH = khachhang_dao.sortGiam_Nam();
 				for(KhachHang kh : dsKH) {
@@ -902,7 +1051,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 							kh.getSoDienThoai(),kh.getEmailKhachHang(), gioitinh});	
 				}
 			}
-			if(selectTen.equalsIgnoreCase("Tăng") && radSortNu.isSelected()) {
+			if(selectTen.equalsIgnoreCase("Tăng") && radSortNu.isSelected() && txtLocTuKhoa_KH.getText().trim().equals("")) {
 				modelKH.getDataVector().removeAllElements();
 				List<KhachHang> dsKH = khachhang_dao.sortTang_Nu();
 				for(KhachHang kh : dsKH) {
@@ -916,7 +1065,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 							kh.getSoDienThoai(),kh.getEmailKhachHang(), gioitinh});	
 				}
 			}
-			if(selectTen.equalsIgnoreCase("Giảm") && radSortNu.isSelected()){
+			if(selectTen.equalsIgnoreCase("Giảm") && radSortNu.isSelected() && txtLocTuKhoa_KH.getText().trim().equals("")){
 				modelKH.getDataVector().removeAllElements();
 				List<KhachHang> dsKH = khachhang_dao.sortGiam_Nu();
 				for(KhachHang kh : dsKH) {
@@ -934,14 +1083,6 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		else if(o.equals(btnThemKH)) {
 			KhachHang kh = revertKHFromTextfields();
 			if(validKH()) {
-//				int ret = JOptionPane.showConfirmDialog(null, "Lưu vào cơ sở dữ liệu ?", "Lưu", JOptionPane.NO_OPTION);
-//				if (ret == JOptionPane.YES_OPTION) {
-//					if(khachhang_dao.insertKhachHang(kh)) {
-//						JOptionPane.showMessageDialog(null, "Lưu thành công");
-//					}else {
-//						JOptionPane.showMessageDialog(null, "Đã có lỗi");
-//					}
-//				}
 				if(addToListKhachHang(kh)) {
 					String gioitinh = "";
 					if (kh.isGioiTinh()) {
@@ -954,7 +1095,38 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 							kh.getSoDienThoai(),kh.getEmailKhachHang(), gioitinh};
 					modelKH_temp.addRow(row);
 				}else {
-					JOptionPane.showMessageDialog(null, "Mã KH này đã tồn tại !!!");
+					int i = listKH.size();
+					String maMoi = null;
+					String maHienTai = null;
+					maHienTai = modelKH_temp.getValueAt(i-1, 0).toString();
+					String kyTuCuoi = maHienTai.replaceAll("[^0-9]+", "");
+					String kyTuMoi = Integer.toString(Integer.parseInt(kyTuCuoi) + 1);
+					maMoi = "KH" + kyTuMoi;
+					
+					String ten = txtTen_KH.getText().trim();
+					String ho = txtho_KH.getText().trim();
+					String sdt = txtSDT_KH.getText().trim();
+					String email = txtEmail_KH.getText().trim();
+					String gioiTinh = (String) comboBoxGioiTinh.getSelectedItem();
+					boolean phai;
+					if(gioiTinh.equalsIgnoreCase("Nam")) {
+						phai = true;
+					}else {
+						phai = false;
+					}
+					KhachHang khMoi = new KhachHang(maMoi, ho, ten, sdt, email, phai);
+					listKH.add(kh);
+					
+					String gioitinh = "";
+					if (khMoi.isGioiTinh()) {
+						gioitinh = "Nam";
+					}else {
+						gioitinh = "Nữ";
+					}
+					JOptionPane.showMessageDialog(null, "Thêm thành công");
+					String [] row = {khMoi.getMaKhachHang(),khMoi.getHoKhachHang(),khMoi.getTenKhachHang(),
+							khMoi.getSoDienThoai(),khMoi.getEmailKhachHang(), gioiTinh};
+					modelKH_temp.addRow(row);
 				}
 			}
 		}
@@ -1008,7 +1180,12 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 					}
 					KhachHang kh = new KhachHang(modelKH_temp.getValueAt(r, 0).toString(), modelKH_temp.getValueAt(r, 1).toString(), modelKH_temp.getValueAt(r, 2).toString(), modelKH_temp.getValueAt(r, 3).toString(), modelKH_temp.getValueAt(r, 4).toString(), gioitinh);
 						if(khachhang_dao.insertKhachHang(kh)) {
+							modelKH.getDataVector().removeAllElements();
+							setDuLieuKhachHang();
 							JOptionPane.showMessageDialog(null, "Lưu thành công");
+							if(xoa1KhachHang(r)){
+								modelKH_temp.removeRow(r);
+							}
 						}else {
 							JOptionPane.showMessageDialog(null, "Đã có lỗi");
 						}
@@ -1022,6 +1199,59 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 			modelKH.getDataVector().removeAllElements();
 			setDuLieuKhachHang();
 		}
+		else if(o.equals(btnXoaTrangKH)) {
+			xoaTrangFieldKhachHang();
+		}
+		else if(o.equals(btnXoaKH_csdl)) {
+			int r = tableKH.getSelectedRow();
+			if(r != -1 ) {
+				int tb = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa khách hàng này không?", "Delete", JOptionPane.NO_OPTION);
+				if(tb == JOptionPane.YES_OPTION) {
+					String maCanXoa = modelKH.getValueAt(r, 0).toString().trim();
+					if(khachhang_dao.XoaKhachHang(maCanXoa)){
+						modelKH.getDataVector().removeAllElements();
+						setDuLieuKhachHang();
+					}
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(null, "Bạn chưa chọn dòng xóa!!!");
+			}
+		}
+		else if(o.equals(btnSuaKH_csdl)) {
+			int r = tableKH.getSelectedRow();
+			if(r == -1) {
+				JOptionPane.showMessageDialog(null, "Bạn chưa chọn dòng");
+				return;
+			}
+			if(tableKH.getSelectedRowCount() > 1) {
+				JOptionPane.showMessageDialog(null, "Chỉ được chọn 1 dòng để sửa");
+				return;
+			}
+			String ma = txtmaKH_KH.getText().trim();
+			String ten = txtTen_KH.getText().trim();
+			String ho = txtho_KH.getText().trim();
+			String sdt = txtSDT_KH.getText().trim();
+			String email = txtEmail_KH.getText().trim();
+			String gioiTinh = (String) comboBoxGioiTinh.getSelectedItem();
+			boolean phai;
+			if(gioiTinh.equalsIgnoreCase("Nam")) {
+				phai = true;
+			}else {
+				phai = false;
+			}
+			KhachHang kh = new KhachHang(ma, ho, ten, sdt, email, phai);
+			if(validKH()) {
+				try {
+					if(khachhang_dao.updateKhachHang(kh)) {
+						modelKH.getDataVector().removeAllElements();
+						setDuLieuKhachHang();
+					}
+				}catch(Exception e1){
+					JOptionPane.showMessageDialog(null, "Không thể sửa vào csdl, hãy kiểm tra lại");
+				}
+			}
+		}
 	}
 	// Khach hang
 	private boolean validKH() {
@@ -1031,20 +1261,21 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		String sdt = txtSDT_KH.getText().trim();
 		String email = txtEmail_KH.getText().trim();
 		
-		if (!(ma.length() > 0 && ma.matches("(KH)\\d{4}"))) {
-			JOptionPane.showMessageDialog(null, "Error: Mã khách hàng theo mẫu: KH + 4 ký số");
-			txtmaKH_KH.requestFocus();
-			return false;
-		}
+//		if (!(ma.length() > 0 && ma.matches("(KH)\\d{4}"))) {
+//			JOptionPane.showMessageDialog(null, "Error: Mã khách hàng theo mẫu: KH + 4 ký số");
+//			txtmaKH_KH.requestFocus();
+//			return false;
+//		}
 
-		else if (!(ho.length() > 0 && ho.matches("^[A-Z][a-z]*(?:\\h+[A-Z][a-z]*)*$"))) {
-			JOptionPane.showMessageDialog(null, "Error: Họ Khách hàng phải viết hoa chữ cái đầu, nếu có họ đệm thì họ đệm phải sau dấu cách và viết hoa chữ cái đầu");
+//		"^[A-Z][a-z]*(?:\\h+[A-Z][a-z]*)*$"
+		if (!(ho.length() > 0 && ho.matches("^[\\p{L}]*(?:\\h+[\\p{L}]*)*$"))) {
+			JOptionPane.showMessageDialog(null, "Error: Họ khách hàng không có số hay kí tự đặc biệt");
 			txtho_KH.requestFocus();
 			return false;
 		}
 		
-		else if (!(ten.length() > 0 && ten.matches("^[A-Z][a-z]*$"))) {
-			JOptionPane.showMessageDialog(null, "Error: Tên Khách hàng phải viết hoa chữ cái đầu, là 1 từ");
+		else if (!(ten.length() > 0 && ten.matches("^[\\p{L}]*$"))) {
+			JOptionPane.showMessageDialog(null, "Error: Tên khách hàng là 1 từ, không có số, hay kí tự đặc biệt");
 			txtTen_KH.requestFocus();
 			return false;
 		}
@@ -1063,7 +1294,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		return true;
 	}
 	private KhachHang revertKHFromTextfields() {
-		String ma = txtmaKH_KH.getText().trim();
+		String ma = khachhang_dao.maKHAuto();
 		String ten = txtTen_KH.getText().trim();
 		String ho = txtho_KH.getText().trim();
 		String sdt = txtSDT_KH.getText().trim();
@@ -1098,7 +1329,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 	public boolean suaKhachHang(String ma, String ho, String ten, String sdt, String email, boolean gioitinh) {
 		KhachHang kh = new KhachHang(ma, ho, ten, sdt, email, gioitinh);
 		if(listKH.contains(kh)) { 
-			kh.setMaKhachHang(ma);
+//			kh.setMaKhachHang(ma);
 			kh.setHoKhachHang(ho);
 			kh.setTenKhachHang(ten);
 			kh.setSoDienThoai(sdt);
@@ -1107,6 +1338,15 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 			return true;
 		}
 		else return false;
+	}
+	
+	public void xoaTrangFieldKhachHang() {
+		txtmaKH_KH.setText("");
+		txtTen_KH.setText("");
+		txtho_KH.setText("");
+		txtSDT_KH.setText("");
+		txtEmail_KH.setText("");
+		txtSDT_KH.requestFocus();
 	}
 
 	@Override
