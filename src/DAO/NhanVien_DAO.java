@@ -154,6 +154,30 @@ public class NhanVien_DAO {
 		
 	}
 	
-	
+	public String maNVAuto() {
+		String maMoi = null;
+		String maHienTai = null;
+		
+		try {
+			
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();	
+			String sql = "SELECT TOP 1 maNV FROM NhanVien ORDER BY maNV DESC";
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				maHienTai = rs.getString(1);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		String kyTuCuoi = maHienTai.replaceAll("[^0-9]{3}", "");
+		String kyTuMoi = Integer.toString(Integer.parseInt(kyTuCuoi) + 1);
+		
+		maMoi = "NV" + kyTuMoi;
+		return maMoi;
+	}
 
 }
