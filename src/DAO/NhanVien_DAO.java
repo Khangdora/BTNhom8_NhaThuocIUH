@@ -6,10 +6,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import connectDB.ConnectDB;
 import entity.CaTruc;
 import entity.NhanVien;
+import entity.Thuoc;
 
 public class NhanVien_DAO {
 	
@@ -180,4 +184,88 @@ public class NhanVien_DAO {
 		return maMoi;
 	}
 
+public ArrayList<NhanVien> filterNangCao(String gioiTinh, String caTruc, String chucVu) {
+		
+		ArrayList<NhanVien> dsNhanVien = new ArrayList<NhanVien>();
+		
+		try {
+			
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
+			String sql = "SELECT * FROM NhanVien ";
+			
+			gioiTinh = gioiTinh.replace("Tất cả", "");
+			gioiTinh = gioiTinh.replace("Nam", "True");
+			gioiTinh = gioiTinh.replace("Nữ", "False");
+			caTruc = caTruc.replace("Tất cả", "");
+			caTruc = caTruc.replace("Sáng(6h-14h)", "CA01");
+			caTruc = caTruc.replace("Chiều(14h-22h)", "CA02");
+			chucVu = chucVu.replace("Tất cả", "");
+			/*Pattern pattern = Pattern.compile("^[\\p{L}\\s]+");
+			Matcher matcher = pattern.matcher(xuatXu);
+			if(matcher.find())
+				xuatXu = matcher.group(0).trim();
+			*/
+			
+			if (!gioiTinh.isBlank()) {
+			    sql += " WHERE gioiTinh = N'" + gioiTinh.trim() + "'";
+			    if (!caTruc.isBlank()) {
+			        sql += " AND macatruc = N'" + caTruc.trim() + "'";
+			        if (!chucVu.isBlank()) 
+			            sql += " AND chucvu = N'" + chucVu.trim() + "'";
+			    } else 
+			    	if (!chucVu.isBlank()) 
+			            sql += " AND chucvu = N'" + chucVu.trim() + "'";
+			     else {
+			        sql += " AND 1=1";
+			    } 
+			} else 
+				if (!caTruc.isBlank()) {
+				        sql += " Where macatruc = N'" + caTruc.trim() + "'";
+				        if (!chucVu.isBlank()) 
+				            sql += " AND chucvu = N'" + chucVu.trim() + "'";
+				        else 
+				        	if (!chucVu.isBlank()) 
+				        		sql += " AND chucvu = N'" + chucVu.trim() + "'";
+				        	else {
+				        		sql += " AND 1=1";
+				        	}
+				} else if (!chucVu.isBlank()) 
+						sql += " Where chucvu = N'" + chucVu.trim() + "'";
+		        	else
+		        		sql += " AND 1=1";
+				
+			
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			while (rs.next()) {
+				
+				String maNhanVien = rs.getString(1);
+				String ho = rs.getString(2);
+				String ten = rs.getString(3);
+				String sdt = rs.getString(4);
+				String email = rs.getString(5);
+				String maCaTruc = rs.getString(6);
+				boolean phai  = rs.getBoolean(7);
+				String chuc = rs.getString(8);
+				float tienLuong = rs.getFloat(9);
+				String mk = rs.getString(10);
+				
+				CaTruc ct = new CaTruc(maCaTruc);
+				
+				
+				NhanVien nv = new NhanVien(maNhanVien,ho,ten,sdt,email,ct,phai,
+						chuc,tienLuong,mk);
+				dsNhanVien.add(nv);
+				
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return dsNhanVien;
+		
+	}
 }

@@ -58,7 +58,7 @@ public class CaTruc {
 	}
 
 	public CaTruc(String maCaTruc) {
-		super();
+		super(tenCaTruc,ghiChu);
 		this.maCaTruc = maCaTruc;
 	}
 
