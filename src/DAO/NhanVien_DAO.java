@@ -11,7 +11,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import connectDB.ConnectDB;
+import entity.CT_HoaDon;
 import entity.CaTruc;
+import entity.HoaDon;
 import entity.NhanVien;
 import entity.Thuoc;
 
@@ -166,7 +168,7 @@ public class NhanVien_DAO {
 			
 			ConnectDB.getInstance();
 			Connection con = ConnectDB.getConnection();	
-			String sql = "SELECT TOP 1 maNV FROM NhanVien ORDER BY maNV DESC";
+			String sql = "SELECT TOP 1 maNhanVien FROM NhanVien ORDER BY maNhanVien DESC";
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
@@ -177,7 +179,7 @@ public class NhanVien_DAO {
 			e.printStackTrace();
 		}
 		
-		String kyTuCuoi = maHienTai.replaceAll("[^0-9]{3}", "");
+		String kyTuCuoi = maHienTai.replaceAll("[^0-9]+", "");
 		String kyTuMoi = Integer.toString(Integer.parseInt(kyTuCuoi) + 1);
 		
 		maMoi = "NV" + kyTuMoi;
@@ -198,14 +200,9 @@ public ArrayList<NhanVien> filterNangCao(String gioiTinh, String caTruc, String 
 			gioiTinh = gioiTinh.replace("Nam", "True");
 			gioiTinh = gioiTinh.replace("Nữ", "False");
 			caTruc = caTruc.replace("Tất cả", "");
-			caTruc = caTruc.replace("Sáng(6h-14h)", "CA01");
-			caTruc = caTruc.replace("Chiều(14h-22h)", "CA02");
+			caTruc = caTruc.replace("Ca sáng", "CA01");
+			caTruc = caTruc.replace("Ca chiều", "CA02");
 			chucVu = chucVu.replace("Tất cả", "");
-			/*Pattern pattern = Pattern.compile("^[\\p{L}\\s]+");
-			Matcher matcher = pattern.matcher(xuatXu);
-			if(matcher.find())
-				xuatXu = matcher.group(0).trim();
-			*/
 			
 			if (!gioiTinh.isBlank()) {
 			    sql += " WHERE gioiTinh = N'" + gioiTinh.trim() + "'";
@@ -233,7 +230,7 @@ public ArrayList<NhanVien> filterNangCao(String gioiTinh, String caTruc, String 
 				} else if (!chucVu.isBlank()) 
 						sql += " Where chucvu = N'" + chucVu.trim() + "'";
 		        	else
-		        		sql += " AND 1=1";
+		        		sql += " Where 1=1";
 				
 			
 			Statement stmt = con.createStatement();
@@ -254,7 +251,6 @@ public ArrayList<NhanVien> filterNangCao(String gioiTinh, String caTruc, String 
 				
 				CaTruc ct = new CaTruc(maCaTruc);
 				
-				
 				NhanVien nv = new NhanVien(maNhanVien,ho,ten,sdt,email,ct,phai,
 						chuc,tienLuong,mk);
 				dsNhanVien.add(nv);
@@ -268,4 +264,108 @@ public ArrayList<NhanVien> filterNangCao(String gioiTinh, String caTruc, String 
 		return dsNhanVien;
 		
 	}
+
+	public boolean insertNhanVien(NhanVien nv) {
+		
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement stmt = null;
+		int n = 0;
+		
+		try {
+			stmt = con.prepareStatement("INSERT INTO NhanVien VALUES"
+					+ "(?, ?, ?, ?, ?, ?, ?,?,?,?)");
+			stmt.setString(1, nv.getMaNhanVien());
+			stmt.setString(2, nv.getHoNhanVien());
+			stmt.setString(3, nv.getTenNhanVien());
+			stmt.setString(4, nv.getSoDienThoai());
+			stmt.setString(5, nv.getEmailNhanVien());
+			stmt.setString(6, nv.getCaTruc().getMaCaTruc());
+			stmt.setBoolean(7, nv.isGioiTinh());
+			stmt.setString(8, nv.getChucVu());
+			stmt.setDouble(9, nv.getTienLuong());
+			stmt.setString(10, "123");
+			n = stmt.executeUpdate();	
+		} catch (SQLException e) {
+			e.printStackTrace();
+			
+		}
+		finally {
+			try {
+				stmt.close();
+				
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+				
+			}
+		}
+		return n>0;
+	}
+	public boolean xoaNhanVien(String ma) {
+		
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement stmt = null;
+		int n = 0;
+		
+		try {
+			stmt = con.prepareStatement("DELETE  FROM NhanVien WHERE maNhanVien = ?");
+			stmt.setString(1, ma);
+			n = stmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			
+		}
+		
+		finally {
+			try {
+				stmt.close();
+				
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+				
+			}
+		}
+		return n>0;
+	}
+
+	public boolean updateNhanVien(NhanVien nv) {
+		
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement stmt = null;
+		int n = 0;
+		
+		try {
+			stmt = con.prepareStatement("UPDATE NhanVien SET ho = ?, ten = ?, sodienthoai = ?, email = ?, macatruc =?, gioitinh = ?, chucvu = ?, tienluong=?, matkhau=? WHERE maNhanVien = ?");
+			stmt.setString(1, nv.getHoNhanVien());
+			stmt.setString(2, nv.getTenNhanVien());
+			stmt.setString(3, nv.getSoDienThoai());
+			stmt.setString(4, nv.getEmailNhanVien());
+			stmt.setString(5, nv.getCaTruc().getMaCaTruc());
+			stmt.setBoolean(6, nv.isGioiTinh());
+			stmt.setString(7, nv.getChucVu());
+			stmt.setDouble(8, nv.getTienLuong());
+			stmt.setString(9, nv.getMatKhau());
+			stmt.setString(10, nv.getMaNhanVien());
+			n = stmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			
+		}
+		
+		finally {
+			try {
+				stmt.close();
+				
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+				
+			}
+		}
+		return n>0;
+	}
 }
+

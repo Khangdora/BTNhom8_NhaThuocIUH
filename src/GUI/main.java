@@ -145,7 +145,7 @@ public class main extends JFrame implements ActionListener, MouseListener {
 
 		centerPanel.add(box);
 		
-		updateTime();
+		//updateTime();
 		
 		panelNorth.add(centerPanel, BorderLayout.CENTER);
 		
