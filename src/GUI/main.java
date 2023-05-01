@@ -56,6 +56,7 @@ public class main extends JFrame implements ActionListener, MouseListener {
 	private ArrayList<JButton> buttons;
 	
 	ChildTab child_tab;
+	KhoThuoc khoThuoc;
 	
 	private NhanVien_DAO nhanvien_dao;
 	
@@ -72,7 +73,7 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		nhanvien_dao = new NhanVien_DAO();
 		nvlogin = nhanvien_dao.getNhanVienTheoMaNV(nv.getMaNhanVien());
 		child_tab = new ChildTab(new NhanVien(nv.getMaNhanVien()));
-		
+		khoThuoc = new KhoThuoc();
 		// ========================
 		
 		setTitle("Hệ thống Nhà thuốc IUH");
@@ -252,7 +253,7 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		
 		panelHoaDon = child_tab.panelHoaDon();
 		panelKhachHang = child_tab.panelKhachHang();
-		panelKhoThuoc = child_tab.panelKhoThuoc();
+		panelKhoThuoc = khoThuoc.panelKhoThuoc();
 		panelLichSu = child_tab.panelLichSu();
 		panelNhanVien = child_tab.panelNhanVien();
 		panelThongKe = child_tab.panelThongKe();

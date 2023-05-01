@@ -191,7 +191,6 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		
 		btnTaiLaiHoaDon = new JButton("Tải lại");
 		box.add(btnTaiLaiHoaDon);
-		btnTaiLaiHoaDon.setBorder(BorderFactory.createCompoundBorder(btnTaiLaiHoaDon.getBorder(), new BottomBorder()));
 		btnTaiLaiHoaDon.setFocusable(false);
 		btnTaiLaiHoaDon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		
@@ -293,6 +292,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		b3.add(new JLabel("Mã KH"));
 		b3.add(Box.createHorizontalStrut(5));
 		b3.add(txtmaKH_HD = new JTextField(5));
+		txtmaKH_HD.setPreferredSize(txtmaHoaDon.getPreferredSize());
 		txtmaKH_HD.setEditable(false);
 		b3.add(Box.createHorizontalStrut(10));
 		b3.add(new JLabel("Họ tên KH"));
@@ -413,16 +413,21 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		return myPanel;
 	}
 	
-	public JPanel panelKhoThuoc() {
-		JPanel myPanel = new JPanel();
-		myPanel.setPreferredSize(new Dimension(817, 600));
-		myPanel.setBackground(Color.decode("#EEEEEE"));
-		myPanel.setBorder(null);
-		
-		myPanel.add(new JLabel("KhoThuoc"));
-		
-		return myPanel;
-	}
+	// -------------------------------------------------------------------
+	JTextField txtFilter;
+	
+//	public JPanel panelKhoThuoc() {
+//		JPanel myPanel = new JPanel();
+//		myPanel.setPreferredSize(new Dimension(900, 600));
+//		myPanel.setBackground(Color.decode("#EEEEEE"));
+//		
+//		JPanel panelNorth = new JPanel();
+//		txtFilter = new JTextField(10);
+//		
+//		
+//		
+//		return myPanel;
+//	}
 	
 	public JPanel panelLichSu() {
 		JPanel myPanel = new JPanel();
@@ -686,7 +691,6 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		
 		if(o.equals(comboBoxDBC)||o.equals(comboBoxDVB)
 				||o.equals(comboBoxXX)||o.equals(comboBoxSX)) {
-			
 			String dangBaoChe = (String) comboBoxDBC.getSelectedItem();
 			String donViBan = (String) comboBoxDVB.getSelectedItem();
 			String xuatXu = (String) comboBoxXX.getSelectedItem();

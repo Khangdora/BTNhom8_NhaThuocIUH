@@ -220,7 +220,11 @@ public class HoaDon_DAO {
 			while (rs.next()) {
 				maHienTai = rs.getString(1);
 			}
-			
+			if (rs.next()) {
+		        maHienTai = rs.getString(1);
+		    } else {
+		        maHienTai = "HD1000"; // hoặc giá trị khác tùy ý
+		    }
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
