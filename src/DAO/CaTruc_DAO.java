@@ -1,6 +1,7 @@
 package DAO;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -40,5 +41,40 @@ public class CaTruc_DAO {
 		return dsCaTruc;
 			
 	}
-
+	
+	public CaTruc getCaTrucTheoMaCT(String maCT) {
+		CaTruc ct = new CaTruc();
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		
+		try {
+			
+			String sql = "Select * from CaTruc where macatruc = ?";
+			statement=con.prepareStatement(sql);
+			statement.setString(1, maCT);
+			ResultSet rs = statement.executeQuery();
+			while(rs.next()) {
+				ct.setMaCaTruc(rs.getString(1));
+				ct.setTenCaTruc(rs.getString(2));
+				ct.setGhiChu(rs.getString(3));
+			}
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		finally {
+			try {
+				statement.close();
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+		return ct;
+		
+	}
+	
 }

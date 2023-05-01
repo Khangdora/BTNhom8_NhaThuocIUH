@@ -25,6 +25,7 @@ import java.lang.Math;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -32,11 +33,14 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -46,12 +50,14 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import DAO.CaTruc_DAO;
 import DAO.HoaDon_DAO;
 import DAO.KhachHang_DAO;
 import DAO.NhanVien_DAO;
 import DAO.Thuoc_DAO;
 import connectDB.ConnectDB;
 import entity.CT_HoaDon;
+import entity.CaTruc;
 import entity.HoaDon;
 import entity.KhachHang;
 import entity.NhanVien;
@@ -67,6 +73,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 	private HoaDon_DAO hoadon_dao;
 	private KhachHang_DAO khachhang_dao;
 	private NhanVien nvlogin;
+	private CaTruc_DAO catruc_dao;
 	
 	//Gán phần tử
 	private JPanel listPanelHoaDon, addPanelHoaDon;
@@ -88,6 +95,18 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 	
 	private ArrayList<CT_HoaDon> listCTHoaDon;
 	
+	//NHAN VIEN
+	private JPanel listPanelNhanVien, addPanelKhachHang;
+	private JTextField txtMaNV_NV, txtHo_NV, txtTen_NV, txtSDT_NV, txtEmail_NV, txtGioiTinh_NV, txtCaTruc_NV, txtChucVu_NV, txtTimMa_NV, txtTienLuong_NV;
+	private JLabel lblTimMa_NV, lblLocCaTruc_NV, lblLocGioiTinh_NV, lblLocChucVu_NV, lblMa_NV, lblHo_NV, lblSDT_NV, lblEmail_NV;
+	private JButton btnLoc_NV, btnNext_NV, btnPrev_NV, btnThem_NV, btnXoa_NV, btnSua_NV, btnTaiLai_NV, btnXoaRong_NV;
+	private DefaultTableModel modelNV, modelNV_temp;
+	private JTable tableNV, tableNV_temp;
+	private JComboBox<String> comboBoxGioiTinh_NV, comboBoxChucVu_NV, comboBoxCaTruc_NV, comboBoxSortGioiTinh_NV, comboBoxSortChucVu_NV, comboBoxSortCaTruc_NV;
+	private JRadioButton radNam, radNu;
+	private ArrayList<NhanVien> listNV;
+	private ArrayList<CaTruc> listCaTruc;
+	
 	private Component main;
 	
 	public ChildTab(NhanVien nv) {
@@ -105,7 +124,8 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		khachhang_dao = new KhachHang_DAO();
 		
 		nvlogin = nv;
-		
+		listNV = nhanvien_dao.getallNhanVien();
+		catruc_dao = new CaTruc_DAO();
 		// ====================
 	}
 	
@@ -437,11 +457,322 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 	
 	public JPanel panelNhanVien() {
 		JPanel myPanel = new JPanel();
-		myPanel.setPreferredSize(new Dimension(817, 600));
+		myPanel.setPreferredSize(new Dimension(900, 600));
 		myPanel.setBackground(Color.decode("#EEEEEE"));
-		myPanel.setBorder(null);
+		lblEmail_NV = new JLabel("Email:");
 		
-		myPanel.add(new JLabel("NhanVien"));
+		NhanVien_DAO nhanvien_dao;
+		CaTruc_DAO catruc_dao;
+		
+		//panel nhap thong tin nhan vien
+		JPanel pnlNhapThongTin = new JPanel(); 
+		pnlNhapThongTin.add(Box.createVerticalStrut(25));
+		myPanel.add(pnlNhapThongTin);
+		pnlNhapThongTin.setPreferredSize(new Dimension(590,240));
+		pnlNhapThongTin.setBorder(BorderFactory.createTitledBorder("Nhập và thay đổi thông tin"));
+		pnlNhapThongTin.setLayout(new BoxLayout(pnlNhapThongTin, BoxLayout.Y_AXIS));
+		
+		// box nhap thong tin nhap vien
+		Box bRight1, bRight2, bRight3, bRight4, bRight5;
+		
+		bRight1 = Box.createHorizontalBox();
+		lblMa_NV = new JLabel("Mã:");
+		lblMa_NV.setPreferredSize(lblEmail_NV.getPreferredSize());
+		bRight1.add(lblMa_NV);
+		txtMaNV_NV = new JTextField();
+		txtMaNV_NV.setEditable(false);
+		bRight1.add(txtMaNV_NV);
+		pnlNhapThongTin.add(bRight1);
+		pnlNhapThongTin.add(Box.createVerticalStrut(15));
+		
+		
+		bRight2 = Box.createHorizontalBox();
+		lblHo_NV = new JLabel("Họ:");
+		lblHo_NV.setPreferredSize(lblEmail_NV.getPreferredSize());
+		bRight2.add(lblHo_NV);
+		txtHo_NV = new JTextField(10);
+		bRight2.add(txtHo_NV);
+		bRight2.add(Box.createHorizontalStrut(10));
+		bRight2.add(new JLabel("Tên:"));
+		txtTen_NV = new JTextField();
+		bRight2.add(txtTen_NV);
+		bRight2.add(Box.createHorizontalStrut(10));
+		bRight2.add(new JLabel("Giới tính:"));
+		radNam = new JRadioButton("Nam",true);
+		radNam.setEnabled(true);
+		radNu = new JRadioButton("Nữ");
+		ButtonGroup group = new ButtonGroup();
+		group.add(radNam);
+		group.add(radNu);
+		bRight2.add(radNam);
+		bRight2.add(radNu);
+		pnlNhapThongTin.add(bRight2);
+		pnlNhapThongTin.add(Box.createVerticalStrut(15));
+		
+		
+		bRight3 = Box.createHorizontalBox();
+		lblSDT_NV = new JLabel("SĐT:");
+		lblSDT_NV.setPreferredSize(lblEmail_NV.getPreferredSize());
+		bRight3.add(lblSDT_NV);
+		txtSDT_NV = new JTextField();
+		bRight3.add(txtSDT_NV);
+		bRight3.add(Box.createHorizontalStrut(10));
+		bRight3.add(new JLabel("Ca trực: "));
+		comboBoxCaTruc_NV = new JComboBox<String>(new String[] {"Ca sáng", "Ca chiều"});
+		bRight3.add(comboBoxCaTruc_NV);
+		comboBoxCaTruc_NV.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		bRight3.add(Box.createHorizontalStrut(10));
+		bRight3.add(new JLabel("Chức vụ: "));
+		comboBoxChucVu_NV = new JComboBox<String>(new String[] {"Nhân viên","Quản trị viên"});
+		bRight3.add(comboBoxChucVu_NV);
+		comboBoxChucVu_NV.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		pnlNhapThongTin.add(bRight3);
+		pnlNhapThongTin.add(Box.createVerticalStrut(15));
+	
+		
+		bRight4 = Box.createHorizontalBox();
+		bRight4.add(lblEmail_NV);
+		txtEmail_NV = new JTextField();
+		bRight4.add(txtEmail_NV);
+		bRight4.add(Box.createHorizontalStrut(10));
+		bRight4.add(new JLabel("Tiền lương"));
+		txtTienLuong_NV = new JTextField();
+		bRight4.add(txtTienLuong_NV);
+		pnlNhapThongTin.add(bRight4);
+		pnlNhapThongTin.add(Box.createVerticalStrut(15));
+		
+		bRight5 = Box.createHorizontalBox();
+		bRight5.add(Box.createHorizontalStrut(50));
+		btnThem_NV = new JButton("Thêm nhân viên");
+		bRight5.add(btnThem_NV);
+		btnSua_NV = new JButton("Sửa");
+		bRight5.add(Box.createHorizontalStrut(10));
+		bRight5.add(btnSua_NV);
+		bRight5.add(Box.createHorizontalStrut(10));
+		btnXoaRong_NV = new JButton("Xóa rỗng");
+		bRight5.add(btnXoaRong_NV);
+		pnlNhapThongTin.add(bRight5);
+		pnlNhapThongTin.add(Box.createVerticalStrut(5));
+		
+		
+		//// PANEL THONG TIN NHAN VIEN
+		/// lay thong tin cua nhan vien dang login
+		nhanvien_dao = new NhanVien_DAO();
+		NhanVien nhanVien = nhanvien_dao.getNhanVienTheoMaNV(nvlogin.getMaNhanVien());
+		
+		JTextField txtMa,txtHo, txtTen, txtSoDienThoai, txtEmail, txtCaTruc, txtGioiTinh, txtChucVu, txtTienLuong;
+		JComboBox<String> cbCaTruc, cbGioiTinh, cbChucVu;
+		
+		JPanel pnlThongTin = new JPanel();
+		JLabel avatar;
+		myPanel.add(pnlThongTin);
+		pnlThongTin.setPreferredSize(new Dimension(300, 240));
+		pnlThongTin.setBorder(BorderFactory.createTitledBorder("Thông tin nhân viên"));
+		
+		// box thông tin nhân viên
+		Box bLeft1, bLeft2, bLeft3, bLeft4;
+		pnlThongTin.setLayout(new BoxLayout(pnlThongTin, BoxLayout.Y_AXIS));
+		pnlThongTin.add(Box.createVerticalStrut(20));
+		
+		bLeft1 = Box.createHorizontalBox();
+		bLeft1.add(Box.createHorizontalStrut(105));
+		bLeft1.add(avatar = new JLabel(new ImageIcon(getClass().getResource("/img/avatar.png"))));
+		bLeft1.add(Box.createVerticalStrut(15));
+		pnlThongTin.add(bLeft1);
+		
+		pnlThongTin.add(Box.createVerticalStrut(10));
+		bLeft2 = Box.createHorizontalBox();
+		bLeft2.add(new JLabel("Mã nhân viên:"));
+		txtMa = new JTextField(nhanVien.getMaNhanVien());
+		txtMa.setEditable(false);
+		bLeft2.add(txtMa);
+		pnlThongTin.add(bLeft2);
+		
+		pnlThongTin.add(Box.createVerticalStrut(10));
+		bLeft3 = Box.createHorizontalBox();
+		bLeft3.add(new JLabel("Họ:"));
+		txtHo = new JTextField(nhanVien.getHoNhanVien());
+		txtHo.setEditable(false);
+		bLeft3.add(txtHo);
+		bLeft3.add(new JLabel("Tên:"));
+		txtTen = new JTextField(nhanVien.getTenNhanVien());
+		txtTen.setEditable(false);
+		bLeft3.add(txtTen);
+		bLeft3.add(new JLabel("Phái:"));
+		String phai;
+		if (nhanVien.isGioiTinh() == true) {
+			phai ="Nam";
+		}
+		else
+			phai = "Nữ";
+		txtGioiTinh = new JTextField(phai);
+		txtGioiTinh.setEditable(false);
+		bLeft3.add(txtGioiTinh);
+		pnlThongTin.add(bLeft3);
+		
+		pnlThongTin.add(Box.createVerticalStrut(10));
+		bLeft4 = Box.createHorizontalBox();
+		bLeft4.add(new JLabel("Ca:"));
+		txtCaTruc = new JTextField(nhanVien.getCaTruc().getMaCaTruc());
+		txtCaTruc.setEditable(false);
+		bLeft4.add(txtCaTruc);
+		bLeft4.add(new JLabel("Chức vụ:"));
+		txtChucVu = new JTextField(nhanVien.getChucVu());
+		txtChucVu.setEditable(false);
+		bLeft4.add(txtChucVu);
+		pnlThongTin.add(bLeft4);
+
+		
+		////////////// PANEL LOC NHAN VIEN
+		JPanel pnlLoc = new JPanel();
+		pnlLoc.setPreferredSize(new Dimension(900, 35));
+		myPanel.add(pnlLoc);
+		Box boxLocNV = Box.createHorizontalBox();
+		boxLocNV.add(lblTimMa_NV = new JLabel("Tìm theo mã nhân viên:"));
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		boxLocNV.add(txtTimMa_NV = new JTextField(5));
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		btnLoc_NV = new JButton("Tìm");
+		boxLocNV.add(btnLoc_NV);
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		boxLocNV.add(lblLocGioiTinh_NV = new JLabel("Giới tính"));
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		String[] gioiTinh_NV = {"Tất cả","Nam", "Nữ"};
+		comboBoxSortGioiTinh_NV = new JComboBox<String>(gioiTinh_NV);
+		boxLocNV.add(comboBoxSortGioiTinh_NV);
+		comboBoxSortGioiTinh_NV.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		boxLocNV.add(lblLocCaTruc_NV = new JLabel("Ca trực"));
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		String[] caTruc_NV = {"Tất cả","Ca sáng","Ca chiều"};
+		comboBoxSortCaTruc_NV = new JComboBox<String>(caTruc_NV);
+		boxLocNV.add(comboBoxSortCaTruc_NV);
+		
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		boxLocNV.add(lblLocCaTruc_NV = new JLabel("Chức vụ"));
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		String[] chucVu_NV = {"Tất cả","Nhân viên","Quản trị viên"};
+		comboBoxSortChucVu_NV = new JComboBox<String>(chucVu_NV);
+		boxLocNV.add(comboBoxSortChucVu_NV);
+		
+		boxLocNV.add(Box.createHorizontalStrut(10));
+		btnXoa_NV = new JButton("Xóa");
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		boxLocNV.add(btnXoa_NV);
+		btnTaiLai_NV = new JButton("Tải lại");
+		boxLocNV.add(Box.createHorizontalStrut(5));
+		boxLocNV.add(btnTaiLai_NV);
+		
+		pnlLoc.add(boxLocNV);
+		Border cnBorder = BorderFactory.createLoweredBevelBorder();
+		pnlLoc.setBorder(cnBorder);
+		
+		////// PANEL TABLE THONG TIN NHAN VIEN
+		JPanel panelTable = new JPanel();
+		panelTable.setLayout(new BorderLayout());
+		panelTable.setBorder(BorderFactory.createTitledBorder("Danh sách nhân viên"));
+		String[] colHeader = {"Mã","Họ","Tên","Số điện thoại","Email","Giới tính","Ca trực","Chức vụ","Tiền lương"};
+		
+		modelNV = new DefaultTableModel(colHeader, 0) {
+			private static final long serialVersionUID = 1L;
+			public boolean isCellEditable(int row, int column) {
+		        return false;
+		    }
+		};
+		
+		tableNV = new JTable(modelNV);
+		tableNV.setRowHeight(20);
+		
+		JScrollPane sp = new JScrollPane(tableNV, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		sp.setPreferredSize(new Dimension(890,290));
+		DefaultTableCellRenderer center = new DefaultTableCellRenderer();
+		center.setHorizontalAlignment(JLabel.CENTER);
+		DefaultTableCellRenderer right = new DefaultTableCellRenderer();
+		right.setHorizontalAlignment(JLabel.RIGHT);
+		tableNV.getColumnModel().getColumn(0).setCellRenderer(center);
+		tableNV.getColumnModel().getColumn(3).setCellRenderer(center);
+		tableNV.getColumnModel().getColumn(4).setCellRenderer(center);
+		tableNV.getColumnModel().getColumn(5).setCellRenderer(center);
+		tableNV.getColumnModel().getColumn(6).setCellRenderer(center);
+		tableNV.getColumnModel().getColumn(7).setCellRenderer(center);
+		tableNV.getColumnModel().getColumn(8).setCellRenderer(right);
+		
+		tableNV.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+		panelTable.add(sp, BorderLayout.CENTER);
+		setDuLieuNhanVien();
+		myPanel.add(panelTable);
+		
+		
+		btnThem_NV.addActionListener(this);
+		btnXoa_NV.addActionListener(this);
+		btnLoc_NV.addActionListener(this);
+		btnSua_NV.addActionListener(this);
+		btnTaiLai_NV.addActionListener(this);
+		btnXoaRong_NV.addActionListener(this);
+		comboBoxSortCaTruc_NV.addActionListener(this);
+		comboBoxSortChucVu_NV.addActionListener(this);
+		comboBoxSortGioiTinh_NV.addActionListener(this);
+		
+		tableNV.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int r = tableNV.getSelectedRow();
+				txtMaNV_NV.setText(modelNV.getValueAt(r, 0).toString());
+				txtHo_NV.setText(modelNV.getValueAt(r, 1).toString());
+				txtTen_NV.setText(modelNV.getValueAt(r, 2).toString());
+				txtSDT_NV.setText(modelNV.getValueAt(r, 3).toString());
+				txtEmail_NV.setText(modelNV.getValueAt(r, 4).toString());
+				
+				if(modelNV.getValueAt(r, 5).toString().equalsIgnoreCase("Nam")) 
+					radNam.setSelected(true);
+					else 
+						radNu.setSelected(true);
+				
+				
+				if(modelNV.getValueAt(r, 6).toString().equalsIgnoreCase("Ca sáng")) 
+					comboBoxCaTruc_NV.setSelectedIndex(0);
+					else
+						comboBoxCaTruc_NV.setSelectedIndex(1);
+					
+				if(modelNV.getValueAt(r, 7).toString().equalsIgnoreCase("Nhân viên")) 
+					comboBoxChucVu_NV.setSelectedIndex(0);
+					else
+						comboBoxChucVu_NV.setSelectedIndex(1);
+				
+				txtTienLuong_NV.setText(modelNV.getValueAt(r, 8).toString());
+			}
+		});
 		
 		return myPanel;
 	}
@@ -543,6 +874,150 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		
 	}
 
+	////////////////////////XU LY NHAN VIEN///////////////////////////
+	public void setDuLieuLocNhanVien() {
+		modelNV.getDataVector().removeAllElements();
+		setDuLieuNhanVien();
+		comboBoxSortGioiTinh_NV.setSelectedIndex(0);
+		comboBoxSortCaTruc_NV.setSelectedIndex(0);
+		comboBoxSortChucVu_NV.setSelectedIndex(0);
+		
+	}
+	
+	private boolean xoa1NhanVien(int x) {
+		if(x >=0 && x < listNV.size()) {
+			listNV.remove(x);
+			return true;
+		}
+		else return false;
+	}
+	
+	public boolean suaNhanVien(String ma, String ho, String ten, String sdt, String email, String caTruc, boolean gioitinh, String chucVu, Double tienLuong, String matKhau) {
+		CaTruc ct = catruc_dao.getCaTrucTheoMaCT(caTruc);
+		NhanVien nv = new NhanVien(ma, ho, ten, sdt, email, ct, gioitinh ,chucVu,tienLuong, matKhau);
+		if(listNV.contains(nv)) { 
+//			kh.setMaKhachHang(ma);
+			nv.setHoNhanVien(ho);
+			nv.setTenNhanVien(ten);;
+			nv.setSoDienThoai(sdt);
+			nv.setEmailNhanVien(email);
+			nv.setCaTruc(ct);
+			nv.setGioiTinh(gioitinh);
+			nv.setChucVu(chucVu);
+			nv.setTienLuong(tienLuong);
+			nv.setMatKhau(matKhau);
+			return true;
+		}
+		else return false;
+	}
+	
+	public void setDuLieuNhanVien() {
+		modelNV.getDataVector().removeAllElements();
+		DecimalFormat formatter = new DecimalFormat("#,###");
+		catruc_dao = new CaTruc_DAO();
+		List<NhanVien> dsNV = nhanvien_dao.getallNhanVien();
+		String gioitinh = "";
+		for(NhanVien nv : dsNV) {
+			if(nv.isGioiTinh()) 
+				gioitinh = "Nam";
+				else
+					gioitinh = "Nữ";
+			String maCaTruc = nv.getCaTruc().getMaCaTruc();
+			nv.setCaTruc(catruc_dao.getCaTrucTheoMaCT(maCaTruc));
+			
+			modelNV.addRow(new Object[] {nv.getMaNhanVien(),nv.getHoNhanVien(),nv.getTenNhanVien(),
+					nv.getSoDienThoai(),nv.getEmailNhanVien(), gioitinh, nv.getCaTruc().getTenCaTruc(),
+					nv.getChucVu(), formatter.format(nv.getTienLuong())});
+		}
+	}
+	
+	private NhanVien revertNVFromTextfields() {
+		nhanvien_dao = new NhanVien_DAO();
+		String ma = nhanvien_dao.maNVAuto();
+		String ten = txtTen_NV.getText().trim();
+		String ho = txtHo_NV.getText().trim();
+		String sdt = txtSDT_NV.getText().trim();
+		String email = txtEmail_NV.getText().trim();
+		boolean gioiTinh = radNam.isSelected();
+		String ca = (String) comboBoxCaTruc_NV.getSelectedItem();
+		catruc_dao = new CaTruc_DAO();
+		listCaTruc = catruc_dao.getAllCaTruc();
+		CaTruc caTruc = new CaTruc(ca);
+		if (ca.equalsIgnoreCase("Ca sáng"))
+			caTruc = listCaTruc.get(0);
+		else
+			caTruc = listCaTruc.get(1);
+		
+		String chucVu = (String) comboBoxChucVu_NV.getSelectedItem();
+		Double tienLuong = Double.parseDouble(txtTienLuong_NV.getText());
+		String matKhau = "123";
+		return new NhanVien(ma, ho, ten, sdt, email,  caTruc, gioiTinh,chucVu,tienLuong,matKhau);
+	}
+	
+	public void xoaRongFieldNhanVien() {
+		txtMaNV_NV.setText("");
+		txtTen_NV.setText("");
+		txtHo_NV.setText("");
+		txtSDT_HD.setText("");
+		txtEmail_NV.setText("");
+		txtTienLuong_NV.setText("");
+		radNam.setSelected(true);
+		comboBoxCaTruc_NV.setSelectedIndex(0);
+		comboBoxChucVu_NV.setSelectedIndex(0);
+		txtHo_NV.requestFocus();
+		tableNV.clearSelection();
+		
+	}
+	
+	private boolean validNV() {
+		//String ma = txtma_KH.getText().trim();
+		String ten = txtTen_NV.getText().trim();
+		String ho = txtHo_NV.getText().trim();
+		String sdt = txtSDT_NV.getText().trim();
+		String email = txtEmail_NV.getText().trim();
+		String tienLuong = txtTienLuong_NV.getText().trim();
+		
+		if (!(ho.length() > 0 && ho.matches("^[\\p{L}]*(?:\\h+[\\p{L}]*)*$"))) {
+			JOptionPane.showMessageDialog(null, "Error: Họ khách hàng không có số hay kí tự đặc biệt");
+			txtHo_NV.requestFocus();
+			return false;
+		}
+		
+		else if (!(ten.length() > 0 && ten.matches("^[\\p{L}]*$"))) {
+			JOptionPane.showMessageDialog(null, "Error: Tên khách hàng là 1 từ, không có số, hay kí tự đặc biệt");
+			txtTen_NV.requestFocus();
+			return false;
+		}
+		
+		else if(!(sdt.length() > 0 && sdt.matches("^\\d{10}$"))) {
+			JOptionPane.showMessageDialog(null, "Error: Số điện thoại là 1 dãy số nguyên có 10 số");
+			txtSDT_NV.requestFocus();
+			return false;
+		}
+		
+		else if(!(email.length()>=0 && email.matches("^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$"))){
+			JOptionPane.showMessageDialog(null, "Sai định dạng email");
+			txtEmail_NV.requestFocus();
+			return false;
+		}
+		
+		else if(!(tienLuong.length() > 0 && tienLuong.matches("^\\d+$"))) {
+			JOptionPane.showMessageDialog(null, "Error: Tiền lương là 1 dãy số nguyên");
+			txtSDT_NV.requestFocus();
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean addToListNhanVien(NhanVien nv) {
+		
+		if (listNV.contains(nv)){
+				return false;
+			}
+		listNV.add(nv);
+		return true;
+	}
+	
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -669,7 +1144,118 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		// TODO Auto-generated method stub
 		
 		Object o = e.getSource();
+		/////////////SU KIEN NHAN VIEN/////////////////////////////
+		if(o.equals(btnThem_NV)) {
+			DecimalFormat formatter = new DecimalFormat("#,###");
+			NhanVien nv = revertNVFromTextfields();
+			if(validNV()) {
+				if(addToListNhanVien(nv)) {
+					String gioitinh = "";
+					if (nv.isGioiTinh()) {
+						gioitinh = "Nam";
+					}else {
+						gioitinh = "Nữ";
+					}
+					JOptionPane.showMessageDialog(null, "Thêm thành công");
+					modelNV.addRow(new Object[] {nv.getMaNhanVien(),nv.getHoNhanVien(),nv.getTenNhanVien(),
+							nv.getSoDienThoai(),nv.getEmailNhanVien(), gioitinh, nv.getCaTruc().getTenCaTruc(),
+							nv.getChucVu(), formatter.format(nv.getTienLuong())});
+					
+				}
+				if (nhanvien_dao.insertNhanVien(nv)) 
+					JOptionPane.showMessageDialog(null, "Đã cập nhật lại dữ liệu!");
+				else
+					JOptionPane.showMessageDialog(null, "Error: Lỗi cập nhật dữ liệu!");
+				
+			}
+		}
+		if(o.equals(btnXoa_NV)) {
+			int r = tableNV.getSelectedRow();
+			if(r != -1) {
+				int tb = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa dòng này không?", "Delete", JOptionPane.NO_OPTION);
+				if(tb == JOptionPane.YES_OPTION) {
+					if(xoa1NhanVien(r)){
+						JOptionPane.showMessageDialog(null, "Xóa thành công");
+						modelNV.removeRow(r);			
+					}
+					if(nhanvien_dao.xoaNhanVien(listNV.get(r).getMaNhanVien()))
+						JOptionPane.showMessageDialog(null, "Đã cập nhật lại dữ liệu!");
+					else
+						JOptionPane.showMessageDialog(null, "Error: Lỗi cập nhật dữ liệu!");
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(null, "Bạn chưa chọn dòng xóa!");
+			}
+		}
+		/*
+		if(o.equals(btnSua)) {
+			int r = tableKH_temp.getSelectedRow();
+			if(r == -1) {
+				JOptionPane.showMessageDialog(null, "Bạn chưa chọn dòng");
+				return;
+			}
+			if(tableKH_temp.getSelectedRowCount() > 1) {
+				JOptionPane.showMessageDialog(null, "Chỉ được chọn 1 dòng để sửa");
+				return;
+			}
+			
+			KhachHang kh = revertKHFromTextfields();
+			if(validKH()) {
+				try {
+					if(suaKhachHang(kh.getMaKhachHang(), kh.getHoKhachHang(), kh.getTenKhachHang(), kh.getSoDienThoai(), kh.getEmailKhachHang(), kh.isGioiTinh())) {
+						modelKH_temp.removeRow(r);
+						modelKH_temp.insertRow(r, kh.getObjectNV());
+					}
+				}catch(Exception e1){
+					JOptionPane.showMessageDialog(null, "Không thể sửa, hãy kiểm tra lại");
+				}
+			}
+		}
+		*/
+		if(o.equals(btnXoaRong_NV))
+			xoaRongFieldNhanVien();
+		else
+		if(o.equals(comboBoxSortCaTruc_NV)||o.equals(comboBoxSortChucVu_NV)
+				||o.equals(comboBoxSortGioiTinh_NV)){
+			String gioiTinh = (String) comboBoxSortGioiTinh_NV.getSelectedItem();
+			String chucVu = (String) comboBoxSortChucVu_NV.getSelectedItem();
+			String caTruc = (String) comboBoxSortCaTruc_NV.getSelectedItem();
+			
+			ArrayList<NhanVien> dsSort_NV = nhanvien_dao.filterNangCao(gioiTinh, caTruc, chucVu);
+			
+			if(dsSort_NV.size()==0) {
+				JOptionPane.showMessageDialog(main, "Không có dữ liệu.");
+				setDuLieuLocNhanVien();
+				
+			}
+			else {
+				DefaultTableModel temp = (DefaultTableModel) tableNV.getModel();
+				temp.getDataVector().removeAllElements();
+				catruc_dao = new CaTruc_DAO();
+				for(NhanVien nv : dsSort_NV) {
+					
+					DecimalFormat formatter = new DecimalFormat("#,###");
+					
+					String gt; 
+					if (nv.isGioiTinh()) {
+						gt = "Nam";
+					} else
+						gt = "Nữ";
+				
+					String maCaTruc = nv.getCaTruc().getMaCaTruc();
+					nv.setCaTruc(catruc_dao.getCaTrucTheoMaCT(maCaTruc));
+					modelNV.addRow(new Object[] {nv.getMaNhanVien(),nv.getHoNhanVien(),nv.getTenNhanVien(),nv.getSoDienThoai(),
+							nv.getEmailNhanVien(),gt,nv.getCaTruc().getTenCaTruc(),nv.getChucVu(),formatter.format(nv.getTienLuong())});
+			
+				}
+			}
+		}
+		if(o.equals(btnTaiLai_NV)) {
+			setDuLieuLocNhanVien();
+		}
 		
+		/////////////SU KIEN HOA DON///////////////////////
 		if(o.equals(btnTaiLaiHoaDon)) {
 			setDuLieuHoaDon(1);
 			

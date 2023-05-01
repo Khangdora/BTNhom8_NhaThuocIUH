@@ -6,12 +6,12 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="D:/BaiTap_QLNV/lib/sqljdbc42.jar">
+	<classpathentry kind="lib" path="T:/JavaProject/BTNhom8_NhaThuocIUH/lib/sqljdbc42.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/LENOVO/Downloads/fontawesomefx-8.9.jar">
+	<classpathentry kind="lib" path="T:/JavaProject/BTNhom8_NhaThuocIUH/lib/fontawesomefx-8.9.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
