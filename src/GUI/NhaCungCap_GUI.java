@@ -319,23 +319,36 @@ public class NhaCungCap_GUI extends JFrame implements ActionListener, MouseListe
 		
 		JLabel lblTen = new JLabel("Tên nhà cung cấp: ");
 		txtTen = new JTextField();
+		txtTen.setName("thongbao_ten");
+		lblTBTen = new JLabel();
 		myPanel.add(lblTen);
 		myPanel.add(txtTen);
+		myPanel.add(lblTBTen);
 		
 		JLabel lblDiaChi = new JLabel("Địa chỉ: ");
 		txtDiaChi = new JTextField();
+		txtDiaChi.setName("thongbao_dc");
+		lblTBDC = new JLabel();
 		myPanel.add(lblDiaChi);
 		myPanel.add(txtDiaChi);
+		myPanel.add(lblTBDC);
 		
 		JLabel lblSDT = new JLabel("Số điện thoại: ");
 		txtSDT = new JTextField();
+		txtSDT.setName("thongbao_sdt");
+		lblTBSDT = new JLabel();
 		myPanel.add(lblSDT);
 		myPanel.add(txtSDT);
+		myPanel.add(lblTBSDT);
 		
 		JLabel lblEmail = new JLabel("Email: ");
 		txtEmail = new JTextField();
+		txtEmail.setName("thongbao_email");
+		lblTBEmail = new JLabel();
 		myPanel.add(lblEmail);
 		myPanel.add(txtEmail);
+		myPanel.add(lblTBEmail);
+
 		
 		btnSaveAdd = new JButton("Lưu");
 		btnXoaTrang = new JButton("Xóa trắng");
@@ -350,15 +363,19 @@ public class NhaCungCap_GUI extends JFrame implements ActionListener, MouseListe
 		
 		lblTen.setBounds(x, y*3, width1, height);
 		txtTen.setBounds(width1, y*3, width2, height);
+		lblTBTen.setBounds(width1, y*4, width2, height);
 		
 		lblDiaChi.setBounds(x, y*5, width1, height);
 		txtDiaChi.setBounds(width1, y*5, width2, height);
+		lblTBDC.setBounds(width1, y*6, width2, height);
 		
 		lblSDT.setBounds(x, y*7, width1, height);
 		txtSDT.setBounds(width1, y*7, width2, height);
+		lblTBSDT.setBounds(width1, y*8, width2, height);
 		
 		lblEmail.setBounds(x, y*9, width1, height);
 		txtEmail.setBounds(width1, y*9, width2, height);
+		lblTBEmail.setBounds(width1, y*10, width2, height);
 		
 		
 		btnSaveAdd.setBounds(160, 235, 100, 25);
@@ -371,6 +388,17 @@ public class NhaCungCap_GUI extends JFrame implements ActionListener, MouseListe
 		frameAdd.add(myPanel);
 		
 		//-----------------------------------------------
+		txtTen.getDocument().putProperty("owner", txtTen);
+		txtTen.getDocument().addDocumentListener(this);
+		
+		txtDiaChi.getDocument().putProperty("owner", txtDiaChi);
+		txtDiaChi.getDocument().addDocumentListener(this);
+		
+		txtSDT.getDocument().putProperty("owner", txtSDT);
+		txtSDT.getDocument().addDocumentListener(this);
+		
+		txtEmail.getDocument().putProperty("owner", txtEmail);
+		txtEmail.getDocument().addDocumentListener(this);
 		
 		return frameAdd;
 	}
@@ -396,9 +424,11 @@ public class NhaCungCap_GUI extends JFrame implements ActionListener, MouseListe
 		else {
 			String maNCC = tableNCC.getValueAt(row, 0).toString();
 			NhaCungCap ncc = ncc_dao.getNCCTheoMaNCC(maNCC);
+//			String tenNCC = ncc.getTenNCC();
 			if(JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn xóa nhà cung cấp có tên: " + ncc.getTenNCC(), "Thông báo", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 				if(ncc_dao.delete(ncc)) {
 					setDuLieuNCC();
+					KhoThuoc.docDuLieuVaoComboboxNCC();
 				}
 			}
 		}
@@ -417,7 +447,7 @@ public class NhaCungCap_GUI extends JFrame implements ActionListener, MouseListe
 			modelNCC.addRow(new Object[] {ncc.getMaNCC(), ncc.getTenNCC(), ncc.getDiaChiNCC(), ncc.getSdtNCC(), ncc.getEmailNCC()});
 			xoaTrang();
 			frameAdd.dispose();
-			KhoThuoc.comboBoxSelectNCC.addItem(ncc.getTenNCC());;
+			KhoThuoc.docDuLieuVaoComboboxNCC();
 		}
 	}
 	
@@ -445,6 +475,10 @@ public class NhaCungCap_GUI extends JFrame implements ActionListener, MouseListe
 		txtSDT.setText("");
 		txtEmail.setText("");
 		tableNCC.clearSelection();
+		lblTBTen.setText("");
+		lblTBEmail.setText("");
+		lblTBDC.setText("");
+		lblTBSDT.setText("");
 	}
 	
 	public void setDuLieuNCC() {

@@ -12,6 +12,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import java.util.Calendar;
@@ -62,7 +64,7 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 	 */
 	private static final long serialVersionUID = 1L;
 	protected Thuoc_DAO thuoc_dao;
-	protected NhaCungCap_DAO ncc_dao;
+	protected static NhaCungCap_DAO ncc_dao;
 	protected JPanel listPanelKhoThuoc;
 	protected JTextField txtKhoThuoc;
 	protected JComboBox<String> comboBoxDVB;
@@ -88,8 +90,6 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 	protected JButton btnXoa;
 	
 	protected Component main;
-	protected JSpinner snNgayNhap;
-	protected JSpinner snHSD;	
 	
 	protected String[] dangBaoCheStr = {"Dung dịch", "Viên sủi", "Bột", "Viên nén", "Viên nhộng", "Khác"};
 	protected String[] donViBanStr = {"Hộp", "Chai", "Vỉ", "Tuýp"};
@@ -109,6 +109,11 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 	private JButton btnSave;
 	private JButton btnExit;
 	private JFrame frameInfoThuoc;
+	private JTextField txtHSD;
+	private DateChooser dateHSD;
+	private JTextField txtNgayNhap;
+	private DateChooser dateNgayNhap;
+	private JLabel lblTBHSD;
 	
 	public KhoThuoc() {
 
@@ -184,10 +189,12 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		panelEnter.add(lblTBDonGia);
 		
 		JLabel lblNgayNhap = new JLabel("Ngày nhập: ");
-		snNgayNhap = ngayNhap();
+		txtNgayNhap = new JTextField();
+		dateNgayNhap = new DateChooser();
+		dateNgayNhap.setTextRefernce(txtNgayNhap);
 		lblNgayNhap.setBounds(x, y*9, width1, height);
-		snNgayNhap.setBounds(width1, y*9, width2, height);
-		snNgayNhap.setEnabled(false);
+		txtNgayNhap.setBounds(width1, y*9, width2, height);
+		txtNgayNhap.setEnabled(false);
 		
 		
 		JLabel lblDVB = new JLabel("Đơn vị bán: ");
@@ -213,9 +220,15 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		
 		
 		JLabel lblHSD = new JLabel("Hạn sử dụng: ");
-		snHSD = hanSuDung();
+		txtHSD = new JTextField();
+		dateHSD = new DateChooser();
+		dateHSD.setTextRefernce(txtHSD);
+		lblTBHSD = new JLabel();
+		txtHSD.setName("tbHSD");
 		lblHSD.setBounds(x + width1 + width2, y*9, width1, height);
-		snHSD.setBounds(x + width1*2 + width2, y*9, width2, height);
+		txtHSD.setBounds(x + width1*2 + width2, y*9, width2, height);
+		lblTBHSD.setBounds(x + width1*2 + width2, y*10, width2, height);
+		
 		
 		
 		JLabel lblThanhPhan = new JLabel("Thành phần: ");
@@ -265,9 +278,10 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		panelEnter.add(lblCongDung);
 		panelEnter.add(spCongDung);
 		panelEnter.add(lblNgayNhap);
-		panelEnter.add(snNgayNhap);
+		panelEnter.add(txtNgayNhap);
 		panelEnter.add(lblHSD);
-		panelEnter.add(snHSD);
+		panelEnter.add(txtHSD);
+		panelEnter.add(lblTBHSD);
 		
 		myPanel.add(panelEnter);
 //----------------------------------------------------------------
@@ -498,6 +512,9 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		txtThanhPhan.getDocument().putProperty("owners", txtThanhPhan);
 		txtThanhPhan.getDocument().addDocumentListener(this);
 		
+		txtHSD.getDocument().putProperty("owner", txtHSD);
+		txtHSD.getDocument().addDocumentListener(this);
+		
 		return myPanel;
 	}
 	
@@ -557,11 +574,11 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		myPanel.add(lblTBDonGia);
 		
 		JLabel lblNgayNhap = new JLabel("Ngày nhập: ");
-		snNgayNhap = ngayNhap();
-		snNgayNhap.setEnabled(false);
+		txtNgayNhap = new JTextField();
+		txtNgayNhap.setEnabled(false);
 		lblNgayNhap.setBounds(x, y*9, width1, height);
-		snNgayNhap.setBounds(width1, y*9, width2, height);
-		snNgayNhap.setEnabled(false);
+		txtNgayNhap.setBounds(width1, y*9, width2, height);
+		txtNgayNhap.setEnabled(false);
 		
 		
 		JLabel lblDVB = new JLabel("Đơn vị bán: ");
@@ -591,10 +608,14 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		
 		
 		JLabel lblHSD = new JLabel("Hạn sử dụng: ");
-		snHSD = hanSuDung();
-		snHSD.setEnabled(false);
+		txtHSD = new JTextField();
+		txtHSD.setEnabled(false);
 		lblHSD.setBounds(x + width1 + width2, y*9, width1, height);
-		snHSD.setBounds(x + width1*2 + width2, y*9, width2, height);
+		txtHSD.setBounds(x + width1*2 + width2, y*9, width2, height);
+//		snHSD = hanSuDung();
+//		snHSD.setEnabled(false);
+//		lblHSD.setBounds(x + width1 + width2, y*9, width1, height);
+//		snHSD.setBounds(x + width1*2 + width2, y*9, width2, height);
 		
 		
 		JLabel lblThanhPhan = new JLabel("Thành phần: ");
@@ -647,9 +668,10 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		myPanel.add(lblCongDung);
 		myPanel.add(spCongDung);
 		myPanel.add(lblNgayNhap);
-		myPanel.add(snNgayNhap);
+		myPanel.add(txtNgayNhap);
 		myPanel.add(lblHSD);
-		myPanel.add(snHSD);
+		myPanel.add(txtHSD);
+		
 		
 		frameInfoThuoc.add(myPanel);
 		
@@ -710,10 +732,10 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		myPanel.add(lblTBDonGia);
 		
 		JLabel lblNgayNhap = new JLabel("Ngày nhập: ");
-		snNgayNhap = ngayNhap();
+		txtNgayNhap = new JTextField();
 		lblNgayNhap.setBounds(x, y*9, width1, height);
-		snNgayNhap.setBounds(width1, y*9, width2, height);
-		snNgayNhap.setEnabled(false);
+		txtNgayNhap.setBounds(width1, y*9, width2, height);
+		txtNgayNhap.setEnabled(false);
 		
 		
 		JLabel lblDVB = new JLabel("Đơn vị bán: ");
@@ -739,9 +761,14 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		
 		
 		JLabel lblHSD = new JLabel("Hạn sử dụng: ");
-		snHSD = hanSuDung();
+		txtHSD = new JTextField();
+		txtHSD.setName("tbHSD");
+		dateHSD = new DateChooser();
+		dateHSD.setTextRefernce(txtHSD);
 		lblHSD.setBounds(x + width1 + width2, y*9, width1, height);
-		snHSD.setBounds(x + width1*2 + width2, y*9, width2, height);
+		txtHSD.setBounds(x + width1*2 + width2, y*9, width2, height);
+		lblTBHSD = new JLabel();
+		lblTBHSD.setBounds(x + width1*2 + width2, y*10, width2, height);
 		
 		
 		JLabel lblThanhPhan = new JLabel("Thành phần: ");
@@ -792,9 +819,10 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		myPanel.add(lblCongDung);
 		myPanel.add(spCongDung);
 		myPanel.add(lblNgayNhap);
-		myPanel.add(snNgayNhap);
+		myPanel.add(txtNgayNhap);
 		myPanel.add(lblHSD);
-		myPanel.add(snHSD);
+		myPanel.add(txtHSD);
+		myPanel.add(lblTBHSD);
 		
 		frameUpdate.add(myPanel);
 		
@@ -819,6 +847,24 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		
 		frameUpdate.add(panelChucNang);
 		
+		txtTenSP.getDocument().putProperty("owner", txtTenSP);
+		txtTenSP.getDocument().addDocumentListener(this);
+		
+		txtSoLuong.getDocument().putProperty("owner", txtSoLuong);
+		txtSoLuong.getDocument().addDocumentListener(this);
+		
+		txtDonGia.getDocument().putProperty("owner", txtDonGia);
+		txtDonGia.getDocument().addDocumentListener(this);
+		
+		txtCongDung.getDocument().putProperty("owners", txtCongDung);
+		txtCongDung.getDocument().addDocumentListener(this);
+		
+		txtThanhPhan.getDocument().putProperty("owners", txtThanhPhan);
+		txtThanhPhan.getDocument().addDocumentListener(this);
+		
+		txtHSD.getDocument().putProperty("owner", txtHSD);
+		txtHSD.getDocument().addDocumentListener(this);
+		
 		readDataIntoTxt(thuoc);
 		return frameUpdate;
 	}
@@ -830,11 +876,11 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		DecimalFormat format = new DecimalFormat("#");
 		String donGia = format.format(thuoc.getDonGia());
 		txtDonGia.setText(donGia);
-//		txtDonGia.setText(Double.toString(thuoc.getDonGia()));
 		txtThanhPhan.setText(thuoc.getThanhPhan());
 		txtCongDung.setText(thuoc.getCongDung());
-		snNgayNhap.setValue(thuoc.getNgayNhapThuoc());
-		snHSD.setValue(thuoc.getHanSuDung());
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		txtNgayNhap.setText(dateFormat.format(thuoc.getNgayNhapThuoc()));
+		txtHSD.setText(dateFormat.format(thuoc.getHanSuDung()));
 		String dvb = thuoc.getDonViBan();
 		for (int i = 0; i < comboBoxSelectDVB.getItemCount(); i++) {
 			if(dvb.compareTo((String) comboBoxSelectDVB.getItemAt(i)) == 0) {
@@ -862,7 +908,7 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		}
 	}
 	
-	public void update() {
+	public void update() throws ParseException {
 		removeTextlblTB();
 		if(validData()) {
 			String maSP = txtMaSP.getText();
@@ -874,8 +920,9 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 			String dang = (String) comboBoxSelectDBC.getSelectedItem();
 			String thanhPhan = txtThanhPhan.getText();
 			String congDung = txtCongDung.getText();
-			Date ngayNhap = (Date) snNgayNhap.getValue();
-			Date HSD = (Date) snHSD.getValue();
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+			Date ngayNhap = (Date) dateFormat.parse(txtNgayNhap.getText());
+			Date HSD = dateFormat.parse(txtHSD.getText());
 			String tenNCC = (String) comboBoxSelectNCC.getSelectedItem();
 			NhaCungCap ncc = ncc_dao.getNCCTheoTenNCC(tenNCC);
 			Thuoc thuoc = new Thuoc(maSP, tenSP, dvb, soLuong, donGia, thanhPhan, xuatXu, congDung, dang, ngayNhap, HSD, ncc);
@@ -889,7 +936,8 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		}
 	}
 	
-	public void docDuLieuVaoComboboxNCC() {		
+	public static void docDuLieuVaoComboboxNCC() {	
+		comboBoxSelectNCC.removeAllItems();
 		for(String tenNCC : ncc_dao.getTenNCC()) {
 			comboBoxSelectNCC.addItem(tenNCC);
 		}
@@ -915,7 +963,6 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 			if(JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa thuốc có tên: "  + thuoc.getTenThuoc(), "Thông báo", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 				if(thuoc_dao.delete(thuoc)) {
 					reload();
-					xoaTrang();
 				}		
 			}
 		}	
@@ -925,18 +972,22 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		txtMaSP.setText(thuoc_dao.maThuocAuto());
 		txtTenSP.setText("");
 		Document doc = txtSoLuong.getDocument();
-		try {
-			doc.remove(0, doc.getLength());
-		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		Document doc1 = txtDonGia.getDocument();
-		try {
-			doc.remove(0, doc.getLength());
-		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(doc.getLength() > 0) {
+			try {
+				doc.remove(0, doc.getLength());
+			} catch (BadLocationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if(doc1.getLength() > 0) {
+			try {
+				doc1.remove(0, doc1.getLength());
+			} catch (BadLocationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		txtThanhPhan.setText("");
 		txtCongDung.setText("");
@@ -948,7 +999,7 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 	
 	
 	
-	public void add() {
+	public void add() throws ParseException {
 		removeTextlblTB();
 		if(validData()) {
 			String maSP = txtMaSP.getText();
@@ -960,11 +1011,11 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 			String dang = (String) comboBoxSelectDBC.getSelectedItem();
 			String thanhPhan = txtThanhPhan.getText();
 			String congDung = txtCongDung.getText();
-			Date ngayNhap = (Date) snNgayNhap.getValue();
-			Date HSD = (Date) snHSD.getValue();
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+			Date ngayNhap = dateFormat.parse(txtNgayNhap.getText());
+			Date HSD = dateFormat.parse(txtHSD.getText());
 			String tenNCC = (String) comboBoxSelectNCC.getSelectedItem();
 			NhaCungCap ncc = ncc_dao.getNCCTheoTenNCC(tenNCC);
-//			NhaCungCap ncc = (NhaCungCap) comboBoxSelectNCC.getSelectedItem();
 			
 			Thuoc thuoc = new Thuoc(maSP, tenSP, dvb, soLuong, donGia, thanhPhan, xuatXu, congDung, dang, ngayNhap, HSD, ncc);
 			
@@ -1082,7 +1133,12 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		// TODO Auto-generated method stub
 		Object o = e.getSource();
 		if(o.equals(btnSave)) {
-			update();
+			try {
+				update();
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 		if(o.equals(btnExit)) {
 			frameUpdate.dispose();
@@ -1107,7 +1163,12 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		}
 		
 		if(o.equals(btnThem)) {
-			add();
+			try {
+				add();
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 		
 		if(o.equals(btnTaiLaiKhoThuoc)) {
@@ -1217,7 +1278,7 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		JTextArea textArea = (JTextArea) e.getDocument().getProperty("owners");
 		
 		if(textField != null) {
-			if(textField.getName().equals("timkiem_khothuoc")) {
+			if(textField.getName().equals("timkiem_khothuoc")) {				
 				String regex = textField.getText().trim();
 				
 				if(regex.equals("")) 
@@ -1270,6 +1331,29 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 					lblThongBao(lblTBDonGia, 1, "");
 				}
 			}
+			if(textField.getName().equals("tbHSD")) {
+				SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+				Date ngayNhap = null;
+				try {
+					ngayNhap = dateFormat.parse(txtNgayNhap.getText());
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				Date HSD = null;
+				try {
+					HSD = dateFormat.parse(txtHSD.getText());
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				if(ngayNhap.compareTo(HSD) > 0) {
+					lblThongBao(lblTBHSD, 0, "Hạn sử dụng phải lớn hơn ngày nhập");
+				}
+				else {
+					lblThongBao(lblTBHSD, 1, "");
+				}
+			}
 		}
 		
 		if(textArea != null) {
@@ -1311,6 +1395,29 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		if(!donGia.matches("^[1-9][0-9]*$")){
 			lblThongBao(lblTBDonGia, 0, "Sai đơn giá ");
 			sum++;
+		}
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		Date ngayNhap = null;
+		try {
+			ngayNhap = dateFormat.parse(txtNgayNhap.getText());
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		Date HSD = null;
+		try {
+			HSD = dateFormat.parse(txtHSD.getText());
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		if(ngayNhap.compareTo(HSD) > 0) {
+			lblThongBao(lblTBHSD, 0, "Hạn sử dụng phải lớn hơn ngày nhập");
+			sum++;
+		}
+		else {
+			lblThongBao(lblTBHSD, 1, "");
 		}
 		
 //		String thanhPhan = txtThanhPhan.getText().trim();
