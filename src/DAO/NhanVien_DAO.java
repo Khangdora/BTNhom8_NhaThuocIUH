@@ -338,7 +338,7 @@ public ArrayList<NhanVien> filterNangCao(String gioiTinh, String caTruc, String 
 		int n = 0;
 		
 		try {
-			stmt = con.prepareStatement("UPDATE NhanVien SET ho = ?, ten = ?, sodienthoai = ?, email = ?, macatruc =?, gioitinh = ?, chucvu = ?, tienluong=?, matkhau=? WHERE maNhanVien = ?");
+			stmt = con.prepareStatement("UPDATE NhanVien SET ho = ?, ten = ?, sodienthoai = ?, email = ?, macatruc =?, gioitinh = ?, chucvu = ?, tienluong=? WHERE maNhanVien = ?");
 			stmt.setString(1, nv.getHoNhanVien());
 			stmt.setString(2, nv.getTenNhanVien());
 			stmt.setString(3, nv.getSoDienThoai());
@@ -347,8 +347,7 @@ public ArrayList<NhanVien> filterNangCao(String gioiTinh, String caTruc, String 
 			stmt.setBoolean(6, nv.isGioiTinh());
 			stmt.setString(7, nv.getChucVu());
 			stmt.setDouble(8, nv.getTienLuong());
-			stmt.setString(9, nv.getMatKhau());
-			stmt.setString(10, nv.getMaNhanVien());
+			stmt.setString(9, nv.getMaNhanVien());
 			n = stmt.executeUpdate();
 			
 		} catch (SQLException e) {
@@ -367,5 +366,55 @@ public ArrayList<NhanVien> filterNangCao(String gioiTinh, String caTruc, String 
 		}
 		return n>0;
 	}
+	
+	public ArrayList<NhanVien> filterNhanVien(String regex) {
+		
+		ArrayList<NhanVien> dsnv = new ArrayList<NhanVien>();
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement stmt = null;
+		
+		try {
+			
+			String sql = "SELECT TOP 50 * FROM NhanVien WHERE ten LIKE ? OR maNhanVien LIKE ?";
+			stmt = con.prepareStatement(sql);
+			stmt.setString(1, "%"+regex+"%");
+			stmt.setString(2, "%"+regex+"%");
+			ResultSet rs = stmt.executeQuery();
+			
+			while (rs.next()) {
+				
+				String maNhanVien = rs.getString(1);
+				String hoNhanVien = rs.getString(2);
+				String tenNhanVien = rs.getString(3);
+				String soDienThoai = rs.getString(4);
+				String emailNhanVien = rs.getString(5);
+				CaTruc caTruc = new CaTruc(rs.getString(6));
+				boolean gioiTinh = rs.getBoolean(7);
+				String chucVu = rs.getString(8);
+				double tienLuong = rs.getDouble(9);
+				String matKhau = rs.getString(10);
+				
+				NhanVien nv = new NhanVien(maNhanVien, hoNhanVien, tenNhanVien, soDienThoai, emailNhanVien, caTruc, gioiTinh, chucVu, tienLuong, matKhau);
+				dsnv.add(nv);
+				
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		finally {
+			try {
+				stmt.close();
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+		return dsnv;
+		
+	}
+	
 }
 

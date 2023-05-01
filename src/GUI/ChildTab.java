@@ -100,8 +100,8 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 	private JTextField txtMaNV_NV, txtHo_NV, txtTen_NV, txtSDT_NV, txtEmail_NV, txtGioiTinh_NV, txtCaTruc_NV, txtChucVu_NV, txtTimMa_NV, txtTienLuong_NV;
 	private JLabel lblTimMa_NV, lblLocCaTruc_NV, lblLocGioiTinh_NV, lblLocChucVu_NV, lblMa_NV, lblHo_NV, lblSDT_NV, lblEmail_NV;
 	private JButton btnLoc_NV, btnNext_NV, btnPrev_NV, btnThem_NV, btnXoa_NV, btnSua_NV, btnTaiLai_NV, btnXoaRong_NV;
-	private DefaultTableModel modelNV, modelNV_temp;
-	private JTable tableNV, tableNV_temp;
+	private DefaultTableModel modelNV;
+	private JTable tableNV;
 	private JComboBox<String> comboBoxGioiTinh_NV, comboBoxChucVu_NV, comboBoxCaTruc_NV, comboBoxSortGioiTinh_NV, comboBoxSortChucVu_NV, comboBoxSortCaTruc_NV;
 	private JRadioButton radNam, radNu;
 	private ArrayList<NhanVien> listNV;
@@ -479,9 +479,10 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		lblMa_NV = new JLabel("Mã:");
 		lblMa_NV.setPreferredSize(lblEmail_NV.getPreferredSize());
 		bRight1.add(lblMa_NV);
-		txtMaNV_NV = new JTextField();
+		txtMaNV_NV = new JTextField(10);
 		txtMaNV_NV.setEditable(false);
 		bRight1.add(txtMaNV_NV);
+		bRight1.add(Box.createHorizontalStrut(10));
 		pnlNhapThongTin.add(bRight1);
 		pnlNhapThongTin.add(Box.createVerticalStrut(15));
 		
@@ -539,7 +540,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		txtTienLuong_NV = new JTextField();
 		bRight4.add(txtTienLuong_NV);
 		pnlNhapThongTin.add(bRight4);
-		pnlNhapThongTin.add(Box.createVerticalStrut(15));
+		pnlNhapThongTin.add(Box.createVerticalStrut(25));
 		
 		bRight5 = Box.createHorizontalBox();
 		bRight5.add(Box.createHorizontalStrut(50));
@@ -552,7 +553,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		btnXoaRong_NV = new JButton("Xóa rỗng");
 		bRight5.add(btnXoaRong_NV);
 		pnlNhapThongTin.add(bRight5);
-		pnlNhapThongTin.add(Box.createVerticalStrut(5));
+		pnlNhapThongTin.add(Box.createVerticalStrut(10));
 		
 		
 		//// PANEL THONG TIN NHAN VIEN
@@ -628,10 +629,11 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		pnlLoc.setPreferredSize(new Dimension(900, 35));
 		myPanel.add(pnlLoc);
 		Box boxLocNV = Box.createHorizontalBox();
-		boxLocNV.add(lblTimMa_NV = new JLabel("Tìm theo mã nhân viên:"));
+		boxLocNV.add(lblTimMa_NV = new JLabel("Tìm theo mã và nhân viên:"));
 		boxLocNV.add(Box.createHorizontalStrut(5));
 		boxLocNV.add(txtTimMa_NV = new JTextField(5));
 		boxLocNV.add(Box.createHorizontalStrut(5));
+		txtTimMa_NV.setName("timKiemMa_NV");
 		btnLoc_NV = new JButton("Tìm");
 		boxLocNV.add(btnLoc_NV);
 		boxLocNV.add(Box.createHorizontalStrut(5));
@@ -708,6 +710,8 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		setDuLieuNhanVien();
 		myPanel.add(panelTable);
 		
+		txtTimMa_NV.getDocument().putProperty("owner", txtTimMa_NV);
+		txtTimMa_NV.getDocument().addDocumentListener(this);
 		
 		btnThem_NV.addActionListener(this);
 		btnXoa_NV.addActionListener(this);
@@ -747,6 +751,8 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				Object o = e.getSource();
+				if (e.getClickCount() == 1 && o.equals(tableNV)) {
 				int r = tableNV.getSelectedRow();
 				txtMaNV_NV.setText(modelNV.getValueAt(r, 0).toString());
 				txtHo_NV.setText(modelNV.getValueAt(r, 1).toString());
@@ -770,7 +776,19 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 					else
 						comboBoxChucVu_NV.setSelectedIndex(1);
 				
-				txtTienLuong_NV.setText(modelNV.getValueAt(r, 8).toString());
+				String tienLuong = modelNV.getValueAt(r, 8).toString();
+				int x = tienLuong.indexOf(",");
+				 while (x != -1) {	
+					tienLuong = removeCharAt(tienLuong, x);
+					x = tienLuong.indexOf(",");
+				} 
+				 
+				txtTienLuong_NV.setText(tienLuong);
+				}
+				
+				if (e.getClickCount() == 2 && o.equals(tableNV)) {
+					xoaRongFieldNhanVien();
+				}
 			}
 		});
 		
@@ -875,6 +893,10 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 	}
 
 	////////////////////////XU LY NHAN VIEN///////////////////////////
+	public static String removeCharAt(String s, int pos) { 
+		return s.substring(0, pos) + s.substring(pos + 1); 
+	}
+
 	public void setDuLieuLocNhanVien() {
 		modelNV.getDataVector().removeAllElements();
 		setDuLieuNhanVien();
@@ -892,20 +914,18 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		else return false;
 	}
 	
-	public boolean suaNhanVien(String ma, String ho, String ten, String sdt, String email, String caTruc, boolean gioitinh, String chucVu, Double tienLuong, String matKhau) {
-		CaTruc ct = catruc_dao.getCaTrucTheoMaCT(caTruc);
-		NhanVien nv = new NhanVien(ma, ho, ten, sdt, email, ct, gioitinh ,chucVu,tienLuong, matKhau);
+	public boolean suaNhanVien(String ma, String ho, String ten, String sdt, String email, CaTruc caTruc, boolean gioitinh, String chucVu, Double tienLuong) {
+		NhanVien nv = new NhanVien(ma, ho, ten, sdt, email, caTruc, gioitinh ,chucVu,tienLuong);
 		if(listNV.contains(nv)) { 
-//			kh.setMaKhachHang(ma);
+			listNV.set(listNV.indexOf(nv), nv);
 			nv.setHoNhanVien(ho);
 			nv.setTenNhanVien(ten);;
 			nv.setSoDienThoai(sdt);
 			nv.setEmailNhanVien(email);
-			nv.setCaTruc(ct);
+			nv.setCaTruc(caTruc);
 			nv.setGioiTinh(gioitinh);
 			nv.setChucVu(chucVu);
 			nv.setTienLuong(tienLuong);
-			nv.setMatKhau(matKhau);
 			return true;
 		}
 		else return false;
@@ -915,9 +935,8 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		modelNV.getDataVector().removeAllElements();
 		DecimalFormat formatter = new DecimalFormat("#,###");
 		catruc_dao = new CaTruc_DAO();
-		List<NhanVien> dsNV = nhanvien_dao.getallNhanVien();
 		String gioitinh = "";
-		for(NhanVien nv : dsNV) {
+		for(NhanVien nv : listNV) {
 			if(nv.isGioiTinh()) 
 				gioitinh = "Nam";
 				else
@@ -931,9 +950,14 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		}
 	}
 	
-	private NhanVien revertNVFromTextfields() {
+	private NhanVien revertNVFromTextfields(boolean flag) {
 		nhanvien_dao = new NhanVien_DAO();
-		String ma = nhanvien_dao.maNVAuto();
+		String ma;
+		if (flag == false) {
+			ma = nhanvien_dao.maNVAuto();
+		}
+		else
+			ma = txtMaNV_NV.getText().trim();		
 		String ten = txtTen_NV.getText().trim();
 		String ho = txtHo_NV.getText().trim();
 		String sdt = txtSDT_NV.getText().trim();
@@ -950,15 +974,14 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		
 		String chucVu = (String) comboBoxChucVu_NV.getSelectedItem();
 		Double tienLuong = Double.parseDouble(txtTienLuong_NV.getText());
-		String matKhau = "123";
-		return new NhanVien(ma, ho, ten, sdt, email,  caTruc, gioiTinh,chucVu,tienLuong,matKhau);
+		return new NhanVien(ma, ho, ten, sdt, email,  caTruc, gioiTinh,chucVu,tienLuong);
 	}
 	
 	public void xoaRongFieldNhanVien() {
 		txtMaNV_NV.setText("");
 		txtTen_NV.setText("");
 		txtHo_NV.setText("");
-		txtSDT_HD.setText("");
+		txtSDT_NV.setText("");
 		txtEmail_NV.setText("");
 		txtTienLuong_NV.setText("");
 		radNam.setSelected(true);
@@ -977,13 +1000,13 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		String email = txtEmail_NV.getText().trim();
 		String tienLuong = txtTienLuong_NV.getText().trim();
 		
-		if (!(ho.length() > 0 && ho.matches("^[\\p{L}]*(?:\\h+[\\p{L}]*)*$"))) {
+		if (!(ho.length() > 0 && ho.matches("^[\\p{L}]*$"))) {
 			JOptionPane.showMessageDialog(null, "Error: Họ khách hàng không có số hay kí tự đặc biệt");
 			txtHo_NV.requestFocus();
 			return false;
 		}
 		
-		else if (!(ten.length() > 0 && ten.matches("^[\\p{L}]*$"))) {
+		else if (!(ten.length() > 0 && ten.matches("^[\\p{L}]*(?:\\h+[\\p{L}]*)*$"))) {
 			JOptionPane.showMessageDialog(null, "Error: Tên khách hàng là 1 từ, không có số, hay kí tự đặc biệt");
 			txtTen_NV.requestFocus();
 			return false;
@@ -1010,7 +1033,6 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 	}
 	
 	private boolean addToListNhanVien(NhanVien nv) {
-		
 		if (listNV.contains(nv)){
 				return false;
 			}
@@ -1124,6 +1146,31 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 			}
 		}
 		
+		if(textField.getName().equals("timKiemMa_NV")) {
+			String regex = textField.getText().trim();
+			
+			if(regex.equals("")) 
+				setDuLieuNhanVien();
+			else {
+				modelNV.getDataVector().removeAllElements();
+				
+				List<NhanVien> list = nhanvien_dao.filterNhanVien(regex);
+				for(NhanVien nv : list) {
+					
+					DecimalFormat formatter = new DecimalFormat("#,###");
+					String gioitinh = "";
+					if (nv.isGioiTinh()) {
+						gioitinh = "Nam";
+					}else {
+						gioitinh = "Nữ";
+					}
+					modelNV.addRow(new Object[] {nv.getMaNhanVien(),nv.getHoNhanVien(),nv.getTenNhanVien(),
+							nv.getSoDienThoai(),nv.getEmailNhanVien(), gioitinh, nv.getCaTruc().getTenCaTruc(),
+							nv.getChucVu(), formatter.format(nv.getTienLuong())});
+				}
+			}
+		}
+		
 	}
 
 	@Override
@@ -1146,9 +1193,18 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		Object o = e.getSource();
 		/////////////SU KIEN NHAN VIEN/////////////////////////////
 		if(o.equals(btnThem_NV)) {
+			if (tableNV.getSelectedRow() != -1) {
+				JOptionPane.showMessageDialog(null, "Error: Không thể thêm khi đang chọn 1 dòng! (click chuột 2 lần để bỏ chọn)");
+			} else {
 			DecimalFormat formatter = new DecimalFormat("#,###");
-			NhanVien nv = revertNVFromTextfields();
+//			String checkMa = txtMaNV_NV.getText();
+//			NhanVien nv = new NhanVien();
+//			if (listNV.contains(checkMa)) {
+//				nv = revertNVFromTextfields(true);
+//			} else
+//				nv = revertNVFromTextfields(false);
 			if(validNV()) {
+				NhanVien nv = revertNVFromTextfields(false);
 				if(addToListNhanVien(nv)) {
 					String gioitinh = "";
 					if (nv.isGioiTinh()) {
@@ -1160,13 +1216,16 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 					modelNV.addRow(new Object[] {nv.getMaNhanVien(),nv.getHoNhanVien(),nv.getTenNhanVien(),
 							nv.getSoDienThoai(),nv.getEmailNhanVien(), gioitinh, nv.getCaTruc().getTenCaTruc(),
 							nv.getChucVu(), formatter.format(nv.getTienLuong())});
-					
-				}
-				if (nhanvien_dao.insertNhanVien(nv)) 
-					JOptionPane.showMessageDialog(null, "Đã cập nhật lại dữ liệu!");
-				else
-					JOptionPane.showMessageDialog(null, "Error: Lỗi cập nhật dữ liệu!");
+					if (nhanvien_dao.insertNhanVien(nv)) {
+						JOptionPane.showMessageDialog(null, "Đã cập nhật lại dữ liệu!");
+					}
+						
+					else
+						JOptionPane.showMessageDialog(null, "Error: Lỗi cập nhật dữ liệu!");
+				} else
+					JOptionPane.showMessageDialog(null,"Error: Dữ liệu bị trùng!");
 				
+			}
 			}
 		}
 		if(o.equals(btnXoa_NV)) {
@@ -1174,45 +1233,65 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 			if(r != -1) {
 				int tb = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa dòng này không?", "Delete", JOptionPane.NO_OPTION);
 				if(tb == JOptionPane.YES_OPTION) {
-					if(xoa1NhanVien(r)){
+					String maCanXoa = modelNV.getValueAt(r, 0).toString().trim();
+					if(nhanvien_dao.xoaNhanVien(maCanXoa)){
+						listNV.remove(r);
+						modelNV.removeRow(r);	
 						JOptionPane.showMessageDialog(null, "Xóa thành công");
-						modelNV.removeRow(r);			
-					}
-					if(nhanvien_dao.xoaNhanVien(listNV.get(r).getMaNhanVien()))
-						JOptionPane.showMessageDialog(null, "Đã cập nhật lại dữ liệu!");
-					else
-						JOptionPane.showMessageDialog(null, "Error: Lỗi cập nhật dữ liệu!");
+						JOptionPane.showMessageDialog(null, "Đã cập nhật lại dữ liệu!");	
+						}else
+							JOptionPane.showMessageDialog(null, "Error: Lỗi cập nhật dữ liệu!");
 				}
 			}
 			else {
 				JOptionPane.showMessageDialog(null, "Bạn chưa chọn dòng xóa!");
 			}
 		}
-		/*
-		if(o.equals(btnSua)) {
-			int r = tableKH_temp.getSelectedRow();
+		
+		if(o.equals(btnSua_NV)) {
+			int r = tableNV.getSelectedRow();
 			if(r == -1) {
 				JOptionPane.showMessageDialog(null, "Bạn chưa chọn dòng");
 				return;
 			}
-			if(tableKH_temp.getSelectedRowCount() > 1) {
+			if(tableNV.getSelectedRowCount() > 1) {
 				JOptionPane.showMessageDialog(null, "Chỉ được chọn 1 dòng để sửa");
 				return;
 			}
 			
-			KhachHang kh = revertKHFromTextfields();
-			if(validKH()) {
+			if(validNV()) {
 				try {
-					if(suaKhachHang(kh.getMaKhachHang(), kh.getHoKhachHang(), kh.getTenKhachHang(), kh.getSoDienThoai(), kh.getEmailKhachHang(), kh.isGioiTinh())) {
-						modelKH_temp.removeRow(r);
-						modelKH_temp.insertRow(r, kh.getObjectNV());
+					NhanVien nv = revertNVFromTextfields(true);
+					if(suaNhanVien(nv.getMaNhanVien(),nv.getHoNhanVien(),nv.getTenNhanVien(),nv.getSoDienThoai(),
+							nv.getEmailNhanVien(),nv.getCaTruc(),nv.isGioiTinh(),nv.getChucVu(),nv.getTienLuong())) {
+						DecimalFormat formatter = new DecimalFormat("#,###");
+						String gioitinh = "";
+						if (nv.isGioiTinh()) {
+							gioitinh = "Nam";
+						}else {
+							gioitinh = "Nữ";
+						}
+						modelNV.removeRow(r);
+						modelNV.insertRow(r, new Object[] {nv.getMaNhanVien(),nv.getHoNhanVien(),nv.getTenNhanVien(),
+								nv.getSoDienThoai(),nv.getEmailNhanVien(), gioitinh, nv.getCaTruc().getTenCaTruc(),
+								nv.getChucVu(), formatter.format(nv.getTienLuong())});
+						JOptionPane.showMessageDialog(null, "Sửa nhân viên thành công!");
+						if(nhanvien_dao.updateNhanVien(nv)) {
+							modelNV.getDataVector().removeAllElements();
+							setDuLieuNhanVien();
+							xoaRongFieldNhanVien();
+							JOptionPane.showMessageDialog(null, "Đã cập nhật lại dữ liệu!");	
+						} else
+							JOptionPane.showMessageDialog(null, "Error: Lỗi cập nhật dữ liệu!");
+	
 					}
+					else
+						JOptionPane.showMessageDialog(null, "Không thể sửa, hãy kiểm tra lại");
 				}catch(Exception e1){
 					JOptionPane.showMessageDialog(null, "Không thể sửa, hãy kiểm tra lại");
 				}
 			}
 		}
-		*/
 		if(o.equals(btnXoaRong_NV))
 			xoaRongFieldNhanVien();
 		else
@@ -1253,6 +1332,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		}
 		if(o.equals(btnTaiLai_NV)) {
 			setDuLieuLocNhanVien();
+			xoaRongFieldNhanVien();
 		}
 		
 		/////////////SU KIEN HOA DON///////////////////////
@@ -1392,9 +1472,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
     			listCTHoaDon.remove(row);
     		
         	setDuLieuChiTietHoaDon();
-        	lblTongTienHD.setText(tongTienCTHD());
-
-        	
+        	lblTongTienHD.setText(tongTienCTHD());	
         }
         
 	}
