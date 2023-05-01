@@ -417,6 +417,7 @@ public class NhaCungCap_GUI extends JFrame implements ActionListener, MouseListe
 			modelNCC.addRow(new Object[] {ncc.getMaNCC(), ncc.getTenNCC(), ncc.getDiaChiNCC(), ncc.getSdtNCC(), ncc.getEmailNCC()});
 			xoaTrang();
 			frameAdd.dispose();
+			KhoThuoc.comboBoxSelectNCC.addItem(ncc.getTenNCC());;
 		}
 	}
 	

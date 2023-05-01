@@ -12,20 +12,17 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import java.util.Calendar;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import javax.swing.BorderFactory;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -50,7 +47,6 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.DocumentFilter;
-import javax.swing.text.NumberFormatter;
 import javax.swing.text.PlainDocument;
 
 
@@ -59,7 +55,6 @@ import DAO.Thuoc_DAO;
 import connectDB.ConnectDB;
 import entity.NhaCungCap;
 import entity.Thuoc;
-import others.RoundedBorder;
 
 public class KhoThuoc extends JFrame implements ActionListener, MouseListener, DocumentListener{
 	/**
@@ -109,7 +104,7 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 	private JButton btnSua;
 	private JButton btnThemNCC;
 	protected JComboBox<String> comboBoxSelectXX;
-	protected JComboBox<String> comboBoxSelectNCC;
+	protected static JComboBox<String> comboBoxSelectNCC;
 	private JFrame frameUpdate;
 	private JButton btnSave;
 	private JButton btnExit;
