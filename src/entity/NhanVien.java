@@ -97,7 +97,7 @@ public class NhanVien {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(maNhanVien);
+		return Objects.hash(emailNhanVien, maNhanVien, soDienThoai);
 	}
 
 	@Override
@@ -109,7 +109,8 @@ public class NhanVien {
 		if (getClass() != obj.getClass())
 			return false;
 		NhanVien other = (NhanVien) obj;
-		return Objects.equals(maNhanVien, other.maNhanVien);
+		return Objects.equals(emailNhanVien, other.emailNhanVien) || Objects.equals(maNhanVien, other.maNhanVien)
+				|| Objects.equals(soDienThoai, other.soDienThoai);
 	}
 
 	public NhanVien(String maNhanVien,  String hoNhanVien, String tenNhanVien, String soDienThoai, String emailNhanVien,
@@ -130,6 +131,20 @@ public class NhanVien {
 	public NhanVien(String maNhanVien) {
 		super();
 		this.maNhanVien = maNhanVien;
+	}
+	
+	public NhanVien(String maNhanVien, String hoNhanVien, String tenNhanVien, String soDienThoai, String emailNhanVien,
+			CaTruc caTruc, boolean gioiTinh, String chucVu, double tienLuong) {
+		super();
+		this.maNhanVien = maNhanVien;
+		this.tenNhanVien = tenNhanVien;
+		this.hoNhanVien = hoNhanVien;
+		this.soDienThoai = soDienThoai;
+		this.emailNhanVien = emailNhanVien;
+		this.caTruc = caTruc;
+		this.gioiTinh = gioiTinh;
+		this.chucVu = chucVu;
+		this.tienLuong = tienLuong;
 	}
 
 	public NhanVien() {
