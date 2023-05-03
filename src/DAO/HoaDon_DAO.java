@@ -29,12 +29,8 @@ public class HoaDon_DAO {
 			ResultSet rs = stmt.executeQuery(sql);
 			
 			while (rs.next()) {
-				totalRows = rs.getInt(totalRows);				
+				totalRows = rs.getInt(1);				
 			}
-			
-			rs.close();
-			stmt.close();
-			con.close();
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -42,6 +38,56 @@ public class HoaDon_DAO {
 		
 		return totalRows;
 		
+	}
+	
+	public ArrayList<HoaDon> getPagesHoaDon(int pages) {
+		
+		int x = pages-1;
+		int start = limit*x;
+		ArrayList<HoaDon> dshoadon = new ArrayList<HoaDon>();
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement stmt = null;
+		
+		try {
+			
+			String sql = "SELECT * FROM HoaDon ORDER BY maHoaDon OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+			stmt = con.prepareStatement(sql);
+			stmt.setInt(1, start);
+			stmt.setInt(2, limit);
+			ResultSet rs = stmt.executeQuery();
+			
+			while(rs.next()) {
+				
+				String maHoaDon = rs.getString(1);
+				String maKhachHang = rs.getString(2);
+				String maNhanVien = rs.getString(3);
+				boolean dangHoaDon = rs.getBoolean(4);
+				boolean thanhToan = rs.getBoolean(5);
+				Date ngayMua = rs.getDate(6);
+				double tienKhach = rs.getDouble(7);
+				
+				KhachHang kh = new KhachHang(maKhachHang);
+				NhanVien nv = new NhanVien(maNhanVien);
+				
+				HoaDon hoadon = new HoaDon(maHoaDon, ngayMua, kh, nv, dangHoaDon, thanhToan, tienKhach);
+				dshoadon.add(hoadon);
+				
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		finally {
+			try {
+				stmt.close();
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+		return dshoadon;
 	}
 	
 	public ArrayList<HoaDon> getallHoaDon() {
@@ -220,6 +266,12 @@ public class HoaDon_DAO {
 			while (rs.next()) {
 				maHienTai = rs.getString(1);
 			}
+			
+			if (rs.next()) {
+		        maHienTai = rs.getString(1);
+		    } else {
+		        maHienTai = "HD1000"; // hoặc giá trị khác tùy ý
+		    }
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

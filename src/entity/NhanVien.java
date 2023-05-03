@@ -127,6 +127,13 @@ public class NhanVien {
 		this.tienLuong = tienLuong;
 		this.matKhau = matKhau;
 	}
+	
+	public boolean kiemTraQuyen() {
+		if(this.chucVu.trim().equals("Nhân viên"))
+			return false;
+		else
+			return true;
+	}
 
 	public NhanVien(String maNhanVien) {
 		super();

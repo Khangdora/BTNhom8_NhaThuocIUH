@@ -11,6 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import connectDB.ConnectDB;
+import entity.NhaCungCap;
 import entity.Thuoc;
 
 public class Thuoc_DAO {
@@ -37,6 +38,126 @@ public class Thuoc_DAO {
 		}
 		
 		return totalRows;
+	}
+	
+	public boolean checkExist(int maNV) {
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			stmt = con.prepareStatement("select * from NhanVien where maNV = ?");
+			stmt.setInt(1, maNV);
+			rs = stmt.executeQuery();
+			return rs.next();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		} finally {
+			try {
+			rs.close();
+			stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public boolean update(Thuoc thuoc) {
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement stmt = null;
+		int n = 0;
+		try {
+			stmt = con.prepareStatement("update Thuoc set tenThuoc = ?, donViBan = ?, soLuong = ?"
+					+ ", donGia = ?, thanhPhan = ?, xuatXu = ?, congDung = ?, dangBaoChe = ?, ngayNhap = ?, hanSuDung = ?,"
+					+ "maNCC = ? where maThuoc = ?");
+			
+			stmt.setString(1, thuoc.getTenThuoc());
+			stmt.setString(2, thuoc.getDonViBan());
+			stmt.setInt(3, thuoc.getSoLuong());
+			stmt.setDouble(4, thuoc.getDonGia());
+			stmt.setString(5, thuoc.getThanhPhan());
+			stmt.setString(6, thuoc.getXuatXu());
+			stmt.setString(7, thuoc.getCongDung());
+			stmt.setString(8, thuoc.getDangBaoChe());
+			java.sql.Date sqlDateNgayNhap = new java.sql.Date(thuoc.getNgayNhapThuoc().getTime());
+			stmt.setDate(9, sqlDateNgayNhap);
+			java.sql.Date sqlDateHSD = new java.sql.Date(thuoc.getHanSuDung().getTime());
+			stmt.setDate(10, sqlDateHSD);
+			stmt.setString(11, thuoc.getNcc().getMaNCC());
+			stmt.setString(12, thuoc.getMaThuoc());
+//			stmt.setString(12, thuoc.getThumbnail());
+			n = stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return n > 0;
+	}
+	
+	public boolean delete(Thuoc thuoc) {
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement stmt = null;
+		int n = 0;
+		try {
+			stmt = con.prepareStatement("delete from Thuoc where maThuoc = ?");
+			stmt.setString(1, thuoc.getMaThuoc());
+			n = stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return n > 0;
+	}
+	
+	public boolean create(Thuoc thuoc) {
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement stmt = null;
+		int n = 0;
+		try {
+			stmt = con.prepareStatement("insert into Thuoc values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, (SELECT maNCC FROM NhaCungCap WHERE tenNCC = ?))");
+			stmt.setString(1, thuoc.getMaThuoc());
+			stmt.setString(2, thuoc.getTenThuoc());
+			stmt.setString(3, thuoc.getDonViBan());
+			stmt.setInt(4, thuoc.getSoLuong());
+			stmt.setDouble(5, thuoc.getDonGia());
+			stmt.setString(6, thuoc.getThanhPhan());
+			stmt.setString(7, thuoc.getXuatXu());
+			stmt.setString(8, thuoc.getCongDung());
+			stmt.setString(9, thuoc.getDangBaoChe());
+			java.sql.Date sqlDateNgayNhap = new java.sql.Date(thuoc.getNgayNhapThuoc().getTime());
+			stmt.setDate(10, sqlDateNgayNhap);
+			java.sql.Date sqlDateHSD = new java.sql.Date(thuoc.getHanSuDung().getTime());
+			stmt.setDate(11, sqlDateHSD);
+			stmt.setString(12, "");
+			stmt.setString(13, thuoc.getNcc().getTenNCC());
+			n = stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return n > 0;
 	}
 	
 	public ArrayList<Thuoc> getallThuoc() {
@@ -84,7 +205,10 @@ public class Thuoc_DAO {
 		PreparedStatement statement = null;
 		try {
 			
-			String sql = "SELECT * FROM Thuoc WHERE maThuoc = ?";
+			String sql = "SELECT t.*, n.* \r\n"
+					+ "FROM Thuoc t \r\n"
+					+ "INNER JOIN NhaCungCap n ON t.maNCC = n.maNCC\r\n"
+					+ "WHERE t.maThuoc = ?";
 			statement = con.prepareStatement(sql);
 			statement.setString(1, maThuoc);
 			ResultSet rs = statement.executeQuery();
@@ -102,9 +226,14 @@ public class Thuoc_DAO {
 				Date ngayNhapThuoc = rs.getDate(10);
 				Date hanSuDung = rs.getDate(11);
 				String thumbnail = rs.getString(12);
+				String maNCC = rs.getString(14);
+				String tenNCC = rs.getString(15);
+				String diaChi = rs.getString(16);
+				String sdt = rs.getString(17);
+				String email = rs.getString(18);
+				NhaCungCap ncc = new NhaCungCap(maNCC, tenNCC, diaChi, sdt, email);
 				
-				thuoc = new Thuoc(maThuocStr, tenThuoc, donViBan, soLuong, donGia, thanhPhan, xuatXu, congDung, dangBaoChe, ngayNhapThuoc, hanSuDung, thumbnail);
-				
+				thuoc = new Thuoc(maThuocStr, tenThuoc, donViBan, soLuong, donGia, thanhPhan, xuatXu, congDung, dangBaoChe, ngayNhapThuoc, hanSuDung, thumbnail, ncc);
 			}
 			
 			
@@ -119,7 +248,6 @@ public class Thuoc_DAO {
 				e2.printStackTrace();
 			}
 		}
-		
 		return thuoc;
 	}
 	
@@ -256,7 +384,7 @@ public class Thuoc_DAO {
 	public ArrayList<Thuoc> getPagesThuoc(int pages) {
 		
 		int x = pages-1;
-		int start = limit*x+1;
+		int start = limit*x;
 		ArrayList<Thuoc> dsthuoc = new ArrayList<Thuoc>();
 		ConnectDB.getInstance();
 		Connection con = ConnectDB.getConnection();
@@ -332,8 +460,7 @@ public class Thuoc_DAO {
 			e.printStackTrace();
 		}
 		
-		return dsthuoc;
-		
+		return dsthuoc;	
 	}
 	
 	public String maThuocAuto() {
@@ -350,6 +477,8 @@ public class Thuoc_DAO {
 			while (rs.next()) {
 				maHienTai = rs.getString(1);
 			}
+			if (rs.next()) 
+				maHienTai = "SP1000";
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -361,5 +490,4 @@ public class Thuoc_DAO {
 		maMoi = "SP" + kyTuMoi;
 		return maMoi;
 	}
-
 }

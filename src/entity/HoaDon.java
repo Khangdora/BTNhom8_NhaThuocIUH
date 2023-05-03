@@ -11,7 +11,25 @@ public class HoaDon {
 	private boolean dangHoaDon;
 	private boolean thanhToan;
 	private double tienKhach;
+	private int soLuong;
+	private double tongTien;
 	
+	public double getTongTien() {
+		return tongTien;
+	}
+
+	public void setTongTien(double tongTien) {
+		this.tongTien = tongTien;
+	}
+
+	public int getSoLuong() {
+		return soLuong;
+	}
+
+	public void setSoLuong(int soLuong) {
+		this.soLuong = soLuong;
+	}
+
 	public double getTienKhach() {
 		return tienKhach;
 	}
@@ -76,6 +94,6 @@ public class HoaDon {
 	
 	public HoaDon() {
 		super();
-	}
+	}	
 	
 }

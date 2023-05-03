@@ -24,6 +24,7 @@ import javax.swing.plaf.DimensionUIResource;
 import DAO.CaTruc_DAO;
 import DAO.NhanVien_DAO;
 import connectDB.ConnectDB;
+import entity.CT_HoaDon;
 import entity.CaTruc;
 import entity.NhanVien;
 import others.RoundedBorder;
@@ -42,6 +43,9 @@ public class InfoUser extends JFrame implements ActionListener {
 	private JButton btnCapNhat, btnMatKhau;
 	
 	private JPasswordField txtPass1, txtPass2, txtPass3;
+	private JTextField txtHo, txtTen, txtSoDienThoai, txtEmail, txtCaTruc, txtGioiTinh, txtChucVu, txtTienLuong;
+	private JLabel lblMess1, lblMess2;
+	JComboBox<String> cbCaTruc, cbGioiTinh, cbChucVu;
 	
 	private DecimalFormat formatter = new DecimalFormat("#,###");
 	
@@ -81,8 +85,6 @@ public class InfoUser extends JFrame implements ActionListener {
 		panelCenter.setPreferredSize(new DimensionUIResource(400, 400));
 		
 		JLabel lblHo, lblTen, lblSoDienThoai, lblEmail, lblCaTruc, lblGioiTinh, lblChucVu, lblTienLuong;
-		JTextField txtHo, txtTen, txtSoDienThoai, txtEmail, txtCaTruc, txtGioiTinh, txtChucVu, txtTienLuong;
-		JComboBox<String> cbCaTruc, cbGioiTinh, cbChucVu;
 		
 		int x = 10, y = 20, width = 100, height = 30;
 		panelCenter.add(lblHo = new JLabel("Họ:"));
@@ -102,6 +104,9 @@ public class InfoUser extends JFrame implements ActionListener {
 		panelCenter.add(lblTienLuong = new JLabel("Tiền lương: "));
 		lblTienLuong.setBounds(x, y+height*7, width, height);
 		
+		panelCenter.add(lblMess1 = new JLabel());
+		lblMess1.setBounds(x+20, y+height*8, width+200, height);
+		
 		x = 110; y = 20; width = 200; height = 30;
 		panelCenter.add(txtHo = new JTextField(nv.getHoNhanVien()));
 		txtHo.setBounds(x, y+height*0, width, height);
@@ -114,7 +119,7 @@ public class InfoUser extends JFrame implements ActionListener {
 		ArrayList<CaTruc> dsCaTruc = catruc_dao.getAllCaTruc();
 		panelCenter.add(cbCaTruc = new JComboBox<String>());
 		for(CaTruc ct : dsCaTruc) {
-			cbCaTruc.addItem(ct.getMaCaTruc());
+			cbCaTruc.addItem(ct.getTenCaTruc());
 		}
 		cbCaTruc.setSelectedItem(nv.getCaTruc().getMaCaTruc());
 		cbCaTruc.setBounds(x, y+height*4, width, height);
@@ -128,7 +133,7 @@ public class InfoUser extends JFrame implements ActionListener {
 			cbChucVu.addItem(str);
 		}
 		cbChucVu.setSelectedItem(nv.getChucVu());
-		panelCenter.add(txtTienLuong = new JTextField(formatter.format(nv.getTienLuong())));
+		panelCenter.add(txtTienLuong = new JTextField(Double.valueOf(nv.getTienLuong()).intValue()+""));
 		txtTienLuong.setBounds(x, y+height*7, width, height);
 		panelCenter.add(btnCapNhat = new JButton("Cập nhật thông tin"));
 		btnCapNhat.setBounds(80, 290, 150, 30);
@@ -153,6 +158,9 @@ public class InfoUser extends JFrame implements ActionListener {
 		lblPass2.setBounds(x2, y2+height2*1, width2, height2);
 		panelEast.add(lblPass3 = new JLabel("Xác nhận mật khẩu: "));
 		lblPass3.setBounds(x2, y2+height2*2, width2, height2);
+		
+		panelEast.add(lblMess2 = new JLabel());
+		lblMess2.setBounds(x2+20, y2+height2*3, width2+200, height2);
 		
 		x2 = 130; y2 = 20; width2 = 200; height2 = 30;
 		panelEast.add(txtPass1 = new JPasswordField());
@@ -194,21 +202,131 @@ public class InfoUser extends JFrame implements ActionListener {
 				cbCaTruc.setEditable(false);
 				cbCaTruc.setEnabled(false);
 			}
-		}else {
-			
-			
-			
-			
 		}
+		
+		if(!(nvlogin.getMaNhanVien().trim().equals(nv.getMaNhanVien().trim()))) {
+			txtPass1.setEditable(false);
+			txtPass2.setEditable(false);
+			txtPass3.setEditable(false);
+		}
+		
 	}
+	
+	public void notiMess(JLabel lbl, int type, String txt) {
+		
+		lbl.setText(txt);
+		lbl.setFont(new Font("Serif", Font.ITALIC, 13));
+		
+		if(type==0)
+			lbl.setForeground(Color.decode("#880000"));
+		if(type==1)
+			lbl.setForeground(Color.decode("#009900"));
+		
+	}
+	
+	public boolean validNhanVien() {
+		String hoNV = txtHo.getText().trim();
+		String tenNV = txtTen.getText().trim();
+		String soDienThoai = txtSoDienThoai.getText().trim();
+		String email = txtEmail.getText().trim();
+		String tienLuong = txtTienLuong.getText().trim();
+		
+		if(!(hoNV.length()>0 && hoNV.matches("^[\\p{L}]*(?:\\h+[\\p{L}]*)*$"))) {
+			notiMess(lblMess1, 0, "Họ nhân viên không có số hay ký tự đặc biệt.");
+			txtHo.requestFocus();	
+			return false;
+		}
+		
+		if(!(tenNV.length()>0 && tenNV.matches("^[\\p{L}]*$"))) {
+			notiMess(lblMess1, 0, "Tên nhân viên là một từ không có số hay ký tự đặc biệt.");
+			txtTen.requestFocus();
+			return false;
+		}
+		
+		if(!(soDienThoai.length()>0 && soDienThoai.matches("^\\d{10}$"))) {
+			notiMess(lblMess1, 0, "Tên nhân viên là một từ không có số hay ký tự đặc biệt.");
+			txtSoDienThoai.requestFocus();
+			return false;
+		}
+		
+		if(!(email.length()>=0 && email.matches("^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$"))){
+			notiMess(lblMess1, 0, "Sai định dạng email");
+			txtEmail.requestFocus();
+			return false;
+		}
+		
+		if(!(tienLuong.length() > 0 && tienLuong.matches("^\\d+$"))) {
+			notiMess(lblMess1, 0, "Tiền lương phải là một dãy số nguyên");
+			txtTienLuong.requestFocus();
+			return false;
+		}
+		
+		try {
+			Double.parseDouble(tienLuong);
+		} catch (Exception e) {
+			notiMess(lblMess1, 0, "Tiền lương phải là một dãy số nguyên");
+			txtTienLuong.requestFocus();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean checkCapNhat() {
+		if(nvlogin.getChucVu().trim().equals("Nhân viên")) {
+			if(!(nvlogin.getMaNhanVien().trim().equals(nv.getMaNhanVien().trim()))) {
+				notiMess(lblMess1, 0, "Không có quyền chỉnh sửa.");
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public NhanVien revertNVFromTextfields() {
+		String ma = nv.getMaNhanVien();		
+		String ten = txtTen.getText().trim();
+		String ho = txtHo.getText().trim();
+		String sdt = txtSoDienThoai.getText().trim();
+		String email = txtEmail.getText().trim();
+		String gioiTinhStr = (String) cbGioiTinh.getSelectedItem();
+		String ca = (String) cbCaTruc.getSelectedItem();
+		
+		ArrayList<CaTruc> dsCaTruc = catruc_dao.getAllCaTruc();
+		CaTruc caTruc = new CaTruc();
+		for(CaTruc ct : dsCaTruc) {
+			if(ct.getTenCaTruc().trim().equals(ca))
+				caTruc = ct;
+		}
+	
+		String chucVu = (String) cbChucVu.getSelectedItem();
+		
+		boolean gioiTinh = gioiTinhStr.trim().equals("Nam")?true:false;
+		
+		Double tienLuong = Double.parseDouble(txtTienLuong.getText());
+		return new NhanVien(ma, ho, ten, sdt, email, caTruc, gioiTinh, chucVu, tienLuong);
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		
 		Object o = e.getSource();
 		
+		if(o.equals(btnCapNhat) && checkCapNhat() && validNhanVien()) {
+			
+			NhanVien nv = revertNVFromTextfields();
+			if(nhanvien_dao.updateNhanVien(nv)) {
+				notiMess(lblMess1, 1, "Cập nhật thông tin thành công!");
+				ChildTab.setDuLieuNhanVien();
+			}else {
+				notiMess(lblMess1, 0, "Cập nhật thông tin không thành công do lỗi SQL.");
+			}
+			
+		}
 		
-		
+		if(o.equals(btnMatKhau)) {
+			
+		}
 		
 	}
 

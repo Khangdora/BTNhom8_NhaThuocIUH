@@ -7,4 +7,5 @@ module BTNhom8_NhaThuocIUH {
 
 	requires java.desktop;
 	requires java.sql;
+	requires datechooser;
 }

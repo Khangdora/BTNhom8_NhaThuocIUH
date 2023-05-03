@@ -17,6 +17,15 @@ public class Thuoc {
 	private Date ngayNhapThuoc;
 	private Date hanSuDung;
 	private String thumbnail;
+	private NhaCungCap ncc;
+	
+	public NhaCungCap getNcc() {
+		return ncc;
+	}
+
+	public void setNcc(NhaCungCap ncc) {
+		this.ncc = ncc;
+	}
 	
 	public String getMaThuoc() {
 		return maThuoc;
@@ -147,6 +156,24 @@ public class Thuoc {
 		this.hanSuDung = hanSuDung;
 		this.thumbnail = thumbnail;
 	}
+	
+	public Thuoc(String maThuoc, String tenThuoc, String donViBan, int soLuong, double donGia, String thanhPhan,
+			String xuatXu, String congDung, String dangBaoChe, Date ngayNhapThuoc, Date hanSuDung, String thumbnail, NhaCungCap ncc) {
+		super();
+		this.maThuoc = maThuoc;
+		this.tenThuoc = tenThuoc;
+		this.donViBan = donViBan;
+		this.soLuong = soLuong;
+		this.donGia = donGia;
+		this.thanhPhan = thanhPhan;
+		this.xuatXu = xuatXu;
+		this.congDung = congDung;
+		this.dangBaoChe = dangBaoChe;
+		this.ngayNhapThuoc = ngayNhapThuoc;
+		this.hanSuDung = hanSuDung;
+		this.thumbnail = thumbnail;
+		this.ncc = ncc;
+	}
 
 	public Thuoc(String maThuoc, String tenThuoc, String donViBan, int soLuong, double donGia, String thanhPhan,
 			String xuatXu, String congDung, String dangBaoChe, Date ngayNhapThuoc, Date hanSuDung) {
@@ -168,6 +195,23 @@ public class Thuoc {
 		super();
 		this.maThuoc = maThuoc;
 	}
+	
+	public Thuoc(String maThuoc, String tenThuoc, String donViBan, int soLuong, double donGia, String thanhPhan,
+			String xuatXu, String congDung, String dangBaoChe, Date ngayNhapThuoc, Date hanSuDung, NhaCungCap ncc) {
+		super();
+		this.maThuoc = maThuoc;
+		this.tenThuoc = tenThuoc;
+		this.donViBan = donViBan;
+		this.soLuong = soLuong;
+		this.donGia = donGia;
+		this.thanhPhan = thanhPhan;
+		this.xuatXu = xuatXu;
+		this.congDung = congDung;
+		this.dangBaoChe = dangBaoChe;
+		this.ngayNhapThuoc = ngayNhapThuoc;
+		this.hanSuDung = hanSuDung;
+		this.ncc = ncc;
+	}
 
 	public Thuoc() {
 		super();
@@ -175,10 +219,10 @@ public class Thuoc {
 
 	@Override
 	public String toString() {
-		return "thuoc [maThuoc=" + maThuoc + ", tenThuoc=" + tenThuoc + ", donViBan=" + donViBan + ", soLuong="
+		return "Thuoc [maThuoc=" + maThuoc + ", tenThuoc=" + tenThuoc + ", donViBan=" + donViBan + ", soLuong="
 				+ soLuong + ", donGia=" + donGia + ", thanhPhan=" + thanhPhan + ", xuatXu=" + xuatXu + ", congDung="
 				+ congDung + ", dangBaoChe=" + dangBaoChe + ", ngayNhapThuoc=" + ngayNhapThuoc + ", hanSuDung="
-				+ hanSuDung + "]";
+				+ hanSuDung + ", thumbnail=" + thumbnail + ", ncc=" + ncc + "]";
 	}
 
 }
