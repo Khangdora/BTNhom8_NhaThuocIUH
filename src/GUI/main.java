@@ -75,7 +75,7 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		nvlogin = nhanvien_dao.getNhanVienTheoMaNV(nv.getMaNhanVien());
 		child_tab = new ChildTab(new NhanVien(nv.getMaNhanVien()));
 		khoThuoc = new KhoThuoc();
-		lichSu = new LichSu();
+		lichSu = new LichSu(nvlogin);
 		
 		// ========================
 		

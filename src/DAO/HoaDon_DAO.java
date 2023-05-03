@@ -116,10 +116,6 @@ public class HoaDon_DAO {
 				
 			}
 			
-			rs.close();
-			stmt.close();
-			con.close();
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

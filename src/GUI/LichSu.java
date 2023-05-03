@@ -50,14 +50,15 @@ public class LichSu extends JFrame implements ActionListener, MouseListener {
 	private Thuoc_DAO thuoc_dao;
 	private NhaCungCap_DAO ncc_dao;
 	private NhanVien_DAO nhanvien_dao;
-	private HoaDon_DAO hoadon_dao;
+	public static HoaDon_DAO hoadon_dao;
 	private KhachHang_DAO khachhang_dao;
-	private CTHoaDon_DAO cthoadon_dao;
+	public static CTHoaDon_DAO cthoadon_dao;
 	
-	private DefaultTableModel modelLichSu;
-	private JTable tableLichSu;
+	public static DefaultTableModel modelLichSu;
+	public static JTable tableLichSu;
+	private NhanVien nvlogin;
 	
-	public LichSu() {
+	public LichSu(NhanVien nvlogin) {
 		try {
 			ConnectDB.getInstance().connect();
 		} catch (SQLException e) {
@@ -192,6 +193,7 @@ public class LichSu extends JFrame implements ActionListener, MouseListener {
 		btnNextHoaDon.addActionListener(this);
 		btnTaiLai.addActionListener(this);
 		btnPrevHoaDon.addActionListener(this);
+		tableLichSu.addMouseListener(this);
 		
 		return myPanel;
 	}
@@ -250,11 +252,34 @@ public class LichSu extends JFrame implements ActionListener, MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+		
+		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
+		
+		Object o = e.getSource();
+		
+		if(e.getClickCount()==2&&o.equals(tableLichSu)) {
+			
+        	int row = tableLichSu.getSelectedRow();
+        	
+        	ArrayList<HoaDon> dsHoaDon = hoadon_dao.getallHoaDon();
+        	HoaDon hoadon = new HoaDon();
+        	
+        	for(HoaDon hd : dsHoaDon) {
+        		if(hd.getMaHoaDon().trim().equals(tableLichSu.getValueAt(row, 0)));
+        			hoadon = hd;
+        	}
+        	
+        	ArrayList<CT_HoaDon> listCTHoaDon = cthoadon_dao.getAllCTHoaDon(tableLichSu.getValueAt(row, 0).toString());
+			
+        	//nvlogin = nhanvien_dao.getNhanVienTheoMaNV(nvlogin.getMaNhanVien());
+        	
+			new xuatHoaDon(nvlogin, hoadon, listCTHoaDon).setVisible(true);
+		}
 		
 	}
 
