@@ -95,6 +95,17 @@ public class KhachHang {
 	public KhachHang() {
 		super();
 	}
+	
+	public Object[] getObjectNV() {
+		String phai="";
+		if(isGioiTinh()) {
+			phai = "Nam";
+		}else {
+			phai = "Nữ";
+		}
+		Object[] obj = {getMaKhachHang(), getHoKhachHang(), getTenKhachHang(), getSoDienThoai(), getEmailKhachHang(), phai};
+		return obj;
+	}
 
 	@Override
 	public String toString() {
