@@ -91,6 +91,8 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 	private JComboBox<String> comboBoxPages, comboBoxDangHD, 
 		comboBoxDVB, comboBoxXX, comboBoxDBC, comboBoxSX;
 	
+	public static int pages = 1;
+	
 	private int limit = 25;
 	
 	private ArrayList<CT_HoaDon> listCTHoaDon;
@@ -261,16 +263,14 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		
 		panelTable.add(sp, BorderLayout.CENTER);
 		
-		setDuLieuHoaDon(1);
-		
 		listPanelHoaDon.add(panelTable, BorderLayout.CENTER);
 		
 		JPanel panelPages = new JPanel();
 		panelPages.setPreferredSize(new Dimension(550, 40));
 		
-		btnNextHoaDon = new JButton("❮");
-		btnNextHoaDon.setFocusable(false);
-		btnNextHoaDon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnPrevHoaDon = new JButton("❮");
+		btnPrevHoaDon.setFocusable(false);
+		btnPrevHoaDon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		
 		int total = (int) Math.ceil(thuoc_dao.totalThuoc()*1.0/25);
 		comboBoxPages = new JComboBox<String>();
@@ -279,15 +279,17 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		}
 		comboBoxPages.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		
-		btnPrevHoaDon = new JButton("❯");
-		btnPrevHoaDon.setFocusable(false);
-		btnPrevHoaDon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnNextHoaDon = new JButton("❯");
+		btnNextHoaDon.setFocusable(false);
+		btnNextHoaDon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		
-		panelPages.add(btnNextHoaDon);
-		panelPages.add(comboBoxPages);
 		panelPages.add(btnPrevHoaDon);
+		panelPages.add(comboBoxPages);
+		panelPages.add(btnNextHoaDon);
 		
 		listPanelHoaDon.add(panelPages, BorderLayout.SOUTH);
+		
+		setDuLieuHoaDon(pages);
 		
 		// ThemPanel HoaDon
 		addPanelHoaDon = new JPanel();
@@ -443,6 +445,8 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		myPanel.add(listPanelKhachHang, BorderLayout.CENTER);
 		listPanelKhachHang.setPreferredSize(new Dimension(500, 580));//550
 		listPanelKhachHang.setLayout(new BorderLayout());
+		
+		listKH= new ArrayList<KhachHang>();
 		
 		JPanel locPanel_KH = new JPanel();
 		locPanel_KH.setPreferredSize(new Dimension(550, 50));
@@ -997,17 +1001,6 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		return myPanel;
 	}
 	
-	public JPanel panelThongKe() {
-		JPanel myPanel = new JPanel();
-		myPanel.setPreferredSize(new Dimension(817, 600));
-		myPanel.setBackground(Color.decode("#EEEEEE"));
-		myPanel.setBorder(null);
-		
-		myPanel.add(new JLabel("ThongKe"));
-		
-		return myPanel;
-	}
-	
 	//====== Hàm thêm không phải panel ====
 	
 	//KhachHangXuLY
@@ -1041,6 +1034,17 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 					thuoc.getSoLuong(),thuoc.getXuatXu(),thuoc.getDangBaoChe(),formatter.format(thuoc.getDonGia())});
 			
 		}
+		if(pages==1)
+			btnPrevHoaDon.setEnabled(false);
+		else
+			btnPrevHoaDon.setEnabled(true);
+		
+		int total = comboBoxPages.getItemCount();
+		if(pages==total)
+			btnNextHoaDon.setEnabled(false);
+		else
+			btnNextHoaDon.setEnabled(true);
+		
 	}
 	
 	public void TayTrongHoaDon() {
@@ -1933,6 +1937,20 @@ KhachHang kh = new KhachHang(modelKH_temp.getValueAt(r, 0).toString(), modelKH_t
 				}
 			}
 		}
+		if(o.equals(btnPrevHoaDon)) {
+			setDuLieuHoaDon(pages-1);
+			pages--;
+		}
+		if(o.equals(btnNextHoaDon)) {
+			setDuLieuHoaDon(pages+1);
+			pages++;
+		}
+		if(o.equals(comboBoxPages)) {
+			int item = comboBoxPages.getSelectedIndex()+1;
+			setDuLieuHoaDon(item);
+			pages=item;
+		}
+		
 		
 	}
 

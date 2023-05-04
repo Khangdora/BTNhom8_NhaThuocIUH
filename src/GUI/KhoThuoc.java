@@ -116,6 +116,8 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 	private DateChooser dateNgayNhap;
 	private JLabel lblTBHSD;
 	
+	public static int pages = 1;
+	
 	public KhoThuoc() {
 
 		try {
@@ -452,31 +454,33 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		
 		panelTable.add(sp);
 		
-		setDuLieuKhoThuoc(1);
+
 		
 		JPanel panelPages = new JPanel();
 		panelPages.setOpaque(false);
 		panelPages.setBounds(0, 290, 890, 35);
 		
-		btnNextKhoThuoc = new JButton("❮");
-		btnNextKhoThuoc.setFocusable(false);
-		btnNextKhoThuoc.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnPrevKhoThuoc = new JButton("❮");
+		btnPrevKhoThuoc.setFocusable(false);
+		btnPrevKhoThuoc.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		
 		int total = (int) Math.ceil(thuoc_dao.totalThuoc()*1.0/25);
 		comboBoxPages = new JComboBox<String>();
-		comboBoxPages.setPreferredSize(btnNextKhoThuoc.getPreferredSize());
+		comboBoxPages.setPreferredSize(btnPrevKhoThuoc.getPreferredSize());
 		comboBoxPages.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		for (int i=1; i <= total; i++) {
 			comboBoxPages.addItem(i+"");
 		}
 		
-		btnPrevKhoThuoc = new JButton("❯");
-		btnPrevKhoThuoc.setFocusable(false);
-		btnPrevKhoThuoc.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnNextKhoThuoc = new JButton("❯");
+		btnNextKhoThuoc.setFocusable(false);
+		btnNextKhoThuoc.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		
-		panelPages.add(btnNextKhoThuoc);
-		panelPages.add(comboBoxPages);
 		panelPages.add(btnPrevKhoThuoc);
+		panelPages.add(comboBoxPages);
+		panelPages.add(btnNextKhoThuoc);
+		
+		setDuLieuKhoThuoc(pages);
 		
 		panelList.add(panelTable);	
 		panelList.add(panelPages);	
@@ -497,6 +501,10 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		tableKhoThuoc.addMouseListener(this);
 		btnThemNCC.addActionListener(this);
 		btnSua.addActionListener(this);
+		
+		btnNextKhoThuoc.addActionListener(this);
+		btnPrevKhoThuoc.addActionListener(this);
+		comboBoxPages.addActionListener(this);
 		
 		txtTenSP.getDocument().putProperty("owner", txtTenSP);
 		txtTenSP.getDocument().addDocumentListener(this);
@@ -870,6 +878,10 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		txtHSD.getDocument().putProperty("owner", txtHSD);
 		txtHSD.getDocument().addDocumentListener(this);
 		
+		btnNextKhoThuoc.addActionListener(this);
+		btnPrevKhoThuoc.addActionListener(this);
+		comboBoxPages.addActionListener(this);
+		
 		readDataIntoTxt(thuoc);
 		return frameUpdate;
 	}
@@ -1098,6 +1110,18 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 			modelKhoThuoc.addRow(new Object[] {thuoc.getMaThuoc(),thuoc.getTenThuoc(),thuoc.getDonViBan(),
 					thuoc.getSoLuong(),thuoc.getXuatXu(),thuoc.getDangBaoChe(),format.format(thuoc.getDonGia())});
 		}
+		
+		if(pages==1)
+			btnPrevKhoThuoc.setEnabled(false);
+		else 
+			btnPrevKhoThuoc.setEnabled(true);
+		
+		int total = comboBoxPages.getItemCount();
+		if(pages==total)
+			btnNextKhoThuoc.setEnabled(false);
+		else
+			btnNextKhoThuoc.setEnabled(true);
+		
 	}
 	
 	DefaultTableCellRenderer render = new DefaultTableCellRenderer() {
@@ -1208,6 +1232,21 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 			}	
 		}
 		
+		if(o.equals(btnNextKhoThuoc)) {
+			setDuLieuKhoThuoc(pages+1);
+			pages++;
+		}
+		if(o.equals(btnPrevKhoThuoc)) {
+			setDuLieuKhoThuoc(pages-1);
+			pages--;
+		}
+		if(o.equals(comboBoxPages)) {
+			int item = comboBoxPages.getSelectedIndex() + 1;
+			setDuLieuKhoThuoc(item);
+			pages=item;
+		}
+		
+		
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -1305,10 +1344,7 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 					btnNextKhoThuoc.setEnabled(false);
 					btnPrevKhoThuoc.setEnabled(false);
 					comboBoxPages.setVisible(false);		
-					
-					btnNextKhoThuoc.addActionListener(this);
-					btnPrevKhoThuoc.addActionListener(this);
-					comboBoxPages.addActionListener(this);
+				
 					
 				}
 			}

@@ -47,10 +47,11 @@ import others.PlaceholderTextField;
 public class LichSu extends JFrame implements ActionListener, MouseListener, DocumentListener {
 	
 	private JPanel listPanelLichSu;
-	private JComboBox<String> cbSort, cbNhanVien, cbAZ, cbKeDon, comboBoxPages;
+	private JComboBox<String> cbSort, cbNhanVien, cbAZ, cbKeDon;
+	private static JComboBox<String> comboBoxPages;
 	
 	private JTextField txtLoc;
-	private JButton btnTaiLai, btnNextHoaDon, btnPrevHoaDon;
+	public static JButton btnTaiLai, btnNextHoaDon, btnPrevHoaDon;
 	
 	public static Thuoc_DAO thuoc_dao;
 	public static NhaCungCap_DAO ncc_dao;
@@ -62,6 +63,8 @@ public class LichSu extends JFrame implements ActionListener, MouseListener, Doc
 	public static DefaultTableModel modelLichSu;
 	public static JTable tableLichSu;
 	private NhanVien nvlogin;
+	
+	public static int pages=1;
 	
 	public LichSu(NhanVien nvlogin) {
 		try {
@@ -150,8 +153,6 @@ public class LichSu extends JFrame implements ActionListener, MouseListener, Doc
 		tableLichSu = new JTable(modelLichSu);
 		tableLichSu.setRowHeight(20);
 		
-		setDuLieuLichSu(1);
-		
 		JScrollPane sp = new JScrollPane(tableLichSu, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
@@ -174,9 +175,9 @@ public class LichSu extends JFrame implements ActionListener, MouseListener, Doc
 		JPanel panelPages = new JPanel();
 		panelPages.setPreferredSize(new Dimension(550, 40));
 		
-		btnNextHoaDon = new JButton("❮");
-		btnNextHoaDon.setFocusable(false);
-		btnNextHoaDon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnPrevHoaDon = new JButton("❮");
+		btnPrevHoaDon.setFocusable(false);
+		btnPrevHoaDon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		
 		int total = (int) Math.ceil(hoadon_dao.totalHoaDon()*1.0/25);
 		comboBoxPages = new JComboBox<String>();
@@ -185,13 +186,15 @@ public class LichSu extends JFrame implements ActionListener, MouseListener, Doc
 		}
 		comboBoxPages.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		
-		btnPrevHoaDon = new JButton("❯");
-		btnPrevHoaDon.setFocusable(false);
-		btnPrevHoaDon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnNextHoaDon = new JButton("❯");
+		btnNextHoaDon.setFocusable(false);
+		btnNextHoaDon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		
-		panelPages.add(btnNextHoaDon);
-		panelPages.add(comboBoxPages);
 		panelPages.add(btnPrevHoaDon);
+		panelPages.add(comboBoxPages);
+		panelPages.add(btnNextHoaDon);
+		
+		setDuLieuLichSu(1);
 		
 		listPanelLichSu.add(panelPages, BorderLayout.SOUTH);
 		
@@ -254,6 +257,17 @@ public class LichSu extends JFrame implements ActionListener, MouseListener, Doc
 							hoadon.getNhanVien().getHoNhanVien()+" "+hoadon.getNhanVien().getTenNhanVien()});
 			
 		}
+		
+		if(pages==1)
+			btnPrevHoaDon.setEnabled(false);
+		else
+			btnPrevHoaDon.setEnabled(true);
+		int total = comboBoxPages.getItemCount();
+		if(pages==total)
+			btnNextHoaDon.setEnabled(false);
+		else
+			btnNextHoaDon.setEnabled(true);
+
 		
 	}
 	
@@ -347,6 +361,22 @@ public class LichSu extends JFrame implements ActionListener, MouseListener, Doc
 			}
 			
 			
+		}
+		
+		if(o.equals(btnNextHoaDon)) {
+			setDuLieuLichSu(pages+1);
+			pages++;
+		}
+		
+		if(o.equals(btnPrevHoaDon)) {
+			setDuLieuLichSu(pages-1);
+			pages--;
+		}
+		
+		if(o.equals(comboBoxPages)) {
+			int item = comboBoxPages.getSelectedIndex() + 1;
+			setDuLieuLichSu(item);
+			pages=item;
 		}
 		
 	}
