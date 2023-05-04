@@ -215,11 +215,8 @@ public class HoaDon_DAO {
 			stmt.setBoolean(1, hd.getThanhToan());
 			stmt.setDouble(2, hd.getTienKhach());
 			stmt.setString(3, hd.getMaHoaDon());
-			
-			ResultSet rs = stmt.executeQuery();
-			while(rs.next()) {
-				count++;
-			}
+
+			count = stmt.executeUpdate();
 			
 		}catch (SQLException e) {
 			e.printStackTrace();

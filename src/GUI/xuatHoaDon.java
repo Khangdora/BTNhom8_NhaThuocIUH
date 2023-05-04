@@ -345,6 +345,9 @@ public class xuatHoaDon extends JFrame implements ActionListener, DocumentListen
 					
 					hd.setTienKhach(hoadon.getThanhToan() ? 0.0 : tienKhach());
 					hd.setThanhToan(hoadon.getThanhToan() ? false : true);
+					
+					
+					
 					hd.setTongTien(tongTien());
 					hd.setSoLuong(tongSoLuongThuoc());
 					

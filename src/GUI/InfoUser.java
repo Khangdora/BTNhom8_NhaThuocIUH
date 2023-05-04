@@ -326,6 +326,34 @@ public class InfoUser extends JFrame implements ActionListener {
 		
 		if(o.equals(btnMatKhau)) {
 			
+			char[] password1 = txtPass1.getPassword();
+			char[] password2 = txtPass2.getPassword();
+			char[] password3 = txtPass3.getPassword();
+			
+			String passwordString1 = new String(password1).trim();
+			String passwordString2 = new String(password2).trim();
+			String passwordString3 = new String(password3).trim();
+			
+			if(!passwordString1.equals(nvlogin.getMatKhau())) {
+				notiMess(lblMess2, 0, "Mật khẩu cũ không chính xác.");
+				txtPass1.requestFocus();
+			}else {
+				
+				if(passwordString2.equals(passwordString3)) {
+					
+					if(nhanvien_dao.changePassword(passwordString2, nvlogin.getMaNhanVien())) {
+						notiMess(lblMess2, 1, "Thay đổi mật khẩu thành công!");
+						ChildTab.setDuLieuNhanVien();
+					}else {
+						notiMess(lblMess2, 0, "Thay đổi mật khẩu không thành công do lỗi SQL.");
+					}
+					
+				}else {
+					notiMess(lblMess2, 0, "Mật khẩu xác nhận không trùng khớp.");
+					txtPass3.requestFocus();
+				}			
+			}
+			
 		}
 		
 	}

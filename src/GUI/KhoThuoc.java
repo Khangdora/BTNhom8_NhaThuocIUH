@@ -1306,6 +1306,10 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 					btnPrevKhoThuoc.setEnabled(false);
 					comboBoxPages.setVisible(false);		
 					
+					btnNextKhoThuoc.addActionListener(this);
+					btnPrevKhoThuoc.addActionListener(this);
+					comboBoxPages.addActionListener(this);
+					
 				}
 			}
 			if(textField.getName().equals("tbTenSP")) {
