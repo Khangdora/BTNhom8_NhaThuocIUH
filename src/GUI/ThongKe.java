@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -25,6 +26,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import DAO.CTHoaDon_DAO;
+import DAO.CaTruc_DAO;
 import DAO.HoaDon_DAO;
 import DAO.KhachHang_DAO;
 import DAO.NhaCungCap_DAO;
@@ -46,6 +48,7 @@ public class ThongKe extends JFrame implements ActionListener {
 	public static HoaDon_DAO hoadon_dao;
 	public static KhachHang_DAO khachhang_dao;
 	public static CTHoaDon_DAO cthoadon_dao;
+	public CaTruc_DAO catruc_dao;
 	
 	private JPanel panelEast, panelCenter;
 	
@@ -71,8 +74,9 @@ public class ThongKe extends JFrame implements ActionListener {
 		hoadon_dao = new HoaDon_DAO();
 		khachhang_dao = new KhachHang_DAO();
 		cthoadon_dao = new CTHoaDon_DAO();
+		catruc_dao = new CaTruc_DAO();
 		
-		this.nvlogin = nvlogin;
+		this.nvlogin = nhanvien_dao.getNhanVienTheoMaNV(nvlogin.getMaNhanVien());
 		
 		add(panelThongKe(),BorderLayout.CENTER);
 	}
@@ -81,7 +85,7 @@ public class ThongKe extends JFrame implements ActionListener {
 		JPanel myPanel = new JPanel();
 		myPanel.setPreferredSize(new Dimension(900, 600));
 		
-		DecimalFormat format = new DecimalFormat("#.###");
+		DecimalFormat format = new DecimalFormat("#,###");
 		
 		panelCenter = new JPanel();
 		panelCenter.setPreferredSize(new Dimension(700, 700));
@@ -132,16 +136,18 @@ public class ThongKe extends JFrame implements ActionListener {
 		panelCenterCenter.setPreferredSize(new Dimension(650, 50));
 		JLabel lblPrevMonth, lblMonth;
 		
-		panelCenterCenter.add(lblPrevMonth = new JLabel("<html><center><span style='font-size:12px'>tháng trước</span><br><span style='font-size:18px'>" + format.format(khachhang_dao.totalKhachHang()) 
-        + "</span></center></html>"));
+		panelCenterCenter.add(lblPrevMonth = new JLabel("<html><center><span style='font-size:12px'>tháng trước</span><br><span style='font-size:18px'>" 
+				+ format.format(hoadon_dao.getDoanhThuTheoThang(LocalDate.now().getMonthValue()-1, LocalDate.now().getYear())) 
+				+ "₫</span></center></html>"));
 		lblPrevMonth.setBackground(Color.decode("#FF3366"));
 		lblPrevMonth.setOpaque(true);
 		lblPrevMonth.setPreferredSize(new Dimension(150, 100));
 		lblPrevMonth.setHorizontalAlignment(JLabel.CENTER);
 		panelCenterCenter.add(Box.createHorizontalStrut(10));
 		
-		panelCenterCenter.add(lblMonth = new JLabel("<html><center><span style='font-size:12px'>tháng này</span><br><span style='font-size:18px'>" + format.format(khachhang_dao.totalKhachHang()) 
-        + "</span></center></html>"));
+		panelCenterCenter.add(lblMonth = new JLabel("<html><center><span style='font-size:12px'>tháng này</span><br><span style='font-size:18px'>" 
+				+ format.format(hoadon_dao.getDoanhThuTheoThang(LocalDate.now().getMonthValue(), LocalDate.now().getYear())) 
+				+ "₫</span></center></html>"));
 		lblMonth.setBackground(Color.decode("#FF3366"));
 		lblMonth.setOpaque(true);
 		lblMonth.setPreferredSize(new Dimension(150, 100));
@@ -210,7 +216,7 @@ public class ThongKe extends JFrame implements ActionListener {
 		
 		Box box = Box.createVerticalBox();
 		
-		JLabel lblCTUsers1, lblCTUsers2;
+		JLabel lblCTUsers1, lblCTUsers2, lblCTUsers3, lblCTUsers4;
 		
 		box.setBorder(borderTitle("Về tôi"));
 		
@@ -222,15 +228,36 @@ public class ThongKe extends JFrame implements ActionListener {
 		lblCTUsers1.setPreferredSize(new Dimension(170, 200));
 		box.add(Box.createVerticalStrut(10));
 		
+		box.add(lblCTUsers4 = new JLabel("<html><center><span style='font-size:18px'>" 
+		+ catruc_dao.getCaTrucTheoMaCT(nhanvien_dao.getNhanVienTheoMaNV(nvlogin.getMaNhanVien()).getCaTruc().getMaCaTruc()).getTenCaTruc().toUpperCase()
+        + "</span><br><span style='font-size:12px'>ca trực</span></center></html>"));
+		lblCTUsers4.setBackground(Color.decode("#DDDDDD"));
+		lblCTUsers4.setOpaque(true);
+		lblCTUsers4.setHorizontalAlignment(JLabel.CENTER);
+		lblCTUsers4.setPreferredSize(new Dimension(170, 200));
+		box.add(Box.createVerticalStrut(10));
+		
 		box.add(lblCTUsers2 = new JLabel("<html><center><span style='font-size:18px'>" + format.format(nvlogin.getTienLuong()) 
-        + "</span><br><span style='font-size:12px'>tiền lương</span></center></html>"));
+        + "₫</span><br><span style='font-size:12px'>tiền lương</span></center></html>"));
 		lblCTUsers2.setBackground(Color.decode("#DDDDDD"));
 		lblCTUsers2.setOpaque(true);
 		lblCTUsers2.setHorizontalAlignment(JLabel.CENTER);
 		lblCTUsers2.setPreferredSize(new Dimension(170, 200));
 		box.add(Box.createVerticalStrut(10));
 		
+		box.add(lblCTUsers3 = new JLabel("<html><center><span style='font-size:18px'>" 
+				+ format.format(nhanvien_dao.getDoanhSo(nvlogin.getMaNhanVien())) 
+				+ "₫</span><br><span style='font-size:12px'>doanh số</span></center></html>"));
+		lblCTUsers3.setBackground(Color.decode("#DDDDDD"));
+		lblCTUsers3.setOpaque(true);
+		lblCTUsers3.setHorizontalAlignment(JLabel.CENTER);
+		lblCTUsers3.setPreferredSize(new Dimension(170, 200));
+		box.add(Box.createVerticalStrut(10));
+		
 		panelEast.add(box);
+		
+		cboKH.setEnabled(false);
+		cboNV.setEnabled(false);
 		
 		cboKH.addActionListener(this);
 		cboNV.addActionListener(this);
@@ -243,6 +270,28 @@ public class ThongKe extends JFrame implements ActionListener {
 	public Box loadNhanVien(int type) {
 		Box myBox = Box.createVerticalBox();
 		
+		if(type==1) {
+			String[][] dsNhanVien = nhanvien_dao.dsNhanVientheoDoanhSo();
+			for(int i = 0; i<11; i++) {
+		
+				NhanVien nv = nhanvien_dao.getNhanVienTheoMaNV(dsNhanVien[i][0]);
+				int stt = i+1;
+				String count = dsNhanVien[i][1];
+				
+				JLabel myLBL;
+				if(count!=null) {
+					myBox.add(myLBL = new JLabel("<html><p style='font-size:9px;'>"+
+							stt+". " + nv.getHoNhanVien() + " " + nv.getTenNhanVien() + "</p></html>"));
+					myBox.add(new JLabel("<html><p style='font-size:8px; margin-left:10px'> Doanh số: " +count+"</p></html>"));
+					myBox.add(Box.createVerticalStrut(5));
+				}else {
+					myBox.add(myLBL = new JLabel("<html><p style='font-size:9px;'>"+
+							stt+". " + "Chưa rõ" + "</p></html>"));
+					myBox.add(new JLabel("<html><p style='font-size:8px; margin-left:10px'> Doanh số: 0</p></html>"));
+					myBox.add(Box.createVerticalStrut(5));
+				}
+			}
+		}
 		
 		return myBox;
 	}
@@ -316,22 +365,20 @@ public class ThongKe extends JFrame implements ActionListener {
 			String cboStr = (String) cboKH.getSelectedItem();
 			boxKhachHang.removeAll();
 			
-			if(cboStr.trim().equals("Theo tổng giá")) {
-				boxKhachHang = loadKhachHang(1);
-			}
-			
-			if(cboStr.trim().equals("Theo số lượng")) {
+			if(cboStr.equals("Theo tổng giá")) {
 				boxKhachHang = loadKhachHang(2);
-			}
-			
-			if(cboStr.trim().equals("Theo lượt mua")) {
+			}else if(cboStr.equals("Theo số lượng")) {
+				boxKhachHang = loadKhachHang(2);
+			}else if(cboStr.equals("Theo lượt mua")) {
 				boxKhachHang = loadKhachHang(3);
 			}
 			
+		    boxKhachHang.revalidate();
+		    boxKhachHang.repaint();
+		    panelCenterSouthLeft.revalidate();
+		    panelCenterSouthLeft.repaint();
 			
 		}
-		
-		
 	}
 
 }

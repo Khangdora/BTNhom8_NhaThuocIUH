@@ -457,5 +457,39 @@ public class HoaDon_DAO {
 		
 	}
 	
+	public double getDoanhThuTheoThang(int month, int year) {
+		int total = 0;
+		
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement stmt = null;
+		
+		try {
+			String sql = "SELECT SUM(tongGia) as total FROM HoaDon WHERE MONTH(ngayMua) = ? AND YEAR (ngayMua) = ?";
+			stmt = con.prepareStatement(sql);
+			stmt.setInt(1, month);
+			stmt.setInt(2, year);
+			
+			ResultSet rs = stmt.executeQuery();
+			
+			while(rs.next()) {
+				total = rs.getInt(1);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		finally {
+			try {
+				stmt.close();
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+		return total;
+	}
+	
 
 }

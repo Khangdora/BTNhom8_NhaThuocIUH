@@ -481,5 +481,85 @@ public ArrayList<NhanVien> filterNangCao(String gioiTinh, String caTruc, String 
 		
 	}
 	
+	public double getDoanhSo(String maNhanVien) {
+		double total = 0;
+		
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement stmt = null;
+		
+		try {
+			String sql = "SELECT SUM(tongGia) as total \r\n"
+					+ " FROM HoaDon h INNER JOIN NhanVien nv \r\n"
+					+ "	ON h.maNhanVien = nv.maNhanVien WHERE h.thanhToan = 1 and h.maNhanVien = ? \r\n"
+					+ "	GROUP BY h.maNhanVien, nv.ho, nv.ten";
+			stmt = con.prepareStatement(sql);
+			stmt.setString(1, maNhanVien);
+			
+			ResultSet rs = stmt.executeQuery();
+			
+			while(rs.next()) {
+				total = rs.getDouble(1);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		finally {
+			try {
+				stmt.close();
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+		return total;
+	}
+	
+	
+	public String[][] dsNhanVientheoDoanhSo() {		
+		String[][] dsNhanViens = new String[20][3];
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		
+		try {
+			String sql = "SELECT TOP 20 h.maNhanVien, nv.ho, nv.ten, SUM(tongGia) as total \r\n"
+					+ "FROM HoaDon h INNER JOIN NhanVien nv \r\n"
+					+ "ON h.maNhanVien = nv.maNhanVien WHERE h.thanhToan = 1 \r\n"
+					+ "GROUP BY h.maNhanVien, nv.ho, nv.ten";
+			statement = con.prepareStatement(sql);
+			ResultSet rs = statement.executeQuery();
+			int i = 0;
+			
+			while (rs.next()) {
+				String ma = rs.getString(1);
+				int count =rs.getInt(4);
+				
+				dsNhanViens[i][0] = ma;
+				dsNhanViens[i][1] = count+"";
+				
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		finally {
+			try {
+				statement.close();
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+		return dsNhanViens;
+		
+	}
+	
+	
 }
 
