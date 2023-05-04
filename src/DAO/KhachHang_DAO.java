@@ -712,7 +712,7 @@ public boolean XoaKhachHang(String ma) {
 	}
 	
 	public String[][] dsKhachHangtheoLuotMua() {		
-		String[][] dsKhachHangs = new String[20][2];
+		String[][] dsKhachHangs = new String[20][3];
 		ConnectDB.getInstance();
 		Connection con = ConnectDB.getConnection();
 		PreparedStatement statement = null;
@@ -727,10 +727,51 @@ public boolean XoaKhachHang(String ma) {
 			
 			while (rs.next()) {
 				String ma = rs.getString(1);
-				String total = rs.getString(4);
+				int count =rs.getInt(4);
 				
 				dsKhachHangs[i][0] = ma;
-				dsKhachHangs[i][1] = total;
+				dsKhachHangs[i][1] = count+"";
+				
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		finally {
+			try {
+				statement.close();
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+		return dsKhachHangs;
+		
+	}
+	
+	public String[][] dsKhachHangTheoTongGia() {		
+		String[][] dsKhachHangs = new String[20][3];
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		
+		try {
+			String sql = "SELECT TOP 20 h.maKhachHang, k.ho, k.ten, SUM(tongGia) as total \r\n"
+					+ "FROM HoaDon h INNER JOIN KhachHang k \r\n"
+					+ "ON h.maKhachHang = k.maKH GROUP BY h.maKhachHang, k.ho, k.ten";
+			statement = con.prepareStatement(sql);
+			ResultSet rs = statement.executeQuery();
+			int i = 0;
+			
+			while (rs.next()) {
+				String ma = rs.getString(1);
+				int count =rs.getInt(4);
+				
+				dsKhachHangs[i][0] = ma;
+				dsKhachHangs[i][1] = count+"";
 				
 			}
 			

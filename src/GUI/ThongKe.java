@@ -3,18 +3,25 @@ package GUI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Label;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import DAO.CTHoaDon_DAO;
@@ -24,10 +31,15 @@ import DAO.NhaCungCap_DAO;
 import DAO.NhanVien_DAO;
 import DAO.Thuoc_DAO;
 import connectDB.ConnectDB;
+import entity.KhachHang;
 import entity.NhanVien;
 
-public class ThongKe extends JFrame {
+public class ThongKe extends JFrame implements ActionListener {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public static Thuoc_DAO thuoc_dao;
 	public static NhaCungCap_DAO ncc_dao;
 	public static NhanVien_DAO nhanvien_dao;
@@ -41,7 +53,7 @@ public class ThongKe extends JFrame {
 	
 	private DefaultTableModel modelLeft, modelRight;
 	private JTable tableLeft, tableRight;
-	private Box panelCenterSouthLeft, panelCenterSouthRight;
+	private Box panelCenterSouthLeft, panelCenterSouthRight, boxKhachHang, boxNhanVien;
 	
 	private JPanel panelTable;
 	private JComboBox<String> cboNV, cboKH;
@@ -146,8 +158,8 @@ public class ThongKe extends JFrame {
 		panelCenterSouth.add(Box.createHorizontalStrut(10));
 		panelCenterSouth.add(panelCenterSouthRight);
 		
-		panelCenterSouthLeft.setPreferredSize(new Dimension(300, 400));
-		panelCenterSouthRight.setPreferredSize(new Dimension(300, 400));
+		panelCenterSouthLeft.setPreferredSize(new Dimension(300, 450));
+		panelCenterSouthRight.setPreferredSize(new Dimension(300, 450));
 		
 		panelBox.add(Box.createVerticalStrut(10));
 		
@@ -161,9 +173,13 @@ public class ThongKe extends JFrame {
 		cboKH.setPreferredSize(new Dimension(200, 20));
 		titleLeft.add(cboKH);
 		
-		
-		
+		panelCenterSouthLeft.setBorder(borderTitle("Khách hàng"));
+
 		panelCenterSouthLeft.add(titleLeft);
+		panelCenterSouthLeft.add(Box.createVerticalStrut(10));
+		
+		boxKhachHang = loadKhachHang(1);
+		panelCenterSouthLeft.add(boxKhachHang);
 		
 		//DSNV
 		Box titleRight = Box.createHorizontalBox();
@@ -171,10 +187,17 @@ public class ThongKe extends JFrame {
 		titleRight.add(Box.createHorizontalStrut(10));
 		lblNV.setHorizontalAlignment(JLabel.LEFT);
 		cboNV = new JComboBox<String>(new String[] {"Theo doanh số", "Theo số đơn", "Theo tiền lương"});
-		cboNV.setPreferredSize(new Dimension(200, 20));
+		cboNV.setPreferredSize(new Dimension(200, 20));		
+		titleRight.add(Box.createHorizontalGlue());
 		titleRight.add(cboNV);
+		titleRight.add(Box.createHorizontalGlue());
 		
+		panelCenterSouthRight.setBorder(borderTitle("Nhân viên"));
 		panelCenterSouthRight.add(titleRight);
+		panelCenterSouthRight.add(Box.createVerticalStrut(10));
+		
+		boxNhanVien = loadNhanVien(1);
+		panelCenterSouthRight.add(boxNhanVien);
 		
 		panelBox.add(panelCenterSouth);
 		
@@ -183,15 +206,13 @@ public class ThongKe extends JFrame {
 		myPanel.add(panelCenter, BorderLayout.NORTH);
 
 		panelEast = new JPanel();
-		panelEast.setPreferredSize(new Dimension(170, 600));
+		panelEast.setPreferredSize(new Dimension(170, 700));
 		
 		Box box = Box.createVerticalBox();
 		
-		JLabel lblCTUsers0, lblCTUsers1, lblCTUsers2;
+		JLabel lblCTUsers1, lblCTUsers2;
 		
-		box.add(lblCTUsers0 = new JLabel("<html><center><span style='font-size:13px'>Của tôi</span></center></html>"));
-		lblCTUsers0.setHorizontalAlignment(JLabel.CENTER);
-		box.add(Box.createVerticalStrut(10));
+		box.setBorder(borderTitle("Về tôi"));
 		
 		box.add(lblCTUsers1 = new JLabel("<html><center><span style='font-size:18px'>" + format.format(hoadon_dao.totalHoaDon1NV(nvlogin.getMaNhanVien())) 
         + "</span><br><span style='font-size:12px'>hóa đơn</span></center></html>"));
@@ -211,9 +232,106 @@ public class ThongKe extends JFrame {
 		
 		panelEast.add(box);
 		
+		cboKH.addActionListener(this);
+		cboNV.addActionListener(this);
+		
 		myPanel.add(panelEast, BorderLayout.EAST);
 		
 		return myPanel;
+	}
+	
+	public Box loadNhanVien(int type) {
+		Box myBox = Box.createVerticalBox();
+		
+		
+		return myBox;
+	}
+	
+	public Box loadKhachHang(int type) {
+		Box myBox = Box.createVerticalBox();
+		
+		if(type==3) {
+			String[][] dsKhachHang = khachhang_dao.dsKhachHangtheoLuotMua();
+			for(int i = 0; i<11; i++) {
+		
+				KhachHang kh = khachhang_dao.getKhachHangTheoMaKH(dsKhachHang[i][0]);
+				int stt = i+1;
+				String count = dsKhachHang[i][1];
+				
+				JLabel myLBL;
+				if(kh!=null) {
+					myBox.add(myLBL = new JLabel("<html><p style='font-size:9px;'>"+
+							stt+". " + kh.getHoKhachHang() + " " + kh.getTenKhachHang() + "</p></html>"));
+					myBox.add(new JLabel("<html><p style='font-size:8px; margin-left:10px'> Lượt mua: " +count+"</p></html>"));
+					myBox.add(Box.createVerticalStrut(5));
+				}else {
+					myBox.add(myLBL = new JLabel("<html><p style='font-size:9px;'>"+
+							stt+". " + "Chưa rõ" + "</p></html>"));
+					myBox.add(new JLabel("<html><p style='font-size:8px; margin-left:10px'> Lượt mua: 0</p></html>"));
+					myBox.add(Box.createVerticalStrut(5));
+				}
+			}
+		}
+		
+		if(type==1) {
+			String[][] dsKhachHang = khachhang_dao.dsKhachHangTheoTongGia();
+			for(int i = 0; i<11; i++) {
+		
+				KhachHang kh = khachhang_dao.getKhachHangTheoMaKH(dsKhachHang[i][0]);
+				int stt = i+1;
+				String count = dsKhachHang[i][1];
+				
+				JLabel myLBL;
+				if(kh!=null) {
+					myBox.add(myLBL = new JLabel("<html><p style='font-size:9px;'>"+
+							stt+". " + kh.getHoKhachHang() + " " + kh.getTenKhachHang() + "</p></html>"));
+					myBox.add(new JLabel("<html><p style='font-size:8px; margin-left:10px'> Tổng giá: " +count+"</p></html>"));
+					myBox.add(Box.createVerticalStrut(5));
+				}else {
+					myBox.add(myLBL = new JLabel("<html><p style='font-size:9px;'>"+
+							stt+". " + "Chưa rõ" + "</p></html>"));
+					myBox.add(new JLabel("<html><p style='font-size:8px; margin-left:10px'> Tổng giá: 0</p></html>"));
+					myBox.add(Box.createVerticalStrut(5));
+				}
+			}
+		}
+		
+		return myBox;
+	}
+	
+	public Border borderTitle(String title) {
+		Border border;
+		border = BorderFactory.createTitledBorder(
+			    BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1), title);
+		((TitledBorder) border).setTitleFont(new Font("Time New Roman", Font.ITALIC, 10));
+		return border;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		Object o = e.getSource();
+		if(o.equals(cboKH)) {
+			
+			String cboStr = (String) cboKH.getSelectedItem();
+			boxKhachHang.removeAll();
+			
+			if(cboStr.trim().equals("Theo tổng giá")) {
+				boxKhachHang = loadKhachHang(1);
+			}
+			
+			if(cboStr.trim().equals("Theo số lượng")) {
+				boxKhachHang = loadKhachHang(2);
+			}
+			
+			if(cboStr.trim().equals("Theo lượt mua")) {
+				boxKhachHang = loadKhachHang(3);
+			}
+			
+			
+		}
+		
+		
 	}
 
 }

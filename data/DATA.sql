@@ -1,6 +1,9 @@
 CREATE DATABASE nhathuocIUH;
 go
+/**
+ALTER DATABASE nhathuocIUH SET SINGLE_USER WITH ROLLBACK IMMEDIATE
 DROP DATABASE nhathuocIUH;
+**/
 go
 USE nhathuocIUH;
 go
@@ -40,7 +43,7 @@ CREATE TABLE Thuoc (
 	maNCC VARCHAR(10),
 
 	CONSTRAINT F_Thuoc_NCC FOREIGN KEY (maNCC) REFERENCES NhaCungCap(maNCC),
-)
+);
 go
 CREATE TABLE KhachHang (
 	maKH VARCHAR(10) PRIMARY KEY,
@@ -49,7 +52,7 @@ CREATE TABLE KhachHang (
 	sodienthoai NVARCHAR(20),
 	email NVARCHAR(30),
 	gioitinh bit
-)
+);
 GO
 CREATE TABLE HoaDon (
 	maHoaDon VARCHAR(10) PRIMARY KEY,
@@ -64,7 +67,7 @@ CREATE TABLE HoaDon (
 
 	CONSTRAINT F_HD_KH FOREIGN KEY (maKhachHang) REFERENCES KhachHang(maKH),
 	CONSTRAINT F_HD_NV FOREIGN KEY (maNhanVien) REFERENCES NhanVien(maNhanVien)
-)
+);
 GO
 CREATE TABLE CT_HoaDon (
 	maHoaDon VARCHAR(10),
@@ -75,7 +78,7 @@ CREATE TABLE CT_HoaDon (
 
 	CONSTRAINT F_CTHD_HD FOREIGN KEY (maHoaDon) REFERENCES HoaDon(maHoaDon),
 	CONSTRAINT F_CTHD_Thuoc FOREIGN KEY (maThuoc) REFERENCES Thuoc(maThuoc)
-)
+);
 GO
 CREATE TABLE NhaCungCap (
 	maNCC VARCHAR(10) PRIMARY KEY,
@@ -83,7 +86,7 @@ CREATE TABLE NhaCungCap (
 	diaChi NVARCHAR(MAX),
 	soDienThoai NVARCHAR(15),
 	email NVARCHAR(50)
-)
+);
 
 
 GO
@@ -124,7 +127,7 @@ INSERT INTO KhachHang VALUES
 
 GO
 INSERT INTO dbo.HoaDon VALUES
-('HD1001','KH1001','NV100',1,0,CONVERT(date,'2023-04-17', 23),1000000)
+('HD1001','KH1001','NV100',1,0,CONVERT(date,'2023-04-17', 23),1000000,1,700000)
 
 SELECT COUNT(*) AS total FROM CT_HoaDon WHERE maHoaDon = ''
 
@@ -134,7 +137,13 @@ SELECT * FROM KhachHang WHERE donViBan = N'Hộp' ORDER BY maThuoc ASC;
 
 SELECT * FROM HoaDon WHERE dangHoaDon = 1
 
+SELECT * FROM NhanVien WHERE (ho + ' ' + ten) = N'Võ Trường Khang'
 
+SELECT * FROM CT_HoaDon
+
+SELECT TOP 20 h.maKhachHang, k.ho, k.ten, COUNT(*) as total 
+FROM HoaDon h INNER JOIN KhachHang k 
+ON h.maKhachHang = k.maKH GROUP BY h.maKhachHang, k.ho, k.ten
 
 /*SELECT * FROM Thuoc OFFSET 1 ROWS FETCH NEXT 25 ROWS ONLY
 
