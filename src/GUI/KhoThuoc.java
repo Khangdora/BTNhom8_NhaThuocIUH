@@ -10,19 +10,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import java.util.Calendar;
+
 
 import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -30,13 +31,12 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
+
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
-import javax.swing.SpinnerDateModel;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
@@ -51,7 +51,6 @@ import javax.swing.text.Document;
 import javax.swing.text.DocumentFilter;
 import javax.swing.text.PlainDocument;
 
-import com.raven.datechooser.DateChooser;
 
 import DAO.NhaCungCap_DAO;
 import DAO.Thuoc_DAO;
@@ -94,7 +93,7 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 	
 	protected String[] dangBaoCheStr = {"Dung dịch", "Viên sủi", "Bột", "Viên nén", "Viên nhộng", "Khác"};
 	protected String[] donViBanStr = {"Hộp", "Chai", "Vỉ", "Tuýp"};
-	protected String[] xuatXuStr = {"Việt nam", "Ý", "Hàn quốc"};
+	protected String[] xuatXuStr = {"Việt nam", "Ý", "Hàn quốc","Pháp","Đức","Indonesia"};
 	protected String[] nhaCungCapStr;
   	protected JLabel lblTBTenSP;
 	protected JLabel lblTBSoLuong;
@@ -106,18 +105,25 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 	private JButton btnThemNCC;
 	protected JComboBox<String> comboBoxSelectXX;
 	protected static JComboBox<String> comboBoxSelectNCC;
-	private JFrame frameUpdate;
-	private JButton btnSave;
-	private JButton btnExit;
-	private JFrame frameInfoThuoc;
-	private JTextField txtHSD;
-	private DateChooser dateHSD;
-	private JTextField txtNgayNhap;
+	protected JFrame frameUpdate;
+	protected JButton btnSave;
+	protected JButton btnExit;
+	protected JFrame frameInfoThuoc;
+	protected JTextField txtHSD;
+
+	protected JTextField txtNgayNhap;
+
+	protected JLabel lblTBHSD;
 	private DateChooser dateNgayNhap;
+<<<<<<< HEAD
 	private JLabel lblTBHSD;
 	
 	public static int pages = 1;
 	
+=======
+	protected DateChooser dateHSD;
+	private JPanel p;
+>>>>>>> c1f6995d84c82ea50b5f284c54c834fc744d7a32
 	public KhoThuoc() {
 
 		try {
@@ -132,13 +138,13 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setResizable(false);
-		JPanel p = panelKhoThuoc();
+		p = panelKhoThuoc();
 		this.add(p);
 	}
 	
-//	public static void main(String[] args) {
-//		new KhoThuoc().setVisible(true);
-//	}
+	public static void main(String[] args) {
+		new KhoThuoc().setVisible(true);
+	}
 	
 	public JPanel panelKhoThuoc() {
 		JPanel myPanel = new JPanel();
@@ -527,169 +533,8 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		return myPanel;
 	}
 	
-	public JFrame infoThuoc(Thuoc thuoc) {
-		frameInfoThuoc = new JFrame();
-		frameInfoThuoc.setTitle("Thông tin thuốc");
-		frameInfoThuoc.setSize(800, 350);
-		frameInfoThuoc.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frameInfoThuoc.setLocationRelativeTo(null);
-		frameInfoThuoc.setResizable(false);
-		frameInfoThuoc.setLayout(null);
-		ImageIcon icon = new ImageIcon(getClass().getResource("/img/logo.jpg"));
-		frameInfoThuoc.setIconImage(icon.getImage());
-		JPanel myPanel = new JPanel();
-		myPanel.setLayout(null);
-		myPanel.setSize(800, 310);
-		myPanel.setBackground(Color.decode("#DDDDDD"));
-		myPanel.setBorder(borderTitle("Thông tin sản phẩm"));
-		
-		int x = 10 , y = 20, width1 = 100, width2 = 280, height = 25;
-		
-		JLabel lblMaSP = new JLabel("Mã thuốc: ");
-		txtMaSP = new JTextField(thuoc_dao.maThuocAuto(), 5);
-		txtMaSP.setEditable(false);
-		lblMaSP.setBounds(x, y, width1, height);
-		txtMaSP.setBounds(width1, y, width2, height);
-		
-		JLabel lblTenSP = new JLabel("Tên thuốc: ");
-		txtTenSP = new JTextField();
-		txtTenSP.setEditable(false);
-		lblTenSP.setBounds(x, y*3, width1, height);
-		txtTenSP.setBounds(width1, y*3, width2, height);
-		txtTenSP.setName("tbTenSP");
-		lblTBTenSP = new JLabel();
-		lblTBTenSP.setBounds(width1, y*4, width2, height);
-		myPanel.add(lblTBTenSP);
-		
-		
-		JLabel lblSoLuong = new JLabel("Số lượng: ");
-		txtSoLuong = new JTextField();
-		txtSoLuong.setEditable(false);
-		txtSoLuong.setDocument(new PlainDocument());
-		((PlainDocument)txtSoLuong.getDocument()).setDocumentFilter(new NumberOnlyFilter());
-		lblSoLuong.setBounds(x, y*5, width1, height);
-		txtSoLuong.setBounds(width1, y*5, width2, height);
-		txtSoLuong.setName("tbSoLuong");
-		lblTBSoLuong = new JLabel();
-		lblTBSoLuong.setBounds(width1, y*6, width2, height);
-		myPanel.add(lblTBSoLuong);
-		
-		JLabel lblDonGia = new JLabel("Đơn giá: ");
-		txtDonGia = new JTextField();
-		txtDonGia.setEditable(false);
-		lblDonGia.setBounds(x, y*7, width1, height);
-		txtDonGia.setBounds(width1, y*7, width2, height);
-		txtDonGia.setName("tbDonGia");
-		lblTBDonGia = new JLabel();
-		lblTBDonGia.setBounds(width1, y*8, width2, height);
-		myPanel.add(lblTBDonGia);
-		
-		JLabel lblNgayNhap = new JLabel("Ngày nhập: ");
-		txtNgayNhap = new JTextField();
-		txtNgayNhap.setEnabled(false);
-		lblNgayNhap.setBounds(x, y*9, width1, height);
-		txtNgayNhap.setBounds(width1, y*9, width2, height);
-		txtNgayNhap.setEnabled(false);
-		
-		
-		JLabel lblDVB = new JLabel("Đơn vị bán: ");
-		comboBoxSelectDVB = new JComboBox<String>(donViBanStr);
-		comboBoxSelectDVB.setEnabled(false);
-		lblDVB.setBounds(x + width1 + width2, y, width1, height);
-		comboBoxSelectDVB.setBounds(x + width1*2 + width2, y, width2, height);
-		
-		JLabel lblDBC = new JLabel("Dạng bào chế: ");
-		comboBoxSelectDBC = new JComboBox<String>(dangBaoCheStr);
-		comboBoxSelectDBC.setEnabled(false);
-		lblDBC.setBounds(x + width1 + width2, y*3, width1, height);
-		comboBoxSelectDBC.setBounds(x + width1*2 + width2, y*3, width2, height);
-		
-		JLabel lblXuatXu = new JLabel("Xuất xứ: ");
-		comboBoxSelectXX = new JComboBox<>(xuatXuStr);
-		comboBoxSelectXX.setEnabled(false);
-		lblXuatXu.setBounds(x + width1 + width2, y*5, width1, height);
-		comboBoxSelectXX.setBounds(x + width1*2 + width2, y*5, width2, height);
-		
-		JLabel lblTenNCC = new JLabel("Nhà cung cấp: ");
-		comboBoxSelectNCC = new JComboBox<String>();
-		comboBoxSelectNCC.setEnabled(false);
-		docDuLieuVaoComboboxNCC();
-		lblTenNCC.setBounds(x + width1 + width2, y*7, width1, height);
-		comboBoxSelectNCC.setBounds(x + width1*2 + width2, y*7, width2, height);
-		
-		
-		JLabel lblHSD = new JLabel("Hạn sử dụng: ");
-		txtHSD = new JTextField();
-		txtHSD.setEnabled(false);
-		lblHSD.setBounds(x + width1 + width2, y*9, width1, height);
-		txtHSD.setBounds(x + width1*2 + width2, y*9, width2, height);
-//		snHSD = hanSuDung();
-//		snHSD.setEnabled(false);
-//		lblHSD.setBounds(x + width1 + width2, y*9, width1, height);
-//		snHSD.setBounds(x + width1*2 + width2, y*9, width2, height);
-		
-		
-		JLabel lblThanhPhan = new JLabel("Thành phần: ");
-		txtThanhPhan = new JTextArea();
-		txtThanhPhan.setEditable(false);
-		txtThanhPhan.setLineWrap(true);
-		txtThanhPhan.setWrapStyleWord(true);
-		txtThanhPhan.setName("tbThanhPhan");
-		JScrollPane spThanhPhan = new JScrollPane(txtThanhPhan, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		lblThanhPhan.setBounds(x, y*11, width1, height*3);
-		spThanhPhan.setBounds(width1, y*11, width2, height*3);
-		
-		lblTBThanhPhan = new JLabel();
-		lblTBThanhPhan.setBounds(x*2 + width1*3 + width2*2, y*5, width2, height);
-		myPanel.add(lblTBThanhPhan);
-		
-		JLabel lblCongDung = new JLabel("Công dụng: ");
-		txtCongDung = new JTextArea();
-		txtCongDung.setEditable(false);
-		txtCongDung.setLineWrap(true);
-		txtCongDung.setWrapStyleWord(true);
-		txtCongDung.setName("tbCongDung");
-		JScrollPane spCongDung = new JScrollPane(txtCongDung, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		lblCongDung.setBounds(x + width1 + width2, y*11, width1, height*3);
-		spCongDung.setBounds(x + width1*2 + width2, y*11, width2, height*3);
-		
-		lblTBCongDung = new JLabel();
-		lblTBCongDung.setBounds(x*2 + width1*3 + width2*2, y*11, width2, height);
-		myPanel.add(lblTBCongDung);
-		
-		
-		myPanel.add(lblMaSP);
-		myPanel.add(txtMaSP);
-		myPanel.add(lblTenSP);
-		myPanel.add(txtTenSP);
-		myPanel.add(lblDVB);
-		myPanel.add(comboBoxSelectDVB);
-		myPanel.add(lblSoLuong);
-		myPanel.add(txtSoLuong);
-		myPanel.add(lblDonGia);
-		myPanel.add(txtDonGia);
-		myPanel.add(lblXuatXu);
-		myPanel.add(comboBoxSelectXX);
-		myPanel.add(lblDBC);
-		myPanel.add(comboBoxSelectDBC);
-		myPanel.add(lblTenNCC);
-		myPanel.add(comboBoxSelectNCC);
-		myPanel.add(lblThanhPhan);
-		myPanel.add(spThanhPhan);
-		myPanel.add(lblCongDung);
-		myPanel.add(spCongDung);
-		myPanel.add(lblNgayNhap);
-		myPanel.add(txtNgayNhap);
-		myPanel.add(lblHSD);
-		myPanel.add(txtHSD);
-		
-		
-		frameInfoThuoc.add(myPanel);
-		
-		readDataIntoTxt(thuoc);
-		return frameInfoThuoc;
-	}
 	
+<<<<<<< HEAD
 	public JFrame guiUpdate(Thuoc thuoc) {
 		frameUpdate = new JFrame();
 		frameUpdate.setTitle("Sửa thông tin thuốc");
@@ -885,6 +730,10 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		readDataIntoTxt(thuoc);
 		return frameUpdate;
 	}
+=======
+	
+	
+>>>>>>> c1f6995d84c82ea50b5f284c54c834fc744d7a32
 	
 	public void readDataIntoTxt(Thuoc thuoc) {
 		txtMaSP.setText(thuoc.getMaThuoc());
@@ -972,7 +821,7 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 	
 	public void delete() {
 		int row = tableKhoThuoc.getSelectedRow();
-		if(row < 0) {
+		if(row < 0 || row > tableKhoThuoc.getRowCount()) {
 			JOptionPane.showMessageDialog(this, "Bạn chưa chọn sản phẩm để xóa");
 		} else {
 			String maSP = modelKhoThuoc.getValueAt(row, 0).toString();	
@@ -1006,12 +855,17 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 				e.printStackTrace();
 			}
 		}
+		dateHSD.toDay();
 		txtThanhPhan.setText("");
 		txtCongDung.setText("");
 		comboBoxSelectDBC.setSelectedIndex(0);
 		comboBoxSelectDVB.setSelectedIndex(0);
 		comboBoxSelectXX.setSelectedIndex(0);
 		comboBoxSelectNCC.setSelectedIndex(0);
+		lblTBTenSP.setText("");
+		lblTBHSD.setText("");
+		lblTBDonGia.setText("");
+		lblTBSoLuong.setText("");
 	}
 	
 	
@@ -1019,7 +873,7 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 	public void add() throws ParseException {
 		removeTextlblTB();
 		if(validData()) {
-			String maSP = txtMaSP.getText();
+			String maSP = thuoc_dao.maThuocAuto();
 			String tenSP = txtTenSP.getText();
 			String dvb = (String) comboBoxSelectDVB.getSelectedItem();
 			int soLuong = Integer.parseInt(txtSoLuong.getText());
@@ -1042,7 +896,9 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 				
 				modelKhoThuoc.addRow(new Object[] {thuoc.getMaThuoc(),thuoc.getTenThuoc(),thuoc.getDonViBan(),
 						thuoc.getSoLuong(),thuoc.getXuatXu(),thuoc.getDangBaoChe(),format.format(thuoc.getDonGia())});
+				JOptionPane.showMessageDialog(this, "Thêm thành công");
 				xoaTrang();
+				reload();
 			}
 			else {
 				JOptionPane.showMessageDialog(this, "Mã sản phẩm đã tồn tại");
@@ -1064,39 +920,6 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		lblTBTenSP.setText("");
 		lblTBCongDung.setText("");
 		lblTBThanhPhan.setText("");
-	}
-	
-	public JSpinner ngayNhap() {
-		// Lấy ngày hiện tại từ đối tượng Calendar
-		Calendar calendar = Calendar.getInstance();
-		Date currentDate = calendar.getTime();
-
-		SpinnerDateModel dateModel = new SpinnerDateModel(currentDate, currentDate, null, Calendar.DAY_OF_MONTH);
-		JSpinner spinner = new JSpinner(dateModel);
-		
-		JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spinner, "dd/MM/yyyy");
-		spinner.setEditor(dateEditor);
-		
-		return spinner;
-	}
-	
-	
-	public JSpinner hanSuDung() {
-		// Lấy ngày hiện tại từ đối tượng Calendar
-		Calendar calendar = Calendar.getInstance();
-		Date currentDate = calendar.getTime();
-
-		// Thêm 7 ngày để tạo ngày trong tương lai
-		calendar.add(Calendar.DAY_OF_MONTH, 1);
-		Date futureDate = calendar.getTime();
-
-		// Tạo SpinnerDateModel với ngày trong tương lai
-		SpinnerDateModel dateModel = new SpinnerDateModel(futureDate, currentDate, null, Calendar.DAY_OF_MONTH);
-		JSpinner spinner = new JSpinner(dateModel);
-		
-		JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spinner, "dd/MM/yyyy");
-		spinner.setEditor(dateEditor);
-		return spinner;
 	}
 	
 	public void setDuLieuKhoThuoc(int pages) {
@@ -1142,7 +965,6 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 	};
 	
 	
-	
 	protected void reload(){
 		setDuLieuKhoThuoc(1);
 		
@@ -1156,7 +978,7 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		comboBoxSX.setSelectedIndex(0);
 	}
 
-	
+	private SuaThuoc sua;
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
@@ -1179,9 +1001,10 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 				JOptionPane.showMessageDialog(this, "Bạn chưa chọn thuốc muốn sửa");
 			}
 			else {
+				sua = new SuaThuoc();
 				String maThuoc = modelKhoThuoc.getValueAt(row, 0).toString();
 				Thuoc thuoc = thuoc_dao.getThuocTheoMaThuoc(maThuoc);
-				guiUpdate(thuoc).setVisible(true);
+				sua.guiUpdate(thuoc).setVisible(true);
 			}
 		}
 		if(o.equals(btnXoaTrang)) {
@@ -1282,7 +1105,8 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 //		}
 	
 	}
-//	InfoThuoc infoThuoc;
+	
+	private InfoThuoc infoThuoc;
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -1292,7 +1116,8 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
             String maThuoc = (String) tableKhoThuoc.getValueAt(row, 0);
             
             Thuoc thuoc = thuoc_dao.getThuocTheoMaThuoc(maThuoc);
-            infoThuoc(thuoc).setVisible(true);
+            infoThuoc = new InfoThuoc();
+            infoThuoc.infoThuoc(thuoc).setVisible(true);
         }
 	}
 
@@ -1433,12 +1258,12 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		
 		String soLuong = txtSoLuong.getText().trim();
 		if(!soLuong.matches("^[0-9]+$")) {
-			lblThongBao(lblTBSoLuong, 0, "Sai số lượng");
+			lblThongBao(lblTBSoLuong, 0, "Số lượng không được rỗng");
 			sum++;
 		}
 		String donGia = txtDonGia.getText().trim();
 		if(!donGia.matches("^[1-9][0-9]*$")){
-			lblThongBao(lblTBDonGia, 0, "Sai đơn giá ");
+			lblThongBao(lblTBDonGia, 0, "Đơn giá không được rỗng");
 			sum++;
 		}
 		

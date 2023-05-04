@@ -33,8 +33,15 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.DocumentFilter;
+import javax.swing.text.PlainDocument;
+import javax.swing.text.DocumentFilter.FilterBypass;
 
 import DAO.NhaCungCap_DAO;
+import GUI.KhoThuoc.NumberOnlyFilter;
 import connectDB.ConnectDB;
 import entity.NhaCungCap;
 
@@ -104,7 +111,7 @@ public class NhaCungCap_GUI extends JFrame implements ActionListener, MouseListe
 		
 		JPanel panelSearch = new JPanel();
 		panelNorth.setPreferredSize(new Dimension(panelNorth.getPreferredSize().height, 30));
-		JLabel lblSearchName = new JLabel("Tìm theo tên: ");
+		JLabel lblSearchName = new JLabel("Nhập thông tin cần tìm: ");
 		txtSearchName = new JTextField(20);
 		txtSearchName.getDocument().addDocumentListener(new DocumentListener() {
 		    @Override
@@ -126,9 +133,12 @@ public class NhaCungCap_GUI extends JFrame implements ActionListener, MouseListe
 		    	String searchText = txtSearchName.getText().trim();
 		    	TableRowSorter<TableModel> sorter = new TableRowSorter<>(tableNCC.getModel());
 		    	tableNCC.setRowSorter(sorter);
-		    	RowFilter<TableModel, Object> filter1 = RowFilter.regexFilter("(?i)" + searchText, 1);
-		    	RowFilter<TableModel, Object> filter2 = RowFilter.regexFilter("(?i)" + searchText, 3);
-		    	RowFilter<TableModel, Object> filter = RowFilter.orFilter(Arrays.asList(filter1, filter2));
+		    	RowFilter<TableModel, Object> filter1 = RowFilter.regexFilter("(?i)" + searchText, 0);
+		    	RowFilter<TableModel, Object> filter2 = RowFilter.regexFilter("(?i)" + searchText, 1);
+		    	RowFilter<TableModel, Object> filter3 = RowFilter.regexFilter("(?i)" + searchText, 2);
+		    	RowFilter<TableModel, Object> filter4 = RowFilter.regexFilter("(?i)" + searchText, 3);
+		    	RowFilter<TableModel, Object> filter5 = RowFilter.regexFilter("(?i)" + searchText, 4);
+		    	RowFilter<TableModel, Object> filter = RowFilter.orFilter(Arrays.asList(filter1, filter2, filter3, filter4, filter5));
 		    	sorter.setRowFilter(filter);
 		    }
 		});
@@ -225,6 +235,8 @@ public class NhaCungCap_GUI extends JFrame implements ActionListener, MouseListe
 		
 		JLabel lblSDT = new JLabel("Số điện thoại: ");
 		txtSDT = new JTextField();
+		txtSDT.setDocument(new PlainDocument());
+		((PlainDocument)txtSDT.getDocument()).setDocumentFilter(new NumberOnlyFilter());
 		txtSDT.setName("thongbao_sdt");
 		lblTBSDT = new JLabel();
 		myPanel.add(lblSDT);
@@ -335,6 +347,8 @@ public class NhaCungCap_GUI extends JFrame implements ActionListener, MouseListe
 		
 		JLabel lblSDT = new JLabel("Số điện thoại: ");
 		txtSDT = new JTextField();
+		txtSDT.setDocument(new PlainDocument());
+		((PlainDocument)txtSDT.getDocument()).setDocumentFilter(new NumberOnlyFilter());
 		txtSDT.setName("thongbao_sdt");
 		lblTBSDT = new JLabel();
 		myPanel.add(lblSDT);
@@ -404,15 +418,17 @@ public class NhaCungCap_GUI extends JFrame implements ActionListener, MouseListe
 	}
 	
 	public void update() {
-		String ma = txtMa.getText();
-		String ten = txtTen.getText();
-		String daiChi = txtDiaChi.getText();
-		String sdt = txtSDT.getText();
-		String email = txtEmail.getText();
-		NhaCungCap ncc = new NhaCungCap(ma, ten, daiChi, sdt, email);
-		if(ncc_dao.update(ncc)) {
-			setDuLieuNCC();
-			JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+		if(validData()) {
+			String ma = txtMa.getText();
+			String ten = txtTen.getText();
+			String daiChi = txtDiaChi.getText();
+			String sdt = txtSDT.getText();
+			String email = txtEmail.getText();
+			NhaCungCap ncc = new NhaCungCap(ma, ten, daiChi, sdt, email);
+			if(ncc_dao.update(ncc)) {
+				setDuLieuNCC();
+				JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+			}
 		}
 	}
 	
@@ -435,19 +451,21 @@ public class NhaCungCap_GUI extends JFrame implements ActionListener, MouseListe
 	}
 	
 	public void saveAdd() {
-		String ma = ncc_dao.maNCCAuto();
-		String ten = txtTen.getText();
-		String daiChi = txtDiaChi.getText();
-		String sdt = txtSDT.getText();
-		String email = txtEmail.getText();
-		
-		NhaCungCap ncc = new NhaCungCap(ma, ten, daiChi, sdt, email);
-		
-		if(ncc_dao.create(ncc)) {
-			modelNCC.addRow(new Object[] {ncc.getMaNCC(), ncc.getTenNCC(), ncc.getDiaChiNCC(), ncc.getSdtNCC(), ncc.getEmailNCC()});
-			xoaTrang();
-			frameAdd.dispose();
-			KhoThuoc.docDuLieuVaoComboboxNCC();
+		if(validData()) {
+			String ma = ncc_dao.maNCCAuto();
+			String ten = txtTen.getText();
+			String daiChi = txtDiaChi.getText();
+			String sdt = txtSDT.getText();
+			String email = txtEmail.getText();
+			
+			NhaCungCap ncc = new NhaCungCap(ma, ten, daiChi, sdt, email);
+			
+			if(ncc_dao.create(ncc)) {
+				modelNCC.addRow(new Object[] {ncc.getMaNCC(), ncc.getTenNCC(), ncc.getDiaChiNCC(), ncc.getSdtNCC(), ncc.getEmailNCC()});
+				xoaTrang();
+				frameAdd.dispose();
+				KhoThuoc.docDuLieuVaoComboboxNCC();
+			}
 		}
 	}
 	
@@ -466,6 +484,34 @@ public class NhaCungCap_GUI extends JFrame implements ActionListener, MouseListe
 		txtDiaChi.setText(tableNCC.getValueAt(row, 2).toString());
 		txtSDT.setText(tableNCC.getValueAt(row, 3).toString());
 		txtEmail.setText(tableNCC.getValueAt(row, 4).toString());
+	}
+	
+	public boolean validData() {
+		int sum = 0;
+		String email = txtEmail.getText().trim();
+		if(!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+			lblThongBao(lblTBEmail, 0, "Sai email");
+			sum++;
+		}
+		String sdt = txtSDT.getText().trim();
+		if(!sdt.matches("^[0-9 -]{8,}$")) {
+			lblThongBao(lblTBSDT, 0, "Sai số điện thoại");
+			sum++;
+		}
+		String diaChi = txtDiaChi.getText().trim();
+		if(!diaChi.matches("^[\\p{L}0-9 .,-\\\\]+$")) {
+			lblThongBao(lblTBDC, 0, "Sai địa chỉ");
+			sum++;
+		}String tenSP = txtTen.getText().trim();
+		if(!tenSP.matches("^[\\p{L}0-9 .]+$")) {
+			lblThongBao(lblTBTen, 0, "Sai tên nhà cung cấp");
+			sum++;
+		}
+		if(sum > 0) {
+			return false;
+		}
+		
+		return true;
 	}
 	
 	public void xoaTrang() {
@@ -497,6 +543,55 @@ public class NhaCungCap_GUI extends JFrame implements ActionListener, MouseListe
 			    BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1), title);
 		((TitledBorder) border).setTitleFont(new Font("Time New Roman", Font.ITALIC, 10));
 		return border;
+	}
+	
+	public class NumberOnlyFilter extends DocumentFilter {
+	    public void insertString(FilterBypass fb, int offset, String string,
+	            AttributeSet attr) throws BadLocationException {
+
+	        Document doc = fb.getDocument();
+	        StringBuilder sb = new StringBuilder();
+	        sb.append(doc.getText(0, doc.getLength()));
+	        sb.insert(offset, string);
+
+	        if (isNumber(sb.toString())) {
+	            super.insertString(fb, offset, string, attr);
+	        }
+	    }
+	    
+	    public void replace(FilterBypass fb, int offset, int length, String text,
+	            AttributeSet attrs) throws BadLocationException {
+
+	        Document doc = fb.getDocument();
+	        StringBuilder sb = new StringBuilder();
+	        sb.append(doc.getText(0, doc.getLength()));
+	        sb.replace(offset, offset + length, text);
+
+	        if (isNumber(sb.toString())) {
+	            super.replace(fb, offset, length, text, attrs);
+	        }
+	    }
+
+	    public void remove(FilterBypass fb, int offset, int length)
+	            throws BadLocationException {
+	        Document doc = fb.getDocument();
+	        StringBuilder sb = new StringBuilder();
+	        sb.append(doc.getText(0, doc.getLength()));
+	        sb.delete(offset + 1, offset + length);
+
+	        if (isNumber(sb.toString())) {
+	            super.remove(fb, offset, length);
+	        }
+	    }
+	    
+	    private boolean isNumber(String text) {
+	        try {
+	            Integer.parseInt(text);
+	            return true;
+	        } catch (NumberFormatException e) {
+	            return false;
+	        }
+	    }
 	}
 
 	@Override
@@ -565,7 +660,7 @@ public class NhaCungCap_GUI extends JFrame implements ActionListener, MouseListe
 			}
 			if(textField.getName().equals("thongbao_sdt")) {
 				String sdt = txtSDT.getText().trim();
-				if(!sdt.matches("^0[0-9]{9}$")) {
+				if(!sdt.matches("^[0-9 -]{8,}$")) {
 					lblThongBao(lblTBSDT, 0, "Sai số điện thoại");
 				}
 				else {
