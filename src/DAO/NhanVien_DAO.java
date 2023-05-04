@@ -481,6 +481,37 @@ public ArrayList<NhanVien> filterNangCao(String gioiTinh, String caTruc, String 
 		
 	}
 	
+	public boolean changePassword(String password, String maNhanVien) {
+		
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement stmt = null;
+		int n = 0;
+		
+		try {
+			stmt = con.prepareStatement("UPDATE NhanVien SET matkhau = ? WHERE maNhanVien = ?");
+			stmt.setString(1, password);
+			stmt.setString(2, maNhanVien);
+			n = stmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			
+		}
+		
+		finally {
+			try {
+				stmt.close();
+				
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+				
+			}
+		}
+		return n>0;
+		
+	}
+	
 	public double getDoanhSo(String maNhanVien) {
 		double total = 0;
 		

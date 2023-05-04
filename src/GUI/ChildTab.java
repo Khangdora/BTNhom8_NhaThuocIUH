@@ -1602,6 +1602,338 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 			}
 		}
 		
+		///SỰ KIỆN KHÁCH HÀNG/////
+		if(o.equals(btnLocKH)) {
+			String selectTen = (String)comboBox_SortHoTen.getSelectedItem();
+			if(txtLocTuKhoa_KH.getName().equals("timkiem_khachhang") && selectTen.equals("Tăng") && radSortNam.isSelected()) {
+				String regex = txtLocTuKhoa_KH.getText().trim();
+				
+				if(regex.equals("")) 
+					setDuLieuKhachHang();
+				else {
+					
+					DefaultTableModel temp = (DefaultTableModel) tableKH.getModel();
+					temp.getDataVector().removeAllElements();
+					
+					List<KhachHang> list = khachhang_dao.filterTuKhoaKH_Tang_Nam(regex);
+					for(KhachHang kh : list) {
+						String gioitinh ="";	
+						if(kh.isGioiTinh()) {
+							gioitinh = "Nam";
+						}else{
+							gioitinh = "Nữ";
+						}
+						modelKH.addRow(new Object[] {kh.getMaKhachHang(),kh.getHoKhachHang(),kh.getTenKhachHang(),
+								kh.getSoDienThoai(),kh.getEmailKhachHang(), gioitinh});
+					}	
+					
+				}
+			}
+			
+			if(txtLocTuKhoa_KH.getName().equals("timkiem_khachhang") && selectTen.equals("Giảm") && radSortNam.isSelected()) {
+				String regex = txtLocTuKhoa_KH.getText().trim();
+				
+				if(regex.equals("")) 
+					setDuLieuKhachHang();
+				else {
+					
+					DefaultTableModel temp = (DefaultTableModel) tableKH.getModel();
+					temp.getDataVector().removeAllElements();
+					
+					List<KhachHang> list = khachhang_dao.filterTuKhoaKH_Giam_Nam(regex);
+					for(KhachHang kh : list) {
+						String gioitinh ="";	
+						if(kh.isGioiTinh()) {
+							gioitinh = "Nam";
+						}else{
+							gioitinh = "Nữ";
+						}
+						modelKH.addRow(new Object[] {kh.getMaKhachHang(),kh.getHoKhachHang(),kh.getTenKhachHang(),
+								kh.getSoDienThoai(),kh.getEmailKhachHang(), gioitinh});
+					}	
+					
+				}
+			}
+			
+			if(txtLocTuKhoa_KH.getName().equals("timkiem_khachhang") && selectTen.equals("Tăng") && radSortNu.isSelected()) {
+				String regex = txtLocTuKhoa_KH.getText().trim();
+				
+				if(regex.equals("")) 
+					setDuLieuKhachHang();
+				else {
+					
+					DefaultTableModel temp = (DefaultTableModel) tableKH.getModel();
+					temp.getDataVector().removeAllElements();
+					
+					List<KhachHang> list = khachhang_dao.filterTuKhoaKH_Tang_Nu(regex);
+					for(KhachHang kh : list) {
+						String gioitinh ="";	
+						if(kh.isGioiTinh()) {
+							gioitinh = "Nam";
+						}else{
+							gioitinh = "Nữ";
+						}
+						modelKH.addRow(new Object[] {kh.getMaKhachHang(),kh.getHoKhachHang(),kh.getTenKhachHang(),
+								kh.getSoDienThoai(),kh.getEmailKhachHang(), gioitinh});
+					}	
+					
+				}
+			}
+			
+			if(txtLocTuKhoa_KH.getName().equals("timkiem_khachhang") && selectTen.equals("Giảm") && radSortNu.isSelected()) {
+				String regex = txtLocTuKhoa_KH.getText().trim();
+				
+				if(regex.equals("")) 
+					setDuLieuKhachHang();
+				else {
+					
+					DefaultTableModel temp = (DefaultTableModel) tableKH.getModel();
+					temp.getDataVector().removeAllElements();
+List<KhachHang> list = khachhang_dao.filterTuKhoaKH_Giam_Nu(regex);
+					for(KhachHang kh : list) {
+						String gioitinh ="";	
+						if(kh.isGioiTinh()) {
+							gioitinh = "Nam";
+						}else{
+							gioitinh = "Nữ";
+						}
+						modelKH.addRow(new Object[] {kh.getMaKhachHang(),kh.getHoKhachHang(),kh.getTenKhachHang(),
+								kh.getSoDienThoai(),kh.getEmailKhachHang(), gioitinh});
+					}	
+					
+				}
+			}
+			
+			if(selectTen.equals("Tăng") && radSortNam.isSelected() && txtLocTuKhoa_KH.getText().trim().equals("")){
+				modelKH.getDataVector().removeAllElements();
+				List<KhachHang> dsKH = khachhang_dao.sortTang_Nam();
+				for(KhachHang kh : dsKH) {
+					String gioitinh = "";
+					if(kh.isGioiTinh()) {
+						gioitinh = "Nam";
+					}else{
+						gioitinh = "Nữ";
+					}
+					modelKH.addRow(new Object[] {kh.getMaKhachHang(),kh.getHoKhachHang(),kh.getTenKhachHang(),
+							kh.getSoDienThoai(),kh.getEmailKhachHang(), gioitinh});	
+				}
+			}
+			if(selectTen.equals("Giảm") && radSortNam.isSelected() && txtLocTuKhoa_KH.getText().trim().equals("")){
+				modelKH.getDataVector().removeAllElements();
+				List<KhachHang> dsKH = khachhang_dao.sortGiam_Nam();
+				for(KhachHang kh : dsKH) {
+					String gioitinh = "";
+					if(kh.isGioiTinh()) {
+						gioitinh = "Nam";
+					}else{
+						gioitinh = "Nữ";
+					}
+					modelKH.addRow(new Object[] {kh.getMaKhachHang(),kh.getHoKhachHang(),kh.getTenKhachHang(),
+							kh.getSoDienThoai(),kh.getEmailKhachHang(), gioitinh});	
+				}
+			}
+			if(selectTen.equalsIgnoreCase("Tăng") && radSortNu.isSelected() && txtLocTuKhoa_KH.getText().trim().equals("")) {
+				modelKH.getDataVector().removeAllElements();
+				List<KhachHang> dsKH = khachhang_dao.sortTang_Nu();
+				for(KhachHang kh : dsKH) {
+						String gioitinh = "";
+					if(kh.isGioiTinh()) {
+						gioitinh = "Nam";
+					}else{
+						gioitinh = "Nữ";
+					}
+					modelKH.addRow(new Object[] {kh.getMaKhachHang(),kh.getHoKhachHang(),kh.getTenKhachHang(),
+							kh.getSoDienThoai(),kh.getEmailKhachHang(), gioitinh});	
+				}
+			}
+			if(selectTen.equalsIgnoreCase("Giảm") && radSortNu.isSelected() && txtLocTuKhoa_KH.getText().trim().equals("")){
+				modelKH.getDataVector().removeAllElements();
+				List<KhachHang> dsKH = khachhang_dao.sortGiam_Nu();
+				for(KhachHang kh : dsKH) {
+					String gioitinh = "";
+					if(kh.isGioiTinh()) {
+						gioitinh = "Nam";
+					}else{
+						gioitinh = "Nữ";
+					}
+					modelKH.addRow(new Object[] {kh.getMaKhachHang(),kh.getHoKhachHang(),kh.getTenKhachHang(),
+							kh.getSoDienThoai(),kh.getEmailKhachHang(), gioitinh});	
+				}
+			}
+		}
+		else if(o.equals(btnThemKH)) {
+			KhachHang kh = revertKHFromTextfields();
+			if(validKH()) {
+				if(addToListKhachHang(kh)) {
+					String gioitinh = "";
+					if (kh.isGioiTinh()) {
+						gioitinh = "Nam";
+					}else {
+						gioitinh = "Nữ";
+					}
+					JOptionPane.showMessageDialog(null, "Thêm thành công");
+String [] row = {kh.getMaKhachHang(),kh.getHoKhachHang(),kh.getTenKhachHang(),
+							kh.getSoDienThoai(),kh.getEmailKhachHang(), gioitinh};
+					modelKH_temp.addRow(row);
+				}else {
+					int i = listKH.size();
+					String maMoi = null;
+					String maHienTai = null;
+					maHienTai = modelKH_temp.getValueAt(i-1, 0).toString();
+					String kyTuCuoi = maHienTai.replaceAll("[^0-9]+", "");
+					String kyTuMoi = Integer.toString(Integer.parseInt(kyTuCuoi) + 1);
+					maMoi = "KH" + kyTuMoi;
+					
+					String ten = txtTen_KH.getText().trim();
+					String ho = txtho_KH.getText().trim();
+					String sdt = txtSDT_KH.getText().trim();
+					String email = txtEmail_KH.getText().trim();
+					String gioiTinh = (String) comboBoxGioiTinh.getSelectedItem();
+					boolean phai;
+					if(gioiTinh.equalsIgnoreCase("Nam")) {
+						phai = true;
+					}else {
+						phai = false;
+					}
+					KhachHang khMoi = new KhachHang(maMoi, ho, ten, sdt, email, phai);
+					listKH.add(kh);
+					
+					String gioitinh = "";
+					if (khMoi.isGioiTinh()) {
+						gioitinh = "Nam";
+					}else {
+						gioitinh = "Nữ";
+					}
+					JOptionPane.showMessageDialog(null, "Thêm thành công");
+					String [] row = {khMoi.getMaKhachHang(),khMoi.getHoKhachHang(),khMoi.getTenKhachHang(),
+							khMoi.getSoDienThoai(),khMoi.getEmailKhachHang(), gioiTinh};
+					modelKH_temp.addRow(row);
+				}
+			}
+		}
+		else if(o.equals(btnXoaKH)) {
+			int r = tableKH_temp.getSelectedRow();
+			if(r != -1 ) {
+				int tb = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa dòng này không?", "Delete", JOptionPane.NO_OPTION);
+				if(tb == JOptionPane.YES_OPTION) {
+					if(xoa1KhachHang(r)){
+						modelKH_temp.removeRow(r);
+					}
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(null, "Bạn chưa chọn dòng xóa!!!");
+			}
+		}
+		else if(o.equals(btnSuaKH)) {
+			int r = tableKH_temp.getSelectedRow();
+			if(r == -1) {
+				JOptionPane.showMessageDialog(null, "Bạn chưa chọn dòng");
+				return;
+			}
+			if(tableKH_temp.getSelectedRowCount() > 1) {
+				JOptionPane.showMessageDialog(null, "Chỉ được chọn 1 dòng để sửa");
+				return;
+			}
+			
+			KhachHang kh = revertKHFromTextfields();
+			if(validKH()) {
+				try {
+					if(suaKhachHang(kh.getMaKhachHang(), kh.getHoKhachHang(), kh.getTenKhachHang(), kh.getSoDienThoai(), kh.getEmailKhachHang(), kh.isGioiTinh())) {
+						modelKH_temp.removeRow(r);
+						modelKH_temp.insertRow(r, kh.getObjectNV());
+					}
+				}catch(Exception e1){
+					JOptionPane.showMessageDialog(null, "Không thể sửa, hãy kiểm tra lại");
+				}
+			}
+		}
+		else if(o.equals(btnLuuKH)) {
+			int r = tableKH_temp.getSelectedRow();
+			if(r != -1 ) {
+				int ret = JOptionPane.showConfirmDialog(null, "Lưu vào cơ sở dữ liệu ?", "Lưu", JOptionPane.NO_OPTION);
+				if (ret == JOptionPane.YES_OPTION) {
+					boolean gioitinh;
+					if(modelKH_temp.getValueAt(r, 5).toString().equalsIgnoreCase("Nam")) {
+						gioitinh = true;
+					}else {
+						gioitinh = false;
+					}
+KhachHang kh = new KhachHang(modelKH_temp.getValueAt(r, 0).toString(), modelKH_temp.getValueAt(r, 1).toString(), modelKH_temp.getValueAt(r, 2).toString(), modelKH_temp.getValueAt(r, 3).toString(), modelKH_temp.getValueAt(r, 4).toString(), gioitinh);
+						if(khachhang_dao.insertKhachHang(kh)) {
+							modelKH.getDataVector().removeAllElements();
+							setDuLieuKhachHang();
+							JOptionPane.showMessageDialog(null, "Lưu thành công");
+							if(xoa1KhachHang(r)){
+								modelKH_temp.removeRow(r);
+							}
+						}else {
+							JOptionPane.showMessageDialog(null, "Đã có lỗi");
+						}
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(null, "Bạn chưa chọn dòng để lưu!!!");
+			}
+		}
+		else if(o.equals(btnRefresh)) {
+			modelKH.getDataVector().removeAllElements();
+			setDuLieuKhachHang();
+		}
+		else if(o.equals(btnXoaTrangKH)) {
+			xoaTrangFieldKhachHang();
+		}
+		else if(o.equals(btnXoaKH_csdl)) {
+			int r = tableKH.getSelectedRow();
+			if(r != -1 ) {
+				int tb = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa khách hàng này không?", "Delete", JOptionPane.NO_OPTION);
+				if(tb == JOptionPane.YES_OPTION) {
+					String maCanXoa = modelKH.getValueAt(r, 0).toString().trim();
+					if(khachhang_dao.XoaKhachHang(maCanXoa)){
+						modelKH.getDataVector().removeAllElements();
+						setDuLieuKhachHang();
+					}
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(null, "Bạn chưa chọn dòng xóa!!!");
+			}
+		}
+		else if(o.equals(btnSuaKH_csdl)) {
+			int r = tableKH.getSelectedRow();
+			if(r == -1) {
+				JOptionPane.showMessageDialog(null, "Bạn chưa chọn dòng");
+				return;
+			}
+			if(tableKH.getSelectedRowCount() > 1) {
+				JOptionPane.showMessageDialog(null, "Chỉ được chọn 1 dòng để sửa");
+				return;
+			}
+			String ma = txtmaKH_KH.getText().trim();
+			String ten = txtTen_KH.getText().trim();
+			String ho = txtho_KH.getText().trim();
+			String sdt = txtSDT_KH.getText().trim();
+			String email = txtEmail_KH.getText().trim();
+			String gioiTinh = (String) comboBoxGioiTinh.getSelectedItem();
+			boolean phai;
+			if(gioiTinh.equalsIgnoreCase("Nam")) {
+				phai = true;
+			}else {
+				phai = false;
+			}
+			KhachHang kh = new KhachHang(ma, ho, ten, sdt, email, phai);
+			if(validKH()) {
+				try {
+					if(khachhang_dao.updateKhachHang(kh)) {
+						modelKH.getDataVector().removeAllElements();
+						setDuLieuKhachHang();
+					}
+				}catch(Exception e1){
+					JOptionPane.showMessageDialog(null, "Không thể sửa vào csdl, hãy kiểm tra lại");
+				}
+			}
+		}
+		
 	}
 
 	@Override
@@ -1679,5 +2011,102 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
         }
         
 	}
+	
+		// Khach hang
+		private boolean validKH() {
+			String ma = txtmaKH_KH.getText().trim();
+			String ten = txtTen_KH.getText().trim();
+			String ho = txtho_KH.getText().trim();
+			String sdt = txtSDT_KH.getText().trim();
+			String email = txtEmail_KH.getText().trim();
+			
+//			if (!(ma.length() > 0 && ma.matches("(KH)\\d{4}"))) {
+//				JOptionPane.showMessageDialog(null, "Error: Mã khách hàng theo mẫu: KH + 4 ký số");
+//				txtmaKH_KH.requestFocus();
+//				return false;
+//			}
+
+//			"^[A-Z][a-z]*(?:\\h+[A-Z][a-z]*)*$"
+			if (!(ho.length() > 0 && ho.matches("^[\\p{L}]*(?:\\h+[\\p{L}]*)*$"))) {
+				JOptionPane.showMessageDialog(null, "Error: Họ khách hàng không có số hay kí tự đặc biệt");
+				txtho_KH.requestFocus();
+				return false;
+			}
+			
+			else if (!(ten.length() > 0 && ten.matches("^[\\p{L}]*$"))) {
+				JOptionPane.showMessageDialog(null, "Error: Tên khách hàng là 1 từ, không có số, hay kí tự đặc biệt");
+				txtTen_KH.requestFocus();
+				return false;
+			}
+			
+			else if(!(sdt.length() > 0 && sdt.matches("^\\d{10}$"))) {
+				JOptionPane.showMessageDialog(null, "Error: Số điện thoại là 1 dãy số nguyên có 10 số");
+				txtSDT_KH.requestFocus();
+				return false;
+			}
+			
+			else if(!(email.length()>=0 && email.matches("^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$"))){
+				JOptionPane.showMessageDialog(null, "Sai định dạng email");
+				txtEmail_KH.requestFocus();
+				return false;
+			}
+			return true;
+		}
+		private KhachHang revertKHFromTextfields() {
+			String ma = khachhang_dao.maKHAuto();
+			String ten = txtTen_KH.getText().trim();
+			String ho = txtho_KH.getText().trim();
+			String sdt = txtSDT_KH.getText().trim();
+			String email = txtEmail_KH.getText().trim();
+			String gioiTinh = (String) comboBoxGioiTinh.getSelectedItem();
+			boolean phai;
+			if(gioiTinh.equalsIgnoreCase("Nam")) {
+				phai = true;
+			}else {
+				phai = false;
+			}
+			return new KhachHang(ma, ho, ten, sdt, email, phai);
+		}
+		
+		private boolean addToListKhachHang(KhachHang kh) {
+			for(int i=0; i<listKH.size(); i++)
+				if(listKH.get(i).getMaKhachHang().equalsIgnoreCase(kh.getMaKhachHang())) {
+					return false;
+				}
+			listKH.add(kh);
+			return true;
+		}
+		
+		private boolean xoa1KhachHang(int x) {
+			if(x >=0 && x < listKH.size()) {
+				listKH.remove(x);
+				return true;
+			}
+			else return false;
+		}
+		
+		public boolean suaKhachHang(String ma, String ho, String ten, String sdt, String email, boolean gioitinh) {
+			KhachHang kh = new KhachHang(ma, ho, ten, sdt, email, gioitinh);
+			if(listKH.contains(kh)) { 
+//				kh.setMaKhachHang(ma);
+				kh.setHoKhachHang(ho);
+				kh.setTenKhachHang(ten);
+				kh.setSoDienThoai(sdt);
+				kh.setEmailKhachHang(email);
+				kh.setGioiTinh(gioitinh);
+				return true;
+			}
+			else return false;
+		}
+		
+		public void xoaTrangFieldKhachHang() {
+			txtmaKH_KH.setText("");
+			txtTen_KH.setText("");
+			txtho_KH.setText("");
+			txtSDT_KH.setText("");
+			txtEmail_KH.setText("");
+			txtSDT_KH.requestFocus();
+		}
+
 
 }
