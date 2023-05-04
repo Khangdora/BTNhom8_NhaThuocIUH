@@ -1,5 +1,7 @@
 CREATE DATABASE nhathuocIUH;
 go
+DROP DATABASE nhathuocIUH;
+go
 USE nhathuocIUH;
 go
 CREATE TABLE CaTruc(
@@ -56,7 +58,9 @@ CREATE TABLE HoaDon (
 	dangHoaDon bit,
 	thanhToan bit,
 	ngayMua DATE,
-	tienKhach FLOAT
+	tienKhach FLOAT,
+	soLuong INT,
+	tongGia FLOAT
 
 	CONSTRAINT F_HD_KH FOREIGN KEY (maKhachHang) REFERENCES KhachHang(maKH),
 	CONSTRAINT F_HD_NV FOREIGN KEY (maNhanVien) REFERENCES NhanVien(maNhanVien)
@@ -122,11 +126,15 @@ GO
 INSERT INTO dbo.HoaDon VALUES
 ('HD1001','KH1001','NV100',1,0,CONVERT(date,'2023-04-17', 23),1000000)
 
-SELECT * FROM NhaCungCap
+SELECT COUNT(*) AS total FROM CT_HoaDon WHERE maHoaDon = ''
 
-SELECT * FROM Thuoc WHERE donViBan = N'Hộp' ORDER BY maThuoc ASC;
+SELECT COUNT(*) AS total FROM HoaDon
 
-SELECT chucVu FROM NhanVien GROUP BY chucVu;
+SELECT * FROM KhachHang WHERE donViBan = N'Hộp' ORDER BY maThuoc ASC;
+
+SELECT * FROM HoaDon WHERE dangHoaDon = 1
+
+
 
 /*SELECT * FROM Thuoc OFFSET 1 ROWS FETCH NEXT 25 ROWS ONLY
 

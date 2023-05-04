@@ -19,6 +19,28 @@ import entity.Thuoc;
 
 public class NhanVien_DAO {
 	
+	public int totalNhanVien() {
+		int totalRows = 0;
+		
+		try {
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
+			String sql = "SELECT COUNT(*) AS total FROM NhanVien";
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			while (rs.next()) {
+				totalRows = rs.getInt(1);				
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return totalRows;
+		
+	}
+	
 	public ArrayList<NhanVien> getallNhanVien() {
 		
 		ArrayList<NhanVien> dsnv = new ArrayList<NhanVien>();
@@ -52,6 +74,49 @@ public class NhanVien_DAO {
 		}
 		
 		return dsnv;		
+	}
+	
+	public NhanVien getNhanVienTheoHoTenNV(String hoten) {
+		NhanVien nv = new NhanVien();
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		
+		try {
+			
+			String sql = "SELECT * FROM NhanVien WHERE (ho + ' ' + ten) = ?";
+			statement=con.prepareStatement(sql);
+			statement.setString(1, hoten);
+			ResultSet rs = statement.executeQuery();
+			while(rs.next()) {
+				
+				nv.setMaNhanVien(rs.getString(1));
+				nv.setHoNhanVien(rs.getString(2));
+				nv.setTenNhanVien(rs.getString(3));
+				nv.setSoDienThoai(rs.getString(4));
+				nv.setEmailNhanVien(rs.getString(5));
+				nv.setCaTruc(new CaTruc(rs.getString(6)));
+				nv.setGioiTinh(rs.getBoolean(7));
+				nv.setChucVu(rs.getString(8));
+				nv.setTienLuong(rs.getDouble(9));
+				nv.setMatKhau(rs.getString(10));
+				
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		finally {
+			try {
+				statement.close();
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+		return nv;
+		
 	}
 	
 	public NhanVien getNhanVienTheoMaNV(String maNV) {

@@ -16,6 +16,28 @@ import entity.Thuoc;
 import GUI.ChildTab;
 
 public class KhachHang_DAO {
+
+	public int totalKhachHang() {
+		int totalRows = 0;
+		
+		try {
+			
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
+			String sql = "SELECT COUNT(*) AS total FROM KhachHang";
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			while (rs.next()) {
+				totalRows = rs.getInt("total");
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return totalRows;
+	}
 	
 	public KhachHang getKhachHangTheoMaKH(String mkh) {
 		KhachHang kh = null;
@@ -688,4 +710,46 @@ public boolean XoaKhachHang(String ma) {
 		}
 		return n>0;
 	}
+	
+	public String[][] dsKhachHangtheoLuotMua() {		
+		String[][] dsKhachHangs = new String[20][2];
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		
+		try {
+			String sql = "SELECT TOP 20 h.maKhachHang, k.ho, k.ten, COUNT(*) as total \r\n"
+					+ "FROM HoaDon h INNER JOIN KhachHang k \r\n"
+					+ "ON h.maKhachHang = k.maKH GROUP BY h.maKhachHang, k.ho, k.ten";
+			statement = con.prepareStatement(sql);
+			ResultSet rs = statement.executeQuery();
+			int i = 0;
+			
+			while (rs.next()) {
+				String ma = rs.getString(1);
+				String total = rs.getString(4);
+				
+				dsKhachHangs[i][0] = ma;
+				dsKhachHangs[i][1] = total;
+				
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		finally {
+			try {
+				statement.close();
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+		return dsKhachHangs;
+		
+	}
+	
 }

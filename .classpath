@@ -16,7 +16,17 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="D:/Documents/BTNhom8_NhaThuocIUH/lib/datechooser.jar">
+	<classpathentry kind="lib" path="lib/jfreechart-1.0.19-demo.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/datechooser.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/JTree-1.0.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

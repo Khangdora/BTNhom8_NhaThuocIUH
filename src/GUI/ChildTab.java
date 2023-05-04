@@ -1415,12 +1415,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 				JOptionPane.showMessageDialog(null, "Error: Không thể thêm khi đang chọn 1 dòng! (click chuột 2 lần để bỏ chọn)");
 			} else {
 			DecimalFormat formatter = new DecimalFormat("#,###");
-//			String checkMa = txtMaNV_NV.getText();
-//			NhanVien nv = new NhanVien();
-//			if (listNV.contains(checkMa)) {
-//				nv = revertNVFromTextfields(true);
-//			} else
-//				nv = revertNVFromTextfields(false);
+
 			if(validNV()) {
 				NhanVien nv = revertNVFromTextfields(false);
 				if(addToListNhanVien(nv)) {

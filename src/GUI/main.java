@@ -58,6 +58,7 @@ public class main extends JFrame implements ActionListener, MouseListener {
 	ChildTab child_tab;
 	KhoThuoc khoThuoc;
 	LichSu lichSu;
+	ThongKe thongke;
 	
 	private NhanVien_DAO nhanvien_dao;
 	
@@ -76,6 +77,7 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		child_tab = new ChildTab(new NhanVien(nv.getMaNhanVien()));
 		khoThuoc = new KhoThuoc();
 		lichSu = new LichSu(nvlogin);
+		thongke = new ThongKe(nvlogin);
 		
 		// ========================
 		
@@ -259,7 +261,7 @@ public class main extends JFrame implements ActionListener, MouseListener {
 		panelKhoThuoc = khoThuoc.panelKhoThuoc();
 		panelLichSu = lichSu.panelLichSu();
 		panelNhanVien = child_tab.panelNhanVien();
-		panelThongKe = child_tab.panelThongKe();
+		panelThongKe = thongke.panelThongKe();
 		panelTrangChu = child_tab.panelTrangChu();
 		
 		panelCenter.add(panelTrangChu);

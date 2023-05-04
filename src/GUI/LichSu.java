@@ -2,8 +2,10 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -18,10 +20,13 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -39,7 +44,7 @@ import entity.NhanVien;
 import entity.Thuoc;
 import others.PlaceholderTextField;
 
-public class LichSu extends JFrame implements ActionListener, MouseListener {
+public class LichSu extends JFrame implements ActionListener, MouseListener, DocumentListener {
 	
 	private JPanel listPanelLichSu;
 	private JComboBox<String> cbSort, cbNhanVien, cbAZ, cbKeDon, comboBoxPages;
@@ -47,11 +52,11 @@ public class LichSu extends JFrame implements ActionListener, MouseListener {
 	private JTextField txtLoc;
 	private JButton btnTaiLai, btnNextHoaDon, btnPrevHoaDon;
 	
-	private Thuoc_DAO thuoc_dao;
-	private NhaCungCap_DAO ncc_dao;
-	private NhanVien_DAO nhanvien_dao;
+	public static Thuoc_DAO thuoc_dao;
+	public static NhaCungCap_DAO ncc_dao;
+	public static NhanVien_DAO nhanvien_dao;
 	public static HoaDon_DAO hoadon_dao;
-	private KhachHang_DAO khachhang_dao;
+	public static KhachHang_DAO khachhang_dao;
 	public static CTHoaDon_DAO cthoadon_dao;
 	
 	public static DefaultTableModel modelLichSu;
@@ -160,8 +165,8 @@ public class LichSu extends JFrame implements ActionListener, MouseListener {
 		
 		tableLichSu.getColumnModel().getColumn(0).setCellRenderer(center);
 		tableLichSu.getColumnModel().getColumn(2).setCellRenderer(right);
-		tableLichSu.getColumnModel().getColumn(3).setCellRenderer(right);
-		tableLichSu.getColumnModel().getColumn(4).setCellRenderer(center);
+		tableLichSu.getColumnModel().getColumn(3).setCellRenderer(render);
+		tableLichSu.getColumnModel().getColumn(4).setCellRenderer(checkedThanhToan);
 		tableLichSu.getColumnModel().getColumn(5).setCellRenderer(center);
 		
 		listPanelLichSu.add(panelTable, BorderLayout.CENTER);
@@ -190,16 +195,26 @@ public class LichSu extends JFrame implements ActionListener, MouseListener {
 		
 		listPanelLichSu.add(panelPages, BorderLayout.SOUTH);
 		
+		txtLoc.getDocument().putProperty("owner", txtLoc);
+		txtLoc.getDocument().addDocumentListener(this);
+		txtLoc.setName("timkiem_hoadon");
+		
 		btnNextHoaDon.addActionListener(this);
 		btnTaiLai.addActionListener(this);
 		btnPrevHoaDon.addActionListener(this);
 		tableLichSu.addMouseListener(this);
 		
+		cbAZ.addActionListener(this);
+		cbKeDon.addActionListener(this);
+		cbNhanVien.addActionListener(this);
+		cbSort.addActionListener(this);
+		comboBoxPages.addActionListener(this);
+		
 		return myPanel;
 	}
 	
 	
-	public HoaDon loadHoaDon(HoaDon hoadon) {
+	public static HoaDon loadHoaDon(HoaDon hoadon) {
 		KhachHang kh = khachhang_dao.getKhachHangTheoMaKH(hoadon.getKhachHang().getMaKhachHang());
 		NhanVien nv = nhanvien_dao.getNhanVienTheoMaNV(hoadon.getNhanVien().getMaNhanVien());
 		
@@ -223,7 +238,7 @@ public class LichSu extends JFrame implements ActionListener, MouseListener {
 	}
 	
 	//=====
-	public void setDuLieuLichSu(int pages) {
+	public static void setDuLieuLichSu(int pages) {
 		
 		DefaultTableModel temp = (DefaultTableModel) tableLichSu.getModel();
 		temp.getDataVector().removeAllElements();
@@ -235,16 +250,104 @@ public class LichSu extends JFrame implements ActionListener, MouseListener {
 			int soLuong = cthoadon_dao.totalSoLuong(hoadon.getMaHoaDon());
 			
 			modelLichSu.addRow(new Object[] {hoadon.getMaHoaDon(),hoadon.getKhachHang().getHoKhachHang()+" "+hoadon.getKhachHang().getTenKhachHang(),
-					soLuong, hoadon.getTongTien(), hoadon.getThanhToan()?"Thanh toán":"Chưa thanh toán", hoadon.isDangHoaDon()?"Kê đơn":"Không kê đơn",
+					soLuong, hoadon.getTongTien(), hoadon.getThanhToan()?"Đã thanh toán":"Chưa thanh toán", hoadon.isDangHoaDon()?"Kê đơn":"Không kê đơn",
 							hoadon.getNhanVien().getHoNhanVien()+" "+hoadon.getNhanVien().getTenNhanVien()});
 			
 		}
 		
 	}
+	
+	DefaultTableCellRenderer checkedThanhToan = new DefaultTableCellRenderer() {
+		
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			
+			if(label.getText().trim().equals("Đã thanh toán"))
+				label.setForeground(Color.decode("#009900"));
+			else
+				label.setForeground(Color.decode("#CC0000"));
+			
+			label.setHorizontalAlignment(JLabel.CENTER);
+			
+			return label;
+		}
+		
+	};
+	
+	DefaultTableCellRenderer render = new DefaultTableCellRenderer() {
+		
+		private static final long serialVersionUID = 1L;
+		@Override
+	    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+	        // Lấy đối tượng JLabel của TableCellRenderer
+	        JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	        
+            Font boldFont = new Font(label.getFont().getName(), Font.BOLD, label.getFont().getSize());
+
+            DecimalFormat format = new DecimalFormat("#,###");
+            label.setText(format.format(Double.parseDouble(label.getText())));
+            label.setFont(boldFont);
+            label.setHorizontalAlignment(JLabel.RIGHT);
+
+	        return label;
+	    }
+	};
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
+		
+		Object o = e.getSource();
+		
+		if(o.equals(btnTaiLai)) {
+			setDuLieuLichSu(1);
+			cbNhanVien.setSelectedItem("Tất cả nhân viên");
+			cbKeDon.setSelectedItem("Tất cả");
+			cbAZ.setSelectedIndex(0);
+			cbSort.setSelectedIndex(0);
+			txtLoc.setText("");
+			btnNextHoaDon.setEnabled(true);
+			btnPrevHoaDon.setEnabled(true);
+			comboBoxPages.setVisible(true);
+		}
+		
+		if(o.equals(cbAZ)||o.equals(cbKeDon)||o.equals(cbNhanVien)||o.equals(cbSort)) {
+			
+			String AZ = (String) cbAZ.getSelectedItem();
+			String keDon = (String) cbKeDon.getSelectedItem();
+			String nhanVien = (String) cbNhanVien.getSelectedItem();
+			String sort = (String) cbSort.getSelectedItem();
+			
+			NhanVien nv = nhanvien_dao.getNhanVienTheoHoTenNV(nhanVien);
+			if(!(nhanVien.trim().equals("Tất cả nhân viên")))
+				nhanVien = nv.getMaNhanVien();
+			
+			ArrayList<HoaDon> dsSort_LichSu = hoadon_dao.filterNangCao(keDon, nhanVien, sort, AZ);
+			
+			if(dsSort_LichSu.size()==0) {
+				JOptionPane.showMessageDialog(this, "Không có dữ liệu");
+				setDuLieuLichSu(1);
+			}else {
+				
+				DefaultTableModel temp = (DefaultTableModel) tableLichSu.getModel();
+				temp.getDataVector().removeAllElements();
+				
+				for(HoaDon hoadon : dsSort_LichSu) {
+					
+					hoadon = loadHoaDon(hoadon);
+					int soLuong = cthoadon_dao.totalSoLuong(hoadon.getMaHoaDon());
+					
+					modelLichSu.addRow(new Object[] {hoadon.getMaHoaDon(),hoadon.getKhachHang().getHoKhachHang()+" "+hoadon.getKhachHang().getTenKhachHang(),
+							soLuong, hoadon.getTongTien(), hoadon.getThanhToan()?"Thanh toán":"Chưa thanh toán", hoadon.isDangHoaDon()?"Kê đơn":"Không kê đơn",
+									hoadon.getNhanVien().getHoNhanVien()+" "+hoadon.getNhanVien().getTenNhanVien()});
+					
+				}
+				
+				
+			}
+			
+			
+		}
 		
 	}
 
@@ -276,7 +379,10 @@ public class LichSu extends JFrame implements ActionListener, MouseListener {
         	
         	ArrayList<CT_HoaDon> listCTHoaDon = cthoadon_dao.getAllCTHoaDon(tableLichSu.getValueAt(row, 0).toString());
 			
-        	//nvlogin = nhanvien_dao.getNhanVienTheoMaNV(nvlogin.getMaNhanVien());
+        	for(CT_HoaDon ct : listCTHoaDon) {
+        		Thuoc thuoc = thuoc_dao.getThuocTheoMaThuoc(ct.getThuocCT().getMaThuoc());
+        		ct.setThuocCT(thuoc);
+        	}
         	
 			new xuatHoaDon(nvlogin, hoadon, listCTHoaDon).setVisible(true);
 		}
@@ -297,6 +403,54 @@ public class LichSu extends JFrame implements ActionListener, MouseListener {
 
 	@Override
 	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void insertUpdate(DocumentEvent e) {
+		// TODO Auto-generated method stub
+		
+		JTextField textField = (JTextField) e.getDocument().getProperty("owner");
+		
+		if(textField.getName().equals("timkiem_hoadon")) {
+			
+			String regex = textField.getText().trim();
+			if(regex.trim().equals(""))
+				setDuLieuLichSu(1);
+			else {
+				DefaultTableModel temp = (DefaultTableModel) tableLichSu.getModel();
+				temp.getDataVector().removeAllElements();
+				
+				List<HoaDon> ds = hoadon_dao.filterHoaDon(regex);
+				for(HoaDon hoadon : ds) {
+					
+					hoadon = loadHoaDon(hoadon);
+					int soLuong = cthoadon_dao.totalSoLuong(hoadon.getMaHoaDon());
+					
+					modelLichSu.addRow(new Object[] {hoadon.getMaHoaDon(),hoadon.getKhachHang().getHoKhachHang()+" "+hoadon.getKhachHang().getTenKhachHang(),
+							soLuong, hoadon.getTongTien(), hoadon.getThanhToan()?"Thanh toán":"Chưa thanh toán", hoadon.isDangHoaDon()?"Kê đơn":"Không kê đơn",
+									hoadon.getNhanVien().getHoNhanVien()+" "+hoadon.getNhanVien().getTenNhanVien()});
+				}
+				
+				btnNextHoaDon.setEnabled(false);
+				btnPrevHoaDon.setEnabled(false);
+				comboBoxPages.setVisible(false);
+				
+			}
+			
+		}
+		
+	}
+
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void changedUpdate(DocumentEvent e) {
 		// TODO Auto-generated method stub
 		
 	}

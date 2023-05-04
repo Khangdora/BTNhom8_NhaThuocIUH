@@ -241,7 +241,11 @@ public class xuatHoaDon extends JFrame implements ActionListener, DocumentListen
 	}
 	
 	public int tongSoLuongThuoc() {
-		return listCTHD.size();
+		int count = 0;
+		for(CT_HoaDon hd : listCTHD) {
+			count+=hd.getSoLuong();
+		}
+		return count;
 	}
 	
 	public double tienThua(String tienKhach) {
@@ -341,16 +345,20 @@ public class xuatHoaDon extends JFrame implements ActionListener, DocumentListen
 					
 					hd.setTienKhach(hoadon.getThanhToan() ? 0.0 : tienKhach());
 					hd.setThanhToan(hoadon.getThanhToan() ? false : true);
+					hd.setTongTien(tongTien());
+					hd.setSoLuong(tongSoLuongThuoc());
 					
 					if(hoadon_dao.kiemTraTonTai(hd.getMaHoaDon())) {
 						if(hoadon_dao.updateThanhToan(hd)) {
 							new xuatHoaDon(nvlogin, hd, listCTHD).setVisible(true);
+							LichSu.setDuLieuLichSu(1);
 							dispose();
 						}else
 							JOptionPane.showMessageDialog(this, "Lỗi cập nhật.");
 					}else {
 						if(hoadon_dao.create(hd, listCTHD)) {
 							new xuatHoaDon(nvlogin, hd, listCTHD).setVisible(true);
+							LichSu.setDuLieuLichSu(1);
 							dispose();
 						}else
 							JOptionPane.showMessageDialog(this, "Lỗi cập nhật.");

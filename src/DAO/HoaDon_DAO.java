@@ -18,6 +18,8 @@ public class HoaDon_DAO {
 	
 	int limit = 25;
 	
+	
+	
 	public int totalHoaDon() {
 		int totalRows = 0;
 		
@@ -38,6 +40,39 @@ public class HoaDon_DAO {
 		
 		return totalRows;
 		
+	}
+	
+	public int totalHoaDon1NV(String maNhanVien) {
+		
+		int total = 0;
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement stmt = null;
+		
+		try {
+			String sql = "SELECT COUNT(*) AS total FROM HoaDon WHERE maNhanVien = ?";
+			stmt = con.prepareStatement(sql);
+			stmt.setString(1, maNhanVien);
+			
+			ResultSet rs = stmt.executeQuery();
+			
+			while(rs.next()) {
+				total = rs.getInt(1);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		finally {
+			try {
+				stmt.close();
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+		return total;
 	}
 	
 	public ArrayList<HoaDon> getPagesHoaDon(int pages) {
@@ -66,11 +101,16 @@ public class HoaDon_DAO {
 				boolean thanhToan = rs.getBoolean(5);
 				Date ngayMua = rs.getDate(6);
 				double tienKhach = rs.getDouble(7);
+				int soLuong = rs.getInt(8);
+				double tongGia = rs.getDouble(9);
 				
 				KhachHang kh = new KhachHang(maKhachHang);
 				NhanVien nv = new NhanVien(maNhanVien);
 				
 				HoaDon hoadon = new HoaDon(maHoaDon, ngayMua, kh, nv, dangHoaDon, thanhToan, tienKhach);
+				hoadon.setSoLuong(soLuong);
+				hoadon.setTongTien(tongGia);
+				
 				dshoadon.add(hoadon);
 				
 			}
@@ -205,7 +245,7 @@ public class HoaDon_DAO {
 		try {
 			
 			stmt1 = con.prepareStatement("INSERT INTO HoaDon VALUES"
-					+ "(?, ?, ?, ?, ?, ?, ?)");
+					+ "(?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			stmt1.setString(1, hd.getMaHoaDon());
 			stmt1.setString(2, hd.getKhachHang().getMaKhachHang());
 			stmt1.setString(3, hd.getNhanVien().getMaNhanVien());
@@ -215,6 +255,8 @@ public class HoaDon_DAO {
 			java.sql.Date sqlDate = new java.sql.Date(date.getTime());
 			stmt1.setDate(6, sqlDate);
 			stmt1.setDouble(7, hd.getTienKhach());
+			stmt1.setInt(8, hd.getSoLuong());
+			stmt1.setDouble(9, hd.getTongTien());
 			n1 = stmt1.executeUpdate();
 			
 			for(CT_HoaDon ct : cthd) {
@@ -263,12 +305,6 @@ public class HoaDon_DAO {
 				maHienTai = rs.getString(1);
 			}
 			
-			if (rs.next()) {
-		        maHienTai = rs.getString(1);
-		    } else {
-		        maHienTai = "HD1000"; // hoặc giá trị khác tùy ý
-		    }
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -278,6 +314,147 @@ public class HoaDon_DAO {
 		
 		maMoi = "HD" + kyTuMoi;
 		return maMoi;
+	}
+	
+	public ArrayList<HoaDon> filterHoaDon(String regex) {
+		
+		ArrayList<HoaDon> dsHoadon = new ArrayList<HoaDon>();
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement stmt = null;
+		
+		if(regex.trim().equals("")) {
+			dsHoadon = this.getPagesHoaDon(1);
+			return dsHoadon;
+		}
+		
+		try {
+			
+			String sql = "SELECT TOP 50 * FROM HoaDon h \r\n"+
+				"INNER JOIN KhachHang k ON h.maKhachHang = k.maKH \r\n"+
+				"WHERE h.maHoaDon LIKE ? OR k.sodienthoai LIKE ? \r\n"+
+				"OR (k.ho + ' ' + k.ten) LIKE ?";
+			stmt = con.prepareStatement(sql);
+			stmt.setString(1, "%"+regex+"%");
+			stmt.setString(2, "%"+regex+"%");
+			stmt.setString(3, "%"+regex+"%");
+			ResultSet rs = stmt.executeQuery();
+			
+			while (rs.next()) {
+				
+				String maHoaDon = rs.getString(1);
+				String maKhachHang = rs.getString(2);
+				String maNhanVien = rs.getString(3);
+				boolean dangHoaDon = rs.getBoolean(4);
+				boolean thanhToan = rs.getBoolean(5);
+				Date ngayMua = rs.getDate(6);
+				double tienKhach = rs.getDouble(7);
+				
+				String ho = rs.getString(9);
+				String ten = rs.getString(10);
+				String sdt = rs.getString(11);
+				String email = rs.getString(12);
+				boolean gioitinh = rs.getBoolean(13);
+				
+				KhachHang kh = new KhachHang(maKhachHang, ho, ten, sdt, email, gioitinh);
+				NhanVien nv = new NhanVien(maNhanVien);
+				
+				HoaDon hd = new HoaDon(maHoaDon, ngayMua, kh, nv, dangHoaDon, thanhToan, tienKhach);
+				dsHoadon.add(hd);
+				
+			}
+			
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		finally {
+			try {
+				stmt.close();
+			} catch (SQLException e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+		return dsHoadon;
+		
+	}
+	
+	public ArrayList<HoaDon> filterNangCao(String keDon, String nhanVien, String sort, String AZ) {
+		
+		ArrayList<HoaDon> dsHoaDon = new ArrayList<HoaDon>();
+		
+		try {
+			
+			ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
+			String sql = "SELECT * FROM HoaDon ";
+			
+			nhanVien = nhanVien.replace("Tất cả nhân viên", "");
+			keDon = keDon.replace("Tất cả", "");
+			
+			if(!keDon.isBlank()) {
+				int keDonInt = keDon.trim().equals("Kê đơn")?1:0;
+				sql += " WHERE dangHoaDon = " + keDonInt + " ";
+				if(!nhanVien.isBlank()) {
+					sql += " AND maNhanVien = N'" + nhanVien.trim() + "' ";
+				}
+			}else if(!nhanVien.isBlank()) 
+				sql += " WHERE maNhanVien = N'" + nhanVien.trim() + "' ";
+			else 
+				sql += " WHERE 1=1";
+			
+			
+			if(sort.trim().equals("Theo thứ tự"))
+				sql += " ORDER BY maHoaDon ";
+			
+			if(sort.trim().equals("Theo số lượng"))
+				sql += " ORDER BY soLuong ";
+			
+			if(sort.trim().equals("Theo giá thành"))
+				sql += " ORDER BY tongGia ";
+			
+			if(AZ.trim().equals("Sắp xếp A-Z"))
+				sql += " ASC";
+			
+			if(AZ.trim().equals("Sắp xếp Z-A"))
+				sql += " DESC";
+			
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			while(rs.next()) {
+				
+				String maHoaDon = rs.getString(1);
+				String maKhachHang = rs.getString(2);
+				String maNhanVien = rs.getString(3);
+				boolean dangHoaDon = rs.getBoolean(4);
+				boolean thanhToan = rs.getBoolean(5);
+				Date ngayMua = rs.getDate(6);
+				double tienKhach = rs.getDouble(7);
+				int soLuong = rs.getInt(8);
+				double tongGia = rs.getDouble(9);
+				
+				KhachHang kh = new KhachHang(maKhachHang);
+				NhanVien nv = new NhanVien(maNhanVien);
+				
+				HoaDon hoadon = new HoaDon(maHoaDon, ngayMua, kh, nv, dangHoaDon, thanhToan, tienKhach);
+				hoadon.setSoLuong(soLuong);
+				hoadon.setTongTien(tongGia);
+				
+				dsHoaDon.add(hoadon);
+				
+			}
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return dsHoaDon;
+		
 	}
 	
 
