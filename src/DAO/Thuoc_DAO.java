@@ -40,28 +40,28 @@ public class Thuoc_DAO {
 		return totalRows;
 	}
 	
-	public boolean checkExist(int maNV) {
-		ConnectDB.getInstance();
-		Connection con = ConnectDB.getConnection();
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			stmt = con.prepareStatement("select * from NhanVien where maNV = ?");
-			stmt.setInt(1, maNV);
-			rs = stmt.executeQuery();
-			return rs.next();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		} finally {
-			try {
-			rs.close();
-			stmt.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+//	public boolean checkExist(int maNV) {
+//		ConnectDB.getInstance();
+//		Connection con = ConnectDB.getConnection();
+//		PreparedStatement stmt = null;
+//		ResultSet rs = null;
+//		try {
+//			stmt = con.prepareStatement("select * from NhanVien where maNV = ?");
+//			stmt.setInt(1, maNV);
+//			rs = stmt.executeQuery();
+//			return rs.next();
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//			return false;
+//		} finally {
+//			try {
+//			rs.close();
+//			stmt.close();
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//	}
 	
 	public boolean update(Thuoc thuoc) {
 		ConnectDB.getInstance();
@@ -477,8 +477,6 @@ public class Thuoc_DAO {
 			while (rs.next()) {
 				maHienTai = rs.getString(1);
 			}
-			if (rs.next()) 
-				maHienTai = "SP1000";
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
