@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -57,6 +57,7 @@ import DAO.Thuoc_DAO;
 import connectDB.ConnectDB;
 import entity.NhaCungCap;
 import entity.Thuoc;
+import others.MyTableCellRenderer;
 
 public class KhoThuoc extends JFrame implements ActionListener, MouseListener, DocumentListener{
 	/**
@@ -115,15 +116,13 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 
 	protected JLabel lblTBHSD;
 	private DateChooser dateNgayNhap;
-<<<<<<< HEAD
-	private JLabel lblTBHSD;
+
 	
 	public static int pages = 1;
 	
-=======
+
 	protected DateChooser dateHSD;
 	private JPanel p;
->>>>>>> c1f6995d84c82ea50b5f284c54c834fc744d7a32
 	public KhoThuoc() {
 
 		try {
@@ -140,10 +139,6 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		setResizable(false);
 		p = panelKhoThuoc();
 		this.add(p);
-	}
-	
-	public static void main(String[] args) {
-		new KhoThuoc().setVisible(true);
 	}
 	
 	public JPanel panelKhoThuoc() {
@@ -448,6 +443,7 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		};
 		tableKhoThuoc = new JTable(modelKhoThuoc);
 		tableKhoThuoc.setRowHeight(20);
+		
 		JScrollPane sp = new JScrollPane(tableKhoThuoc, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		sp.setPreferredSize(new Dimension(870, 245));
 		
@@ -534,7 +530,7 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 	}
 	
 	
-<<<<<<< HEAD
+
 	public JFrame guiUpdate(Thuoc thuoc) {
 		frameUpdate = new JFrame();
 		frameUpdate.setTitle("Sửa thông tin thuốc");
@@ -683,7 +679,7 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		myPanel.add(lblTBHSD);
 		
 		frameUpdate.add(myPanel);
-		
+		tableKhoThuoc.getTableHeader().setDefaultRenderer(headerRenderer);
 		
 		JPanel panelChucNang = new JPanel();
 		panelChucNang.setLayout(null);
@@ -730,10 +726,7 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		readDataIntoTxt(thuoc);
 		return frameUpdate;
 	}
-=======
-	
-	
->>>>>>> c1f6995d84c82ea50b5f284c54c834fc744d7a32
+
 	
 	public void readDataIntoTxt(Thuoc thuoc) {
 		txtMaSP.setText(thuoc.getMaThuoc());
@@ -1371,4 +1364,16 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 	        }
 	    }
 	}
+	
+	DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+	    @Override
+	    public Component getTableCellRendererComponent(JTable table, Object value,
+	            boolean isSelected, boolean hasFocus, int row, int column) {
+	        super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	        // Thiết lập màu nền cho header
+	        setBackground(Color.decode("#3366CC"));
+	        setForeground(Color.white);
+	        return this;
+	    }
+	};
 }
