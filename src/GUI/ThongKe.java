@@ -98,7 +98,7 @@ public class ThongKe extends JFrame implements ActionListener {
 		JLabel lblCN1, lblCN2, lblCN3, lblCN4;
 		
 		panelCenterNorth.add(lblCN1 = new JLabel("<html><center><span style='font-size:18px'>" + format.format(thuoc_dao.totalThuoc()) 
-        + "</span><br><span style='font-size:12px'>nhân viên</span></center></html>"));
+        + "</span><br><span style='font-size:12px'>thuốc</span></center></html>"));
 		lblCN1.setBackground(Color.decode("#66CCFF"));
 		lblCN1.setOpaque(true);
 		lblCN1.setPreferredSize(new Dimension(150, 100));
