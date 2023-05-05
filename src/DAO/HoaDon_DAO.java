@@ -237,8 +237,8 @@ public class HoaDon_DAO {
 	public boolean create(HoaDon hd, ArrayList<CT_HoaDon> cthd) {
 		ConnectDB.getInstance();
 		Connection con = ConnectDB.getConnection();
-		PreparedStatement stmt1 = null, stmt2 = null;
-		int n1 = 0, n2 = 0;
+		PreparedStatement stmt1 = null, stmt2 = null, stmt3 = null;
+		int n1 = 0, n2 = 0, n3 = 0;
 		try {
 			
 			stmt1 = con.prepareStatement("INSERT INTO HoaDon VALUES"
@@ -264,6 +264,11 @@ public class HoaDon_DAO {
 				stmt2.setString(2, ct.getThuocCT().getMaThuoc());
 				stmt2.setInt(3, ct.getSoLuong());
 				n2 += stmt2.executeUpdate();
+				
+				stmt3 = con.prepareStatement("UPDATE Thuoc SET soLuong = soluong-? WHERE maThuoc = ?");
+				stmt3.setInt(1, ct.getSoLuong());
+				stmt3.setString(2, ct.getThuocCT().getMaThuoc());
+				n3 += stmt3.executeUpdate();
 			}
 			
 		} catch (SQLException e) {
@@ -278,12 +283,15 @@ public class HoaDon_DAO {
 		        if (stmt2 != null) {
 		            stmt2.close();
 		        }
+		        if (stmt3 != null) {
+		        	stmt3.close();
+		        }
 			} catch (SQLException e2) {
 				e2.printStackTrace();
 			}
 		}
 		
-		return (n1>0 && n2>0);
+		return (n1>0 && n2>0 && n3>0);
 		
 	}
 

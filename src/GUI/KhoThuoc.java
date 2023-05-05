@@ -57,6 +57,7 @@ import DAO.Thuoc_DAO;
 import connectDB.ConnectDB;
 import entity.NhaCungCap;
 import entity.Thuoc;
+import others.MyTableCellRenderer;
 
 public class KhoThuoc extends JFrame implements ActionListener, MouseListener, DocumentListener{
 	/**
@@ -117,7 +118,7 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 	private DateChooser dateNgayNhap;
 	
 	public static int pages = 1;
-	
+
 	protected DateChooser dateHSD;
 	private JPanel p;
 	public KhoThuoc() {
@@ -136,10 +137,6 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		setResizable(false);
 		p = panelKhoThuoc();
 		this.add(p);
-	}
-	
-	public static void main(String[] args) {
-		new KhoThuoc().setVisible(true);
 	}
 	
 	public JPanel panelKhoThuoc() {
@@ -444,6 +441,7 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		};
 		tableKhoThuoc = new JTable(modelKhoThuoc);
 		tableKhoThuoc.setRowHeight(20);
+		
 		JScrollPane sp = new JScrollPane(tableKhoThuoc, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		sp.setPreferredSize(new Dimension(870, 245));
 		
@@ -675,7 +673,7 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		myPanel.add(lblTBHSD);
 		
 		frameUpdate.add(myPanel);
-		
+		tableKhoThuoc.getTableHeader().setDefaultRenderer(headerRenderer);
 		
 		JPanel panelChucNang = new JPanel();
 		panelChucNang.setLayout(null);
@@ -722,7 +720,7 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		readDataIntoTxt(thuoc);
 		return frameUpdate;
 	}
-	
+
 	public void readDataIntoTxt(Thuoc thuoc) {
 		txtMaSP.setText(thuoc.getMaThuoc());
 		txtTenSP.setText(thuoc.getTenThuoc());
@@ -1359,4 +1357,16 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 	        }
 	    }
 	}
+	
+	DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+	    @Override
+	    public Component getTableCellRendererComponent(JTable table, Object value,
+	            boolean isSelected, boolean hasFocus, int row, int column) {
+	        super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	        // Thiết lập màu nền cho header
+	        setBackground(Color.decode("#3366CC"));
+	        setForeground(Color.white);
+	        return this;
+	    }
+	};
 }

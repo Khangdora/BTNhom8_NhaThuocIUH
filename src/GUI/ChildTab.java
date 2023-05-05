@@ -251,6 +251,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		
 		DefaultTableCellRenderer center = new DefaultTableCellRenderer();
 		center.setHorizontalAlignment(JLabel.CENTER);
+		tableHoaDon.getTableHeader().setDefaultRenderer(headerRenderer);
 		tableHoaDon.getColumnModel().getColumn(0).setCellRenderer(center);
 		tableHoaDon.getColumnModel().getColumn(1).setPreferredWidth(200);
 		tableHoaDon.getColumnModel().getColumn(2).setCellRenderer(center);
@@ -413,6 +414,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		
 		tableHoaDon.addMouseListener(this);
 		tableChiTietHoaDon.addMouseListener(this);
+		tableChiTietHoaDon.getTableHeader().setDefaultRenderer(headerRenderer);
 		
 		txtSDT_HD.getDocument().putProperty("owner", txtSDT_HD);
 		txtSDT_HD.getDocument().addDocumentListener(this);
@@ -499,8 +501,8 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		tableKH = new JTable(modelKH);
 		tableKH.setRowHeight(20);
 		
-		JScrollPane sp = new JScrollPane(tableKH, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		JScrollPane sp = new JScrollPane(tableKH, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
 		DefaultTableCellRenderer center = new DefaultTableCellRenderer();
 		center.setHorizontalAlignment(JLabel.CENTER);
@@ -632,8 +634,8 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		tableKH_temp.getColumnModel().getColumn(4).setCellRenderer(center);
 		tableKH_temp.getColumnModel().getColumn(5).setCellRenderer(center);
 		
-		JScrollPane spTemp = new JScrollPane(tableKH_temp, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		JScrollPane spTemp = new JScrollPane(tableKH_temp, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		spTemp.setPreferredSize(new Dimension(370, 390));//320
 		
 		addPanelKhachHangCenter.add(spTemp, BorderLayout.CENTER);
@@ -678,6 +680,9 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		btnSuaKH_csdl.addActionListener(this);
 		txtLocTuKhoa_KH.getDocument().putProperty("owner", txtLocTuKhoa_KH);
 		txtLocTuKhoa_KH.getDocument().addDocumentListener(this);
+		
+		tableKH.getTableHeader().setDefaultRenderer(headerRenderer);
+		tableKH_temp.getTableHeader().setDefaultRenderer(headerRenderer);
 		
 		tableKH.addMouseListener(new MouseListener() {
 			
@@ -958,9 +963,10 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		
 		tableNV = new JTable(modelNV);
 		tableNV.setRowHeight(20);
+		tableNV.getTableHeader().setDefaultRenderer(headerRenderer);
 		
-		JScrollPane sp = new JScrollPane(tableNV, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		JScrollPane sp = new JScrollPane(tableNV, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		sp.setPreferredSize(new Dimension(890,290));
 		DefaultTableCellRenderer center = new DefaultTableCellRenderer();
 		center.setHorizontalAlignment(JLabel.CENTER);
@@ -1053,6 +1059,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		txthotenKH_HD.setText("");
 		txtmaKH_HD.setText("");
 		listCTHoaDon.clear();
+		lblTongTienHD.setText("<html>Tổng tiền: <b><font color='red'>0</font></b>₫</html>");
 		DefaultTableModel temp = (DefaultTableModel) tableChiTietHoaDon.getModel();
 		temp.setRowCount(0);
 		temp.getDataVector().removeAllElements();
@@ -1085,10 +1092,15 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 		String soLuongMoi = (String) modelChiTietHoaDon.getValueAt(row, column);
 		int value = Integer.parseInt(soLuongMoi);
 		
-		int i = 0;
+		int i = 0;		
 		for(CT_HoaDon ct : listCTHoaDon) {
-			if(i==row)
-				ct.setSoLuong(value);
+			if(i==row) {
+				if(value>ct.getThuocCT().getSoLuong()) {
+					JOptionPane.showMessageDialog(main, "Giá trị quá số lượng thuốc.");
+				}else {
+					ct.setSoLuong(value);
+				}
+			}
 			i++;
 		}
 		setDuLieuChiTietHoaDon();
@@ -1573,6 +1585,7 @@ public class ChildTab implements ActionListener, MouseListener, KeyListener, Doc
 					HoaDon hd = new HoaDon(mahoadon, now, new KhachHang(maKhachHang), nvlogin, dangHoaDon, false, 0.0);
 					if(hoadon_dao.create(hd, listCTHoaDon)) {
 						lblThongBao(lblTBHD, 1, "Lưu hóa đơn thành công!");
+						setDuLieuHoaDon(pages);
 					} else
 						lblThongBao(lblTBHD, 0, "Lưu hóa đơn không thành công!");
 				}
@@ -2026,6 +2039,7 @@ KhachHang kh = new KhachHang(modelKH_temp.getValueAt(r, 0).toString(), modelKH_t
         if(column>0 && o.equals(modelChiTietHoaDon)) {
         	ThayDoiSoLuong(row, column);
         	lblTongTienHD.setText(tongTienCTHD());
+        	
         }
         
 	}
@@ -2125,6 +2139,22 @@ KhachHang kh = new KhachHang(modelKH_temp.getValueAt(r, 0).toString(), modelKH_t
 			txtEmail_KH.setText("");
 			txtSDT_KH.requestFocus();
 		}
+		
+		DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+		    @Override
+		    public Component getTableCellRendererComponent(JTable table, Object value,
+		            boolean isSelected, boolean hasFocus, int row, int column) {
+		        super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		        // Thiết lập màu nền cho header
+		        setBackground(Color.decode("#3366CC"));
+		        setForeground(Color.white);
+		        return this;
+		    }
+		};
+		
+	public boolean checkSoLuong(int oldSL, int newSL) {
+		return oldSL>=newSL;		
+	}
 
 
 }

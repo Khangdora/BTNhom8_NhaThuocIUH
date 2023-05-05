@@ -152,6 +152,7 @@ public class LichSu extends JFrame implements ActionListener, MouseListener, Doc
 		
 		tableLichSu = new JTable(modelLichSu);
 		tableLichSu.setRowHeight(20);
+		tableLichSu.getTableHeader().setDefaultRenderer(headerRenderer);
 		
 		JScrollPane sp = new JScrollPane(tableLichSu, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -484,5 +485,17 @@ public class LichSu extends JFrame implements ActionListener, MouseListener, Doc
 		// TODO Auto-generated method stub
 		
 	}
+	
+	DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+	    @Override
+	    public Component getTableCellRendererComponent(JTable table, Object value,
+	            boolean isSelected, boolean hasFocus, int row, int column) {
+	        super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	        // Thiết lập màu nền cho header
+	        setBackground(Color.decode("#3366CC"));
+	        setForeground(Color.white);
+	        return this;
+	    }
+	};
 
 }
