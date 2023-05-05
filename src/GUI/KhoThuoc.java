@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -115,15 +115,11 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 
 	protected JLabel lblTBHSD;
 	private DateChooser dateNgayNhap;
-<<<<<<< HEAD
-	private JLabel lblTBHSD;
 	
 	public static int pages = 1;
 	
-=======
 	protected DateChooser dateHSD;
 	private JPanel p;
->>>>>>> c1f6995d84c82ea50b5f284c54c834fc744d7a32
 	public KhoThuoc() {
 
 		try {
@@ -460,8 +456,6 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		
 		panelTable.add(sp);
 		
-
-		
 		JPanel panelPages = new JPanel();
 		panelPages.setOpaque(false);
 		panelPages.setBounds(0, 290, 890, 35);
@@ -533,8 +527,6 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		return myPanel;
 	}
 	
-	
-<<<<<<< HEAD
 	public JFrame guiUpdate(Thuoc thuoc) {
 		frameUpdate = new JFrame();
 		frameUpdate.setTitle("Sửa thông tin thuốc");
@@ -730,10 +722,6 @@ public class KhoThuoc extends JFrame implements ActionListener, MouseListener, D
 		readDataIntoTxt(thuoc);
 		return frameUpdate;
 	}
-=======
-	
-	
->>>>>>> c1f6995d84c82ea50b5f284c54c834fc744d7a32
 	
 	public void readDataIntoTxt(Thuoc thuoc) {
 		txtMaSP.setText(thuoc.getMaThuoc());
